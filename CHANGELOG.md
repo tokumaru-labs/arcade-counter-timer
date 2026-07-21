@@ -8,6 +8,28 @@ project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 Nothing yet.
 
+## [0.1.1] — 2026-07-21
+
+Store listing localization. No change to the interface, the features, the stored
+data format or the requested permissions.
+
+### Added
+
+- `_locales/en/messages.json` and `_locales/ja/messages.json` holding the
+  extension name and description
+- `default_locale: "en"` in the manifest
+
+### Changed
+
+- The manifest's `name`, `description` and `action.default_title` now reference
+  the localized messages as `__MSG_extensionName__` and
+  `__MSG_extensionDescription__`, so Chrome and the Web Store show Japanese text
+  to Japanese users
+- Release verification and packaging check the locale files, their message keys,
+  the description length limit and the `_locales` entries inside the ZIP
+
+The popup interface itself is still English only.
+
 ## [0.1.0] — 2026-07-21
 
 Initial public release.

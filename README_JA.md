@@ -7,7 +7,7 @@
 
 <img src="store-assets/source/popup-main.png" alt="Arcade Counter Timer のポップアップ。動作中のタイマー、大きなカウント、START と COUNT ボタン" width="300">
 
-バージョン 0.1.0 ／ Tokumaru Labs ／ Chrome 拡張機能（Manifest V3）
+バージョン 0.1.1 ／ Tokumaru Labs ／ Chrome 拡張機能（Manifest V3）
 
 ## できること
 
@@ -103,8 +103,8 @@ Chrome ウェブストアへはまだ公開していません。ソースから�
 ビルドツール、依存パッケージ、バンドラーはありません。素の HTML / CSS / ES モジュールです。
 
 ```
-npm test              # 47件のユニットテスト（Node 標準の node:test）
-npm run verify        # 公開前チェック（manifest、権限、アイコン、リモートコード不使用）
+npm test              # 55件のユニットテスト（Node 標準の node:test）
+npm run verify        # 公開前チェック（manifest、ロケール、権限、アイコン、リモートコード不使用）
 npm run package       # Chrome ウェブストア用 ZIP を dist/ に作成
 ```
 
@@ -130,7 +130,7 @@ npm run store-assets  # 1280x800 のストア用スクリーンショットを�
 - タイマーの状態、セッションカウント、日別履歴、設定は端末上の
   `chrome.storage.local` に保存されます
 
-## 0.1.0 時点の制限
+## 現時点の制限
 
 - streak はポップアップを開いている間だけで、閉じると途切れます
 - タイマーとカウンターは各1つずつです（タスク名や複数カウンターはありません）
@@ -138,6 +138,8 @@ npm run store-assets  # 1280x800 のストア用スクリーンショットを�
 - ポップアップを閉じている間の経過時間は正しい日付に振り分けられますが、
   ストレージへ書き込まれるのは次にポップアップを開いたときです
 - システム時刻が巻き戻った場合、その区間は0として扱います
+- ローカライズ対象は拡張機能名と説明文（英語・日本語）のみで、
+  ポップアップの UI 表記は英語のままです
 
 ## ライセンス
 

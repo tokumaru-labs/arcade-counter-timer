@@ -10,6 +10,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { inflateRawSync } from 'node:zlib';
 
 import { pngSize } from './png.mjs';
 
@@ -17,11 +18,20 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const EXPECTED = {
   manifestVersion: 3,
-  name: 'Arcade Counter Timer',
-  version: '0.1.0',
+  name: '__MSG_extensionName__',
+  description: '__MSG_extensionDescription__',
+  defaultLocale: 'en',
+  version: '0.1.1',
   descriptionLimit: 132,
   permissions: ['storage']
 };
+
+/**
+ * Localized listing strings. The manifest only holds __MSG_*__ references now,
+ * so the real name and description live here and are checked per locale.
+ */
+const LOCALES = ['en', 'ja'];
+const MESSAGE_KEYS = ['extensionName', 'extensionDescription'];
 
 /** Files that belong in the published package, and nothing else. */
 const RUNTIME_FILES = [
@@ -33,6 +43,8 @@ const RUNTIME_FILES = [
   'src/storage.js',
   'src/effects.js',
   'src/input.js',
+  '_locales/en/messages.json',
+  '_locales/ja/messages.json',
   'assets/icons/icon16.png',
   'assets/icons/icon32.png',
   'assets/icons/icon48.png',
@@ -91,13 +103,16 @@ if (manifest) {
   check('manifest_version is 3', manifest.manifest_version === EXPECTED.manifestVersion, String(manifest.manifest_version));
   check(`name is "${EXPECTED.name}"`, manifest.name === EXPECTED.name, manifest.name);
   check(`version is ${EXPECTED.version}`, manifest.version === EXPECTED.version, manifest.version);
-
-  const description = manifest.description ?? '';
-  check('description is present', description.length > 0);
+  check(`default_locale is "${EXPECTED.defaultLocale}"`, manifest.default_locale === EXPECTED.defaultLocale, manifest.default_locale);
   check(
-    `description is within ${EXPECTED.descriptionLimit} characters`,
-    description.length <= EXPECTED.descriptionLimit,
-    `${description.length} characters`
+    `description is "${EXPECTED.description}"`,
+    manifest.description === EXPECTED.description,
+    manifest.description
+  );
+  check(
+    `action.default_title is "${EXPECTED.name}"`,
+    manifest.action?.default_title === EXPECTED.name,
+    manifest.action?.default_title
   );
 
   const permissions = manifest.permissions ?? [];
@@ -120,6 +135,44 @@ section('Runtime files');
 
 for (const rel of RUNTIME_FILES) {
   check(`${rel} exists`, existsSync(join(ROOT, rel)));
+}
+
+/* -------------------------------------------------------------- locales -- */
+
+section('Locales');
+
+check(`_locales/${EXPECTED.defaultLocale} is one of the shipped locales`, LOCALES.includes(EXPECTED.defaultLocale));
+
+for (const locale of LOCALES) {
+  const rel = `_locales/${locale}/messages.json`;
+  if (!existsSync(join(ROOT, rel))) {
+    check(`${rel} exists`, false);
+    continue;
+  }
+
+  const raw = readFileSync(join(ROOT, rel));
+  check(`${rel} has no UTF-8 BOM`, !(raw[0] === 0xef && raw[1] === 0xbb && raw[2] === 0xbf));
+
+  let messages = null;
+  try {
+    messages = JSON.parse(raw.toString('utf8'));
+    check(`${rel} is valid JSON`, true);
+  } catch (err) {
+    check(`${rel} is valid JSON`, false, err.message);
+    continue;
+  }
+
+  for (const key of MESSAGE_KEYS) {
+    const message = messages[key]?.message;
+    check(`${rel} defines ${key}`, typeof message === 'string' && message.length > 0);
+  }
+
+  const description = messages.extensionDescription?.message ?? '';
+  check(
+    `${locale} description is within ${EXPECTED.descriptionLimit} characters`,
+    description.length > 0 && description.length <= EXPECTED.descriptionLimit,
+    `${description.length} characters`
+  );
 }
 
 /* ---------------------------------------------------------------- icons -- */
@@ -237,9 +290,15 @@ const zipPath = join(ROOT, 'dist', `arcade-counter-timer-v${EXPECTED.version}-ch
 if (!existsSync(zipPath)) {
   console.log('  SKIP  no ZIP built yet — run "npm run package" then re-run verify');
 } else {
-  const names = listZipEntries(zipPath);
+  const zip = readZipDirectory(zipPath);
+  const names = zip.entries.map((e) => e.name);
   const allowed = new Set(RUNTIME_FILES);
 
+  check(
+    'entry names use forward slashes',
+    !names.some((n) => n.includes('\\')),
+    names.filter((n) => n.includes('\\')).join(', ')
+  );
   check('manifest.json sits at the ZIP root', names.includes('manifest.json'));
   check(
     'no wrapper directory',
@@ -259,13 +318,52 @@ if (!existsSync(zipPath)) {
   for (const excluded of ['package.json', 'package-lock.json', 'README.md', 'README_JA.md', 'PRIVACY.md', 'PRIVACY_JA.md', 'CHANGELOG.md', 'SECURITY.md']) {
     check(`ZIP excludes ${excluded}`, !names.includes(excluded));
   }
+
+  // Read the shipped files back out of the archive rather than trusting the
+  // working tree: the ZIP is what Chrome actually receives.
+  let zipManifest = null;
+  try {
+    zipManifest = JSON.parse(readZipEntry(zip, 'manifest.json'));
+    check('ZIP manifest.json is valid JSON', true);
+  } catch (err) {
+    check('ZIP manifest.json is valid JSON', false, err.message);
+  }
+
+  if (zipManifest) {
+    check(`ZIP manifest version is ${EXPECTED.version}`, zipManifest.version === EXPECTED.version, zipManifest.version);
+    check(`ZIP manifest default_locale is "${EXPECTED.defaultLocale}"`, zipManifest.default_locale === EXPECTED.defaultLocale, zipManifest.default_locale);
+    check(`ZIP manifest name is "${EXPECTED.name}"`, zipManifest.name === EXPECTED.name, zipManifest.name);
+    check(`ZIP manifest description is "${EXPECTED.description}"`, zipManifest.description === EXPECTED.description, zipManifest.description);
+    check(`ZIP manifest action.default_title is "${EXPECTED.name}"`, zipManifest.action?.default_title === EXPECTED.name, zipManifest.action?.default_title);
+
+    const zipPermissions = zipManifest.permissions ?? [];
+    check(
+      'ZIP permissions are exactly ["storage"]',
+      zipPermissions.length === EXPECTED.permissions.length && zipPermissions.every((p, i) => p === EXPECTED.permissions[i]),
+      JSON.stringify(zipPermissions)
+    );
+  }
+
+  for (const locale of LOCALES) {
+    const rel = `_locales/${locale}/messages.json`;
+    check(`ZIP contains ${rel}`, names.includes(rel));
+    if (!names.includes(rel)) continue;
+    try {
+      const messages = JSON.parse(readZipEntry(zip, rel));
+      const ok = MESSAGE_KEYS.every((key) => typeof messages[key]?.message === 'string' && messages[key].message.length > 0);
+      check(`ZIP ${rel} defines ${MESSAGE_KEYS.join(' and ')}`, ok);
+    } catch (err) {
+      check(`ZIP ${rel} is valid JSON`, false, err.message);
+    }
+  }
 }
 
 /**
- * Read entry names straight out of the ZIP central directory. Only the names
- * are needed, so nothing has to be decompressed.
+ * Read the ZIP central directory. Entry names are returned exactly as stored —
+ * no separator rewriting — because "the names use forward slashes" is itself
+ * one of the things being checked.
  */
-function listZipEntries(path) {
+function readZipDirectory(path) {
   const buf = readFileSync(path);
   const EOCD = 0x06054b50;
   let eocd = -1;
@@ -279,16 +377,38 @@ function listZipEntries(path) {
 
   const count = buf.readUInt16LE(eocd + 10);
   let offset = buf.readUInt32LE(eocd + 16);
-  const names = [];
+  const entries = [];
   for (let i = 0; i < count; i += 1) {
     if (buf.readUInt32LE(offset) !== 0x02014b50) throw new Error('Corrupt ZIP central directory');
     const nameLen = buf.readUInt16LE(offset + 28);
     const extraLen = buf.readUInt16LE(offset + 30);
     const commentLen = buf.readUInt16LE(offset + 32);
-    names.push(buf.toString('utf8', offset + 46, offset + 46 + nameLen).replaceAll('\\', '/'));
+    entries.push({
+      name: buf.toString('utf8', offset + 46, offset + 46 + nameLen),
+      method: buf.readUInt16LE(offset + 10),
+      localOffset: buf.readUInt32LE(offset + 42)
+    });
     offset += 46 + nameLen + extraLen + commentLen;
   }
-  return names;
+  return { buf, entries };
+}
+
+/** Decompress one entry's bytes as UTF-8 text. */
+function readZipEntry({ buf, entries }, name) {
+  const entry = entries.find((e) => e.name === name);
+  if (!entry) throw new Error(`${name} is not in the archive`);
+
+  const local = entry.localOffset;
+  if (buf.readUInt32LE(local) !== 0x04034b50) throw new Error(`Corrupt local header for ${name}`);
+  const nameLen = buf.readUInt16LE(local + 26);
+  const extraLen = buf.readUInt16LE(local + 28);
+  const compressedSize = buf.readUInt32LE(local + 18);
+  const start = local + 30 + nameLen + extraLen;
+  const body = buf.subarray(start, start + compressedSize);
+
+  if (entry.method === 0) return body.toString('utf8');
+  if (entry.method === 8) return inflateRawSync(body).toString('utf8');
+  throw new Error(`Unsupported compression method ${entry.method} for ${name}`);
 }
 
 /* --------------------------------------------------------------- result -- */

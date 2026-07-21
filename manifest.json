@@ -1,10 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "Arcade Counter Timer",
-  "version": "0.1.0",
-  "description": "A fast arcade-style count-up timer and tally counter with local statistics and satisfying milestone effects.",
+  "name": "__MSG_extensionName__",
+  "version": "0.1.1",
+  "description": "__MSG_extensionDescription__",
+  "default_locale": "en",
   "action": {
-    "default_title": "Arcade Counter Timer",
+    "default_title": "__MSG_extensionName__",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "assets/icons/icon16.png",

@@ -1,7 +1,7 @@
 # Builds the Chrome Web Store upload ZIP, then verifies what it actually built.
 #
-# Output : dist/arcade-counter-timer-v0.1.0-chrome-web-store.zip
-#          dist/arcade-counter-timer-v0.1.0-chrome-web-store.zip.sha256
+# Output : dist/arcade-counter-timer-v0.1.1-chrome-web-store.zip
+#          dist/arcade-counter-timer-v0.1.1-chrome-web-store.zip.sha256
 #
 # Only runtime files are included, and manifest.json sits at the archive root
 # with no wrapper directory. Everything is staged into a clean temporary folder
@@ -31,6 +31,8 @@ $runtimeFiles = @(
     'src/storage.js',
     'src/effects.js',
     'src/input.js',
+    '_locales/en/messages.json',
+    '_locales/ja/messages.json',
     'assets/icons/icon16.png',
     'assets/icons/icon32.png',
     'assets/icons/icon48.png',
@@ -132,11 +134,42 @@ try {
     if ($zipManifest) {
         Assert-Release "ZIP manifest version is $version" ($zipManifest.version -eq $version) $zipManifest.version
         Assert-Release 'ZIP manifest_version is 3' ($zipManifest.manifest_version -eq 3)
+        Assert-Release 'ZIP manifest default_locale is en' ($zipManifest.default_locale -eq 'en') $zipManifest.default_locale
+        Assert-Release 'ZIP manifest name is __MSG_extensionName__' ($zipManifest.name -eq '__MSG_extensionName__') $zipManifest.name
+        Assert-Release 'ZIP manifest description is __MSG_extensionDescription__' ($zipManifest.description -eq '__MSG_extensionDescription__') $zipManifest.description
+        Assert-Release 'ZIP manifest action.default_title is __MSG_extensionName__' ($zipManifest.action.default_title -eq '__MSG_extensionName__') $zipManifest.action.default_title
         $perms = @($zipManifest.permissions)
         Assert-Release 'ZIP permissions are exactly ["storage"]' ($perms.Count -eq 1 -and $perms[0] -eq 'storage') ($perms -join ', ')
         Assert-Release 'ZIP manifest has no host_permissions' ($null -eq $zipManifest.host_permissions)
         Assert-Release 'ZIP manifest has no background' ($null -eq $zipManifest.background)
         Assert-Release 'ZIP manifest has no content_scripts' ($null -eq $zipManifest.content_scripts)
+    }
+
+    # The localized name and description the Store will actually display.
+    foreach ($locale in @('en', 'ja')) {
+        $rel = "_locales/$locale/messages.json"
+        Assert-Release "includes $rel" ($names -contains $rel)
+        if ($names -notcontains $rel) { continue }
+
+        $e = $archive.GetEntry($rel)
+        $r = New-Object System.IO.StreamReader($e.Open(), [System.Text.UTF8Encoding]::new($false))
+        $messagesText = $r.ReadToEnd()
+        $r.Close()
+
+        $messages = $null
+        try {
+            $messages = $messagesText | ConvertFrom-Json
+            Assert-Release "$rel inside the ZIP is valid JSON" $true
+        } catch {
+            Assert-Release "$rel inside the ZIP is valid JSON" $false $_.Exception.Message
+        }
+
+        if ($messages) {
+            Assert-Release "$rel defines extensionName" (-not [string]::IsNullOrWhiteSpace($messages.extensionName.message))
+            Assert-Release "$rel defines extensionDescription" (-not [string]::IsNullOrWhiteSpace($messages.extensionDescription.message))
+            $len = "$($messages.extensionDescription.message)".Length
+            Assert-Release "$rel description is within 132 characters" ($len -le 132) "$len characters"
+        }
     }
 
     # No packaged code may reach out to the network.

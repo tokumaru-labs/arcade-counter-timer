@@ -7,7 +7,7 @@ small arcade machine for a fraction of a second when you hit a milestone.
 
 <img src="store-assets/source/popup-main.png" alt="The Arcade Counter Timer popup: a running timer, a large count, and START and COUNT buttons" width="300">
 
-Version 0.1.0 · by Tokumaru Labs · Chrome Extension (Manifest V3)
+Version 0.1.1 · by Tokumaru Labs · Chrome Extension (Manifest V3)
 
 ## What it does
 
@@ -121,8 +121,8 @@ source:
 No build step, no dependencies, no bundler. Vanilla HTML, CSS and ES modules.
 
 ```
-npm test              # 47 unit tests, Node's built-in node:test runner
-npm run verify        # release checks: manifest, permissions, icons, no remote code
+npm test              # 55 unit tests, Node's built-in node:test runner
+npm run verify        # release checks: manifest, locales, permissions, icons, no remote code
 npm run package       # build the Chrome Web Store ZIP into dist/
 ```
 
@@ -150,7 +150,7 @@ statement.
 - Timer state, session count, daily history and settings live in
   `chrome.storage.local` on your device
 
-## Limitations in 0.1.0
+## Current limitations
 
 - Streaks are per-popup-session; closing the popup ends the current streak
 - One timer and one counter — no named tasks or multiple counters
@@ -158,6 +158,8 @@ statement.
 - Time that elapses while the popup is closed is credited to the correct days,
   but written to storage the next time the popup is opened
 - If the system clock jumps backwards, the affected interval counts as zero
+- Only the extension name and description are localized (English and Japanese);
+  the popup interface itself is English only
 
 ## License
 

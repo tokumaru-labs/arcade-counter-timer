@@ -9,16 +9,18 @@ the declarations and the final "Submit for review" are all manual.**
 - [ ] `npm test` passes
 - [ ] `npm run verify` passes
 - [ ] `npm run package` has produced
-      `dist/arcade-counter-timer-v0.1.0-chrome-web-store.zip`
+      `dist/arcade-counter-timer-v0.1.1-chrome-web-store.zip`
 - [ ] The ZIP has been loaded unpacked in Chrome once and manually exercised
-- [ ] The public GitHub repository exists, so the URLs in `urls.md` are real
+- [ ] The URLs in `urls.md` still load
 
 ## Package
 
-- [ ] Upload `dist/arcade-counter-timer-v0.1.0-chrome-web-store.zip`
-- [ ] The Dashboard's manifest analysis reports version **0.1.0**
+- [ ] Upload `dist/arcade-counter-timer-v0.1.1-chrome-web-store.zip`
+- [ ] The Dashboard's manifest analysis reports version **0.1.1**
 - [ ] It reports the **storage** permission and nothing else
 - [ ] It reports no host permissions and no remote code warnings
+- [ ] The item name and description are picked up from `_locales/en` — the
+      Dashboard shows the English text, not `__MSG_extensionName__`
 
 ## Store listing
 

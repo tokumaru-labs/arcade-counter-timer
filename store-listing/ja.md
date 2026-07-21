@@ -1,7 +1,9 @@
 # Chrome ウェブストア掲載情報 — ja
 
 Developer Dashboard の各項目へそのまま貼り付けられる形にしています。
-0.1.0 に実装されていない機能は記載していません。
+0.1.1 に実装されていない機能は記載していません。
+ポップアップの UI 表記は 0.1.1 でも英語のままです（ローカライズ対象は
+ストア掲載名と説明文のみ）。
 
 ---
 
@@ -15,7 +17,8 @@ Arcade Counter Timer
 
 ## 概要（Summary / 短い説明）
 
-最大132文字。以下は約60文字です。
+最大132文字。以下は42文字で、`_locales/ja/messages.json` の
+`extensionDescription` と一致しています。
 
 ```
 爽快な節目演出とローカル統計を備えた、シンプルなカウントアップタイマー＆カウンター。
@@ -138,5 +141,10 @@ The extension does not transmit user data. Timer, counter, history, and settings
 
 ## サポート情報
 
-公開用のソースリポジトリは未作成です。作成後は GitHub Issues をサポート窓口とし、
-`urls.md` の URL 項目を記入します。それまで架空の URL を入力しないでください。
+サポート窓口は公開リポジトリの GitHub Issues です。
+
+```
+https://github.com/tokumaru-labs/arcade-counter-timer/issues
+```
+
+ホームページ URL、プライバシーポリシー URL とあわせて `urls.md` から記入します。

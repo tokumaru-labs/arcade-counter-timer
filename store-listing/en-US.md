@@ -1,7 +1,7 @@
 # Chrome Web Store listing — en-US
 
 Copy each field below into the corresponding box in the Developer Dashboard.
-Nothing here describes a feature that is not in 0.1.0.
+Nothing here describes a feature that is not in 0.1.1.
 
 ---
 
@@ -14,7 +14,8 @@ Arcade Counter Timer
 ## Summary / short description
 
 Maximum 132 characters. This text is 110 characters and matches
-`manifest.json`'s `description` exactly.
+`_locales/en/messages.json`'s `extensionDescription` exactly, which is what
+`manifest.json` now references as `__MSG_extensionDescription__`.
 
 ```
 A fast arcade-style count-up timer and tally counter with local statistics and satisfying milestone effects.
@@ -130,6 +131,10 @@ for the item-by-item answers.
 
 ## Support information
 
-The public source repository has not been created yet. Once it exists, its
-GitHub Issues page will be the support channel, and the URLs in `urls.md` will
-be filled in. Do not enter invented URLs before then.
+Support runs through the public repository's GitHub Issues page:
+
+```
+https://github.com/tokumaru-labs/arcade-counter-timer/issues
+```
+
+Enter it, together with the homepage and privacy policy URLs, from `urls.md`.
