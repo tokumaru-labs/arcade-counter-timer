@@ -22,14 +22,22 @@
           </button>
         </header>
 
-        <button
-          id="timer"
-          class="timer"
-          type="button"
-          aria-label="Timer: press to start or stop"
-        >
+        <!-- Click shortcut for the mouse; the labelled buttons below are the
+             accessible controls, so this is plain text, not a second button. -->
+        <div id="timer" class="timer">
           <span id="timer-value" class="timer__value">00:00:00</span>
           <span id="timer-state" class="timer__state">STOPPED</span>
+        </div>
+
+        <button
+          id="btn-start-stop"
+          class="mainbtn mainbtn--timer"
+          type="button"
+          aria-pressed="false"
+          aria-label="Start the timer"
+        >
+          <span id="start-stop-icon" class="mainbtn__icon" aria-hidden="true">&#9654;</span>
+          <span id="start-stop-label" class="mainbtn__label">START</span>
         </button>
 
         <div class="subrow">
@@ -43,9 +51,19 @@
           </button>
         </div>
 
-        <button id="count-pad" class="countpad" type="button" aria-label="Add one to the count">
+        <div id="count-pad" class="countpad">
           <span id="count-value" class="countpad__value">0</span>
           <span id="fx-layer" class="fx-layer" aria-hidden="true"></span>
+        </div>
+
+        <button
+          id="btn-count"
+          class="mainbtn mainbtn--count"
+          type="button"
+          aria-label="Add one to the count"
+        >
+          <span class="mainbtn__icon" aria-hidden="true">+</span>
+          <span class="mainbtn__label">COUNT</span>
         </button>
 
         <div class="subrow">
@@ -62,7 +80,7 @@
         <p id="live-region" class="visually-hidden" role="status" aria-live="polite"></p>
 
         <footer class="footer">
-          <p class="hints">ENTER timer &middot; SPACE +1 &middot; HOLD R reset</p>
+          <p class="hints">ENTER timer &middot; SPACE count &middot; HOLD R reset</p>
           <button
             id="btn-reset"
             class="hold hold--session"

@@ -17,6 +17,7 @@ import {
   resetSession
 } from './src/storage.js';
 import { sounds, praiseForStreak, flyText, chainBurst, clearFx } from './src/effects.js';
+import { shortcutFor } from './src/input.js';
 
 const STREAK_WINDOW_MS = 650;
 const SESSION_HOLD_MS = 650;
@@ -34,7 +35,11 @@ const el = {
   timer: $('timer'),
   timerValue: $('timer-value'),
   timerState: $('timer-state'),
+  btnStartStop: $('btn-start-stop'),
+  startStopIcon: $('start-stop-icon'),
+  startStopLabel: $('start-stop-label'),
   countPad: $('count-pad'),
+  btnCount: $('btn-count'),
   countValue: $('count-value'),
   fxLayer: $('fx-layer'),
   live: $('live-region'),
@@ -86,15 +91,32 @@ function flushRun(now = Date.now()) {
 
 /* ------------------------------------------------------------- render -- */
 
+/** Only the digits change on every tick; the controls change on toggle. */
 function renderTimer() {
   const timer = state.timer;
   const live = timer.running && Number.isFinite(timer.runStartedAt)
     ? timer.sessionElapsedMs + clampMs(Date.now() - timer.runStartedAt)
     : timer.sessionElapsedMs;
   el.timerValue.textContent = formatDuration(live);
-  el.timerState.textContent = timer.running ? 'RUNNING' : 'STOPPED';
-  el.timer.classList.toggle('is-running', timer.running);
-  el.runDot.classList.toggle('is-running', timer.running);
+  renderTimerControls();
+}
+
+let renderedRunning = null;
+
+function renderTimerControls() {
+  const running = state.timer.running;
+  if (running === renderedRunning) return;
+  renderedRunning = running;
+
+  el.timerState.textContent = running ? 'RUNNING' : 'STOPPED';
+  el.timer.classList.toggle('is-running', running);
+  el.runDot.classList.toggle('is-running', running);
+
+  el.startStopIcon.textContent = running ? '■' : '▶';
+  el.startStopLabel.textContent = running ? 'STOP' : 'START';
+  el.btnStartStop.classList.toggle('is-running', running);
+  el.btnStartStop.setAttribute('aria-pressed', String(running));
+  el.btnStartStop.setAttribute('aria-label', running ? 'Stop the timer' : 'Start the timer');
 }
 
 function renderCount() {
@@ -290,7 +312,11 @@ function showMain() {
 /* ------------------------------------------------------------- events -- */
 
 function bindEvents() {
+  // Every entry point funnels into the same two functions — no duplicated
+  // state changes. Timer/count displays are mouse shortcuts for the buttons.
+  el.btnStartStop.addEventListener('click', toggleTimer);
   el.timer.addEventListener('click', toggleTimer);
+  el.btnCount.addEventListener('click', addCount);
   el.countPad.addEventListener('click', addCount);
   el.btnSettings.addEventListener('click', showStats);
   el.btnBack.addEventListener('click', showMain);
@@ -327,27 +353,20 @@ function bindEvents() {
 }
 
 function onKeyDown(e) {
-  if (e.key === 'Escape' && statsVisible()) {
-    showMain();
-    return;
-  }
-  // Auto-repeat must never drive the counter or the timer.
-  if (e.repeat) return;
-  if (statsVisible()) return;
-  // Let focused controls handle their own activation keys.
-  const tag = e.target instanceof HTMLElement ? e.target.tagName : '';
-  const onControl = tag === 'BUTTON' || tag === 'INPUT';
+  const action = shortcutFor({
+    key: e.key,
+    code: e.code,
+    repeat: e.repeat,
+    tagName: e.target instanceof HTMLElement ? e.target.tagName : '',
+    statsVisible: statsVisible()
+  });
+  if (action === null) return;
 
-  if (e.code === 'Space' && !onControl) {
-    e.preventDefault();
-    addCount();
-  } else if (e.key === 'Enter' && !onControl) {
-    e.preventDefault();
-    toggleTimer();
-  } else if (e.key === 'r' || e.key === 'R') {
-    e.preventDefault();
-    sessionHold.start();
-  }
+  e.preventDefault();
+  if (action === 'count') addCount();
+  else if (action === 'timer') toggleTimer();
+  else if (action === 'reset') sessionHold.start();
+  else if (action === 'back') showMain();
 }
 
 function onKeyUp(e) {

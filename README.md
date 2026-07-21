@@ -30,7 +30,14 @@ animation and sound is generated in the extension itself (sound via the Web Audi
 | `Esc` | Return from stats to the timer |
 
 Held keys auto-repeat is ignored, so one press is always exactly one count.
-The timer display and the big count area are also clickable.
+
+Every action also has a visible button: **▶ START / ■ STOP** under the timer and
+**+ COUNT** under the number. The timer display and the big count area stay
+clickable as mouse shortcuts for those buttons. All entry points call the same
+`toggleTimer()` / `addCount()`, so behaviour cannot drift between them.
+
+When a button has keyboard focus, its own `Space`/`Enter` activation wins and the
+global shortcut stands down — one keypress is always exactly one action.
 
 ## Resets
 

@@ -145,18 +145,17 @@ body {
   align-items: center;
   gap: 6px;
   width: 100%;
-  margin-top: 18px;
-  padding: 14px 8px;
-  font-family: inherit;
+  margin-top: 12px;
+  padding: 12px 8px;
   color: var(--blue);
-  background: transparent;
   border: 1px solid var(--line);
   border-radius: 6px;
   cursor: pointer;
+  user-select: none;
 }
 
 .timer__value {
-  font-size: 42px;
+  font-size: 40px;
   font-variant-numeric: tabular-nums;
   letter-spacing: 1px;
   text-shadow: 0 0 12px var(--blue-glow);
@@ -174,17 +173,72 @@ body {
 
 /* ------------------------------------------------------------ countpad -- */
 
+/* ------------------------------------------------------- main controls -- */
+
+.mainbtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+  font-family: inherit;
+  letter-spacing: 4px;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 150ms ease-out, transform 120ms ease-out;
+}
+
+.mainbtn__icon {
+  font-size: 0.85em;
+  letter-spacing: 0;
+}
+
+.mainbtn:active {
+  transform: translateY(2px);
+}
+
+.mainbtn--timer {
+  min-height: 44px;
+  font-size: 13px;
+  color: #8fc2f5;
+}
+
+.mainbtn--timer:hover {
+  background-color: rgba(120, 190, 255, 0.12);
+}
+
+/* Running state is carried by the label and aria-pressed too, not colour alone. */
+.mainbtn--timer.is-running {
+  color: #dff0ff;
+  background-color: rgba(120, 190, 255, 0.16);
+}
+
+.mainbtn--count {
+  min-height: 54px;
+  font-size: 16px;
+  color: var(--orange);
+}
+
+.mainbtn--count:hover {
+  background-color: rgba(255, 150, 60, 0.12);
+}
+
+.mainbtn--count:active {
+  background-color: rgba(255, 150, 60, 0.2);
+}
+
 .countpad {
   position: relative;
   display: grid;
   flex: 1;
   place-items: center;
   width: 100%;
-  margin-top: 10px;
-  padding: 0;
-  font-family: inherit;
+  min-height: 92px;
+  margin-top: 12px;
   color: var(--orange);
-  background: transparent;
   border: 1px solid var(--line);
   border-radius: 6px;
   cursor: pointer;
@@ -192,7 +246,7 @@ body {
 }
 
 .countpad__value {
-  font-size: 76px;
+  font-size: 66px;
   font-variant-numeric: tabular-nums;
   line-height: 1;
   text-shadow: 0 0 16px var(--orange-glow);
@@ -332,11 +386,13 @@ body {
   margin: 12px 0 0;
 }
 
+/* Secondary now that the buttons are labelled: small, dim, out of the way. */
 .hints {
   margin: 0;
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: 1px;
   color: var(--dim);
+  opacity: 0.7;
 }
 
 /* --------------------------------------------------- hold-to-confirm -- */
@@ -526,6 +582,14 @@ body {
   .countpad__value.is-chain,
   .hold.is-done {
     animation: none;
+  }
+
+  .mainbtn {
+    transition: none;
+  }
+
+  .mainbtn:active {
+    transform: none;
   }
 
   .fly,
