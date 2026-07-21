@@ -1,0 +1,8 @@
+node_modules/
+.claude/settings.local.json
+*.log
+*.zip
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

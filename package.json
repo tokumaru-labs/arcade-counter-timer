@@ -1,0 +1,10 @@
+{
+  "name": "arcade-counter-timer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Minimal Chrome MV3 count-up timer and counter with brief arcade-style feedback.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Arcade Counter Timer",
+  "version": "0.1.0",
+  "description": "A minimal count-up timer and tally counter with brief arcade-style feedback. Fully local.",
+  "action": {
+    "default_title": "Arcade Counter Timer",
+    "default_popup": "popup.html"
+  },
+  "permissions": ["storage"]
+}
