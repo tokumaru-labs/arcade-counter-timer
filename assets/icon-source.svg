@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Arcade Counter Timer icon">
+  <title>Arcade Counter Timer</title>
+  <desc>An open blue-white timer ring around an orange plus sign, on a dark navy rounded square. Original artwork for Tokumaru Labs.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#05070f"/>
+      <stop offset="1" stop-color="#0b1430"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Panel -->
+  <rect x="2" y="2" width="124" height="124" rx="26" ry="26" fill="url(#bg)" stroke="#2a3d63" stroke-width="2"/>
+
+  <!-- Timer: an open ring, gap at the top right.
+       Ring and plus are kept well apart so they stay separate at 16px. -->
+  <path d="M 41.1 96.8 A 40 40 0 1 1 92.3 92.3"
+        fill="none" stroke="#b9ddff" stroke-width="11" stroke-linecap="round"/>
+
+  <!-- Counter: a plus -->
+  <g stroke="#ffb063" stroke-width="12" stroke-linecap="round">
+    <path d="M 50 64 H 78"/>
+    <path d="M 64 50 V 78"/>
+  </g>
+</svg>

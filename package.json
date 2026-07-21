@@ -3,8 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "description": "Minimal Chrome MV3 count-up timer and counter with brief arcade-style feedback.",
+  "author": "Tokumaru Labs",
+  "license": "GPL-3.0-only",
   "type": "module",
   "scripts": {
-    "test": "node --test tests/*.test.js"
+    "test": "node --test tests/*.test.js",
+    "verify": "node scripts/verify-release.mjs",
+    "package": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-release.ps1",
+    "icons": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-icons.ps1",
+    "capture": "node scripts/capture-screenshots.mjs",
+    "store-assets": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-store-screenshots.ps1"
   }
 }

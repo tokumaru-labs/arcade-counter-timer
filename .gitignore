@@ -1,5 +1,7 @@
 node_modules/
 .claude/settings.local.json
+dist/
+.render/
 *.log
 *.zip
 .DS_Store
