@@ -1,4 +1,6 @@
-// chrome.storage.local access with defaults merging.
+// chrome.storage.local access, defaults merging and session reset transitions.
+
+import { addIntervalToHistory } from './time.js';
 
 export const STATE_VERSION = 1;
 
@@ -70,6 +72,36 @@ export function mergeState(stored) {
       subtleCrt: bool(settings.subtleCrt, base.settings.subtleCrt)
     }
   };
+}
+
+/* ----------------------------------------------------- reset transitions -- */
+// Pure: they take a state and return a new one. History and settings are only
+// ever discarded by clearAll().
+
+/** Credit any in-flight run time to the day history before stopping the clock. */
+function settleRun(state, now) {
+  const timer = state.timer;
+  if (!timer.running || !Number.isFinite(timer.runStartedAt)) return state.history;
+  return addIntervalToHistory(state.history, Math.min(timer.runStartedAt, now), now);
+}
+
+/** Timer back to 00:00:00 and stopped. Session count is untouched. */
+export function resetTimer(state, now = Date.now()) {
+  return {
+    ...state,
+    history: settleRun(state, now),
+    timer: { running: false, sessionElapsedMs: 0, runStartedAt: null }
+  };
+}
+
+/** Session count back to 0. Statistics are never decremented. */
+export function resetCount(state) {
+  return { ...state, sessionCount: 0 };
+}
+
+/** Both of the above, in one step. */
+export function resetSession(state, now = Date.now()) {
+  return resetCount(resetTimer(state, now));
 }
 
 const KEYS = ['stateVersion', 'timer', 'sessionCount', 'history', 'settings'];

@@ -8,11 +8,19 @@ import {
   clampMs,
   chainLevel
 } from './src/time.js';
-import { loadState, saveState, clearAll } from './src/storage.js';
-import { sounds, praiseForStreak, flyText, chainBurst } from './src/effects.js';
+import {
+  loadState,
+  saveState,
+  clearAll,
+  resetTimer,
+  resetCount,
+  resetSession
+} from './src/storage.js';
+import { sounds, praiseForStreak, flyText, chainBurst, clearFx } from './src/effects.js';
 
 const STREAK_WINDOW_MS = 650;
-const RESET_HOLD_MS = 650;
+const SESSION_HOLD_MS = 650;
+const PART_HOLD_MS = 500;
 const TICK_MS = 250;
 const FLUSH_MS = 10000;
 
@@ -33,6 +41,8 @@ const el = {
   btnSettings: $('btn-settings'),
   btnBack: $('btn-back'),
   btnReset: $('btn-reset'),
+  btnResetTimer: $('btn-reset-timer'),
+  btnResetCount: $('btn-reset-count'),
   btnClear: $('btn-clear')
 };
 
@@ -43,7 +53,8 @@ let streak = 0;
 let lastCountAt = 0;
 let tickTimer = null;
 let flushTimer = null;
-let holdTimer = null;
+/** Hold controller for SESSION RESET, so the R key can drive the same button. */
+let sessionHold = null;
 
 /* ------------------------------------------------------------ persist -- */
 
@@ -164,42 +175,95 @@ function addCount() {
   }
 }
 
-/* ------------------------------------------------------- session reset -- */
+/* -------------------------------------------------------------- resets -- */
 
-function resetSession() {
-  flushRun();
-  state.timer.running = false;
-  state.timer.runStartedAt = null;
-  state.timer.sessionElapsedMs = 0;
-  state.sessionCount = 0;
+/** Clear the ephemeral, popup-only streak / chain state. */
+function clearEphemeral() {
   streak = 0;
   lastCountAt = 0;
+  el.countValue.classList.remove('is-chain', 'is-bump');
+  clearFx(el.fxLayer);
+}
+
+function finishReset(button, message) {
   persist();
   renderTimer();
   renderCount();
-
-  if (state.settings.sound) sounds.reset();
-  el.btnReset.classList.add('is-done');
-  setTimeout(() => el.btnReset.classList.remove('is-done'), 560);
-  announce('Session reset. Statistics kept.');
+  button.classList.add('is-done');
+  setTimeout(() => button.classList.remove('is-done'), 560);
+  announce(message);
 }
 
-function startHold() {
-  if (holdTimer !== null) return;
-  el.btnReset.classList.add('is-holding');
-  holdTimer = setTimeout(() => {
-    holdTimer = null;
-    el.btnReset.classList.remove('is-holding');
-    resetSession();
-  }, RESET_HOLD_MS);
+function doResetTimer() {
+  // resetTimer() folds the in-flight run into the day history itself.
+  state = resetTimer(state, Date.now());
+  if (state.settings.sound) sounds.reset(false);
+  finishReset(el.btnResetTimer, 'Timer reset. Count and statistics kept.');
 }
 
-function cancelHold() {
-  if (holdTimer !== null) {
-    clearTimeout(holdTimer);
-    holdTimer = null;
+function doResetCount() {
+  state = resetCount(state);
+  clearEphemeral();
+  if (state.settings.sound) sounds.clear();
+  finishReset(el.btnResetCount, 'Count reset. Timer and statistics kept.');
+}
+
+function doResetSession() {
+  state = resetSession(state, Date.now());
+  clearEphemeral();
+  if (state.settings.sound) sounds.reset(true);
+  finishReset(el.btnReset, 'Session reset. Statistics kept.');
+}
+
+/**
+ * Hold-to-confirm: a short press does nothing, releasing or leaving early
+ * cancels. Returns { start, cancel } so a key can drive the same button.
+ */
+function bindHoldAction(element, durationMs, callback) {
+  let timer = null;
+
+  element.style.setProperty('--hold-ms', `${durationMs}ms`);
+
+  const cancel = () => {
+    if (timer !== null) {
+      clearTimeout(timer);
+      timer = null;
+    }
+    element.classList.remove('is-holding');
+  };
+
+  const start = () => {
+    if (timer !== null) return;
+    element.classList.add('is-holding');
+    timer = setTimeout(() => {
+      timer = null;
+      element.classList.remove('is-holding');
+      callback();
+    }, durationMs);
+  };
+
+  element.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    start();
+  });
+  for (const type of ['pointerup', 'pointerleave', 'pointercancel']) {
+    element.addEventListener(type, cancel);
   }
-  el.btnReset.classList.remove('is-holding');
+  // A plain click must never reset — the hold timer is the only path.
+  element.addEventListener('click', (e) => e.preventDefault());
+
+  // Same hold contract for keyboard users on the focused button.
+  element.addEventListener('keydown', (e) => {
+    if (e.repeat || (e.key !== 'Enter' && e.code !== 'Space')) return;
+    e.preventDefault();
+    start();
+  });
+  element.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter' || e.code === 'Space') cancel();
+  });
+  element.addEventListener('blur', cancel);
+
+  return { start, cancel };
 }
 
 /* --------------------------------------------------------------- views -- */
@@ -231,15 +295,9 @@ function bindEvents() {
   el.btnSettings.addEventListener('click', showStats);
   el.btnBack.addEventListener('click', showMain);
 
-  el.btnReset.addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    startHold();
-  });
-  for (const type of ['pointerup', 'pointerleave', 'pointercancel']) {
-    el.btnReset.addEventListener(type, cancelHold);
-  }
-  // A plain click must never reset — the hold timer is the only path.
-  el.btnReset.addEventListener('click', (e) => e.preventDefault());
+  bindHoldAction(el.btnResetTimer, PART_HOLD_MS, doResetTimer);
+  bindHoldAction(el.btnResetCount, PART_HOLD_MS, doResetCount);
+  sessionHold = bindHoldAction(el.btnReset, SESSION_HOLD_MS, doResetSession);
 
   for (const input of document.querySelectorAll('[data-setting]')) {
     input.addEventListener('change', () => {
@@ -252,8 +310,7 @@ function bindEvents() {
   el.btnClear.addEventListener('click', async () => {
     if (!window.confirm('Clear all data? Timer, count, history and settings reset.')) return;
     state = await clearAll();
-    streak = 0;
-    lastCountAt = 0;
+    clearEphemeral();
     renderTimer();
     renderCount();
     renderSettings();
@@ -289,12 +346,12 @@ function onKeyDown(e) {
     toggleTimer();
   } else if (e.key === 'r' || e.key === 'R') {
     e.preventDefault();
-    startHold();
+    sessionHold.start();
   }
 }
 
 function onKeyUp(e) {
-  if (e.key === 'r' || e.key === 'R') cancelHold();
+  if ((e.key === 'r' || e.key === 'R') && sessionHold) sessionHold.cancel();
 }
 
 /* ---------------------------------------------------------------- boot -- */

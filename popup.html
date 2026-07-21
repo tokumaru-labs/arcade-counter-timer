@@ -32,10 +32,32 @@
           <span id="timer-state" class="timer__state">STOPPED</span>
         </button>
 
+        <div class="subrow">
+          <button
+            id="btn-reset-timer"
+            class="hold hold--timer"
+            type="button"
+            aria-label="Hold for 500 milliseconds to reset the timer only"
+          >
+            <span class="hold__label">RESET TIMER</span>
+          </button>
+        </div>
+
         <button id="count-pad" class="countpad" type="button" aria-label="Add one to the count">
           <span id="count-value" class="countpad__value">0</span>
           <span id="fx-layer" class="fx-layer" aria-hidden="true"></span>
         </button>
+
+        <div class="subrow">
+          <button
+            id="btn-reset-count"
+            class="hold hold--count"
+            type="button"
+            aria-label="Hold for 500 milliseconds to reset the count only"
+          >
+            <span class="hold__label">RESET COUNT</span>
+          </button>
+        </div>
 
         <p id="live-region" class="visually-hidden" role="status" aria-live="polite"></p>
 
@@ -43,12 +65,11 @@
           <p class="hints">ENTER timer &middot; SPACE +1 &middot; HOLD R reset</p>
           <button
             id="btn-reset"
-            class="reset"
+            class="hold hold--session"
             type="button"
-            aria-label="Hold for 650 milliseconds to reset the session"
+            aria-label="Hold for 650 milliseconds to reset the whole session"
           >
-            <span class="reset__label">RESET</span>
-            <span id="reset-progress" class="reset__progress" aria-hidden="true"></span>
+            <span class="hold__label">SESSION RESET</span>
           </button>
         </footer>
       </main>

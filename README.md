@@ -12,7 +12,8 @@ animation and sound is generated in the extension itself (sound via the Web Audi
 - Count-up timer, `HH:MM:SS`, correct past 100 hours
 - Timer keeps running while the popup is closed and across browser restarts
   (elapsed time is derived from a stored timestamp, not from an interval)
-- Counter with `+1` and a hold-to-confirm session reset
+- Counter with `+1`, plus separate hold-to-confirm resets for the timer, the
+  count, and the whole session
 - Fly text (`GOOD!` / `NICE!` / `GREAT!` / `FANTASTIC!`) on fast streaks
 - `CHAIN!` burst every 10 counts, with a slightly bigger flourish at 50 and 100
 - Original Web Audio blips for count, chain and reset
@@ -29,11 +30,25 @@ animation and sound is generated in the extension itself (sound via the Web Audi
 | `Esc` | Return from stats to the timer |
 
 Held keys auto-repeat is ignored, so one press is always exactly one count.
-The timer display and the big count area are also clickable; the `RESET` button
-needs a 650 ms press-and-hold.
+The timer display and the big count area are also clickable.
 
-A session reset clears the session timer, session count, streak and chain state.
-It never touches the daily history, so TODAY/WEEK/MONTH/YEAR statistics survive.
+## Resets
+
+Every reset button is press-and-hold; a short click does nothing, and releasing
+or moving off the button early cancels it.
+
+| Button | Hold | Clears | Keeps |
+| --- | --- | --- | --- |
+| `RESET TIMER` | 500 ms | Timer only (stopped, back to `00:00:00`) | Count, streak, statistics |
+| `RESET COUNT` | 500 ms | Session count, streak, chain state | Timer, statistics |
+| `SESSION RESET` (or hold `R`) | 650 ms | Timer **and** count, streak, chain | Statistics, settings |
+| `CLEAR ALL DATA` (stats screen) | confirm dialog | Everything, including history and settings | — |
+
+If the timer is running when it is reset, the time elapsed up to that moment is
+first credited to the correct day(s) in the history, so statistics never lose it.
+Resetting the count never decrements the count statistics — only the number on
+screen goes back to 0. The daily history is only ever discarded by
+**CLEAR ALL DATA**.
 
 ## Load in Chrome
 

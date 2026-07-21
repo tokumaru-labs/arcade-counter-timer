@@ -71,18 +71,27 @@ export const sounds = {
     });
   },
 
-  /** Gentle descending sweep for reset. */
-  reset() {
+  /** Gentle descending sweep for reset; `long` is the whole-session variant. */
+  reset(long = false) {
+    const ac = audio();
+    if (!ac) return;
+    blip(ac, {
+      freq: 330,
+      start: ac.currentTime,
+      duration: long ? 0.4 : 0.2,
+      peak: 0.09,
+      type: 'triangle',
+      sweepTo: long ? 90 : 150
+    });
+  },
+
+  /** Two dry descending ticks — a "cleared" sound for the counter. */
+  clear() {
     const ac = audio();
     if (!ac) return;
     const now = ac.currentTime;
-    blip(ac, {
-      freq: 330,
-      start: now,
-      duration: 0.28,
-      peak: 0.09,
-      type: 'triangle',
-      sweepTo: 110
+    [520, 340].forEach((freq, i) => {
+      blip(ac, { freq, start: now + i * 0.07, duration: 0.06, peak: 0.08, type: 'square' });
     });
   },
 
@@ -133,6 +142,11 @@ export function flyText(layer, text, tone) {
   el.style.setProperty('--dy', `${rand(6).toFixed(1)}px`);
   layer.appendChild(el);
   el.addEventListener('animationend', () => el.remove(), { once: true });
+}
+
+/** Drop any fly text / sparks still animating. */
+export function clearFx(layer) {
+  layer.replaceChildren();
 }
 
 export function chainBurst(layer, level, screen) {
