@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { isInteractiveTarget, shortcutFor } from '../src/input.js';
+import { isInteractiveTarget, shortcutFor, isPointerActivation } from '../src/input.js';
 
 const press = (over) => shortcutFor({ key: '', code: '', ...over });
 const SPACE = { key: ' ', code: 'Space' };
@@ -68,4 +68,31 @@ test('unrelated keys are ignored', () => {
 
 test('shortcutFor tolerates being called with no argument', () => {
   assert.equal(shortcutFor(), null);
+});
+
+/* ------------------------------------------------ pointer vs keyboard -- */
+
+test('a mouse click is pointer-driven, so the button gives focus back', () => {
+  // Chrome: click after a real press carries detail >= 1.
+  assert.equal(isPointerActivation({ detail: 1, viaPointer: true }), true);
+  assert.equal(isPointerActivation({ detail: 2, viaPointer: true }), true);
+});
+
+test('touch and pen count as pointer even when detail is unhelpful', () => {
+  // The preceding pointerdown is what proves it, not detail.
+  assert.equal(isPointerActivation({ detail: 0, viaPointer: true }), true);
+});
+
+test('a keyboard click keeps focus on the button', () => {
+  // Enter and Space synthesise a click with detail 0 and no pointerdown.
+  assert.equal(isPointerActivation({ detail: 0, viaPointer: false }), false);
+});
+
+test('a stray detail without a pointerdown is still treated as a pointer', () => {
+  assert.equal(isPointerActivation({ detail: 1, viaPointer: false }), true);
+});
+
+test('isPointerActivation defaults to keyboard when told nothing', () => {
+  assert.equal(isPointerActivation(), false);
+  assert.equal(isPointerActivation({}), false);
 });

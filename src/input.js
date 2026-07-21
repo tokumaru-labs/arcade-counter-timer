@@ -13,6 +13,20 @@ export function isInteractiveTarget(tagName) {
 }
 
 /**
+ * Did a click come from a pointer (mouse / touch / pen) rather than a key?
+ * Chrome reports `detail: 0` for clicks synthesised by Enter or Space, while a
+ * real pointer press reports at least 1; `viaPointer` is the pointerdown seen
+ * just before the click, which also covers touch and pen.
+ *
+ * Primary buttons blur themselves after a pointer activation so that Space and
+ * Enter go back to their global meanings; after a keyboard activation focus
+ * stays put.
+ */
+export function isPointerActivation({ detail = 0, viaPointer = false } = {}) {
+  return viaPointer || detail > 0;
+}
+
+/**
  * Which global shortcut a keydown should run: 'count' | 'timer' | 'reset' |
  * 'back' | null. Never returns more than one action for a single event.
  */

@@ -17,7 +17,7 @@ import {
   resetSession
 } from './src/storage.js';
 import { sounds, praiseForStreak, flyText, chainBurst, clearFx } from './src/effects.js';
-import { shortcutFor } from './src/input.js';
+import { shortcutFor, isPointerActivation } from './src/input.js';
 
 const STREAK_WINDOW_MS = 650;
 const SESSION_HOLD_MS = 650;
@@ -238,6 +238,32 @@ function doResetSession() {
 }
 
 /**
+ * Wire a primary button (START/STOP, COUNT). Identical to a plain click
+ * listener, except a pointer activation releases focus afterwards so the next
+ * Space or Enter is read as a global shortcut instead of re-pressing the
+ * button. Keyboard activation keeps focus and the focus ring.
+ */
+function bindPrimaryAction(element, callback) {
+  let viaPointer = false;
+
+  element.addEventListener('pointerdown', () => {
+    viaPointer = true;
+  });
+  // A key press on the button means this activation is not pointer-driven,
+  // even if an earlier pointerdown never produced a click.
+  element.addEventListener('keydown', () => {
+    viaPointer = false;
+  });
+
+  element.addEventListener('click', (e) => {
+    const fromPointer = isPointerActivation({ detail: e.detail, viaPointer });
+    viaPointer = false;
+    callback();
+    if (fromPointer) element.blur();
+  });
+}
+
+/**
  * Hold-to-confirm: a short press does nothing, releasing or leaving early
  * cancels. Returns { start, cancel } so a key can drive the same button.
  */
@@ -314,9 +340,9 @@ function showMain() {
 function bindEvents() {
   // Every entry point funnels into the same two functions — no duplicated
   // state changes. Timer/count displays are mouse shortcuts for the buttons.
-  el.btnStartStop.addEventListener('click', toggleTimer);
+  bindPrimaryAction(el.btnStartStop, toggleTimer);
+  bindPrimaryAction(el.btnCount, addCount);
   el.timer.addEventListener('click', toggleTimer);
-  el.btnCount.addEventListener('click', addCount);
   el.countPad.addEventListener('click', addCount);
   el.btnSettings.addEventListener('click', showStats);
   el.btnBack.addEventListener('click', showMain);
