@@ -11,17 +11,21 @@
 **Please do not open a public issue containing vulnerability details**, and do
 not include secrets, credentials or personal data in any report.
 
-The public source repository has not been created yet, so there is no reporting
-channel at this time. This section will be updated as soon as the repository
-exists.
+The repository is https://github.com/bhcir/arcade-counter-timer.
 
-Once it does:
+**GitHub private vulnerability reporting is not currently enabled on this
+repository**, so there is no confidential channel available right now. Until
+that changes:
 
-- Use GitHub's **private vulnerability reporting** on the repository's Security
-  tab if it is available. That keeps the report confidential until a fix ships.
-- If private reporting is not available, open a public issue that says only that
-  you have found a security problem and asks for a private channel — with no
-  technical detail.
+- Open an issue at
+  https://github.com/bhcir/arcade-counter-timer/issues that says only that you
+  have found a security problem and asks for a private channel. Include **no**
+  technical detail, no proof of concept, and no logs.
+- Wait for a private channel to be arranged before sending anything further.
+
+If private vulnerability reporting is enabled later, it will become the
+preferred route — check the repository's Security tab, and this file will be
+updated at the same time.
 
 ## Scope
 

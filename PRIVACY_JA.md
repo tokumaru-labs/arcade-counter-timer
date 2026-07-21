@@ -65,6 +65,11 @@ host_permissions は要求せず、content script も background service worker 
 
 ## お問い合わせ
 
-公開用のソースリポジトリをまだ作成していないため、現時点で連絡先は用意していません。
-リポジトリ公開後は GitHub Issues でのご質問・ご報告を受け付ける予定で、
-その際に本項目へ連絡先を記載します。
+本ポリシーに関するご質問は、プロジェクトの GitHub Issues で受け付けています。
+
+https://github.com/bhcir/arcade-counter-timer/issues
+
+公開ページのため、個人情報を書き込まないようご注意ください。
+セキュリティ上の問題と思われる場合は、Issue ではなく
+[SECURITY.md](https://github.com/bhcir/arcade-counter-timer/blob/main/SECURITY.md)
+の手順に従ってください。

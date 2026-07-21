@@ -71,7 +71,11 @@ public source repository and the "Last updated" date above will change.
 
 ## Contact
 
-The public source repository has not been created yet, so no contact channel is
-available at this time. Once the repository is published, questions and reports
-will be handled through its GitHub Issues page, and this section will be updated
-with the address.
+Questions about this policy are handled through the project's GitHub Issues page:
+
+https://github.com/bhcir/arcade-counter-timer/issues
+
+Please do not include personal information in an issue — it is a public page.
+For suspected security problems, follow
+[SECURITY.md](https://github.com/bhcir/arcade-counter-timer/blob/main/SECURITY.md)
+instead.

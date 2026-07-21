@@ -1,27 +1,31 @@
 # URLs for the store listing
 
-**None of these URLs exist yet.** The public GitHub repository has not been
-created, so every entry below is a placeholder description rather than a link.
-After creating the public GitHub repository, replace these entries with the
-actual repository URLs.
+The public repository now exists, so these are the real URLs to enter in the
+Developer Dashboard. Each one was read back from the GitHub API rather than
+assembled by hand.
 
-Do not invent or guess a URL, and do not paste a placeholder into the Developer
-Dashboard — a listing with a broken support or privacy URL will be rejected.
+Repository: **bhcir/arcade-counter-timer**
 
-| Dashboard field | What to enter once the repository exists | Required? |
+| Dashboard field | URL | Required? |
 | --- | --- | --- |
-| Homepage URL | The repository root | Optional |
-| Support URL | The repository's Issues page | Recommended |
-| Privacy policy URL | The published `PRIVACY.md` on the default branch | **Required** — the item stores user data |
-| Source code URL | The repository root (GPL-3.0-only requires the source to be available) | Recommended |
+| Homepage URL | https://github.com/bhcir/arcade-counter-timer | Optional |
+| Support URL | https://github.com/bhcir/arcade-counter-timer/issues | Recommended |
+| Privacy policy URL | https://github.com/bhcir/arcade-counter-timer/blob/main/PRIVACY.md | **Required** — the item stores user data |
+| Source code URL | https://github.com/bhcir/arcade-counter-timer | Recommended |
 
-## Checklist for filling these in
+Japanese privacy policy, if a Japanese listing is published:
+https://github.com/bhcir/arcade-counter-timer/blob/main/PRIVACY_JA.md
 
-1. Create the public repository and push the current commit.
-2. Confirm each of the four pages loads for a signed-out visitor.
-3. Copy the final URLs into this table, replacing this checklist's placeholders.
-4. Enter them in the Developer Dashboard.
-5. Update the **Contact** section of `PRIVACY.md` and `PRIVACY_JA.md`, and the
-   reporting channel in `SECURITY.md`, which currently state that no channel is
-   available yet.
-6. Add the store listing URL to `README.md` once the item is published.
+## Before entering them
+
+1. Open each URL while signed out of GitHub and confirm it loads.
+2. Confirm the repository is still public and Issues are still enabled — the
+   support URL is useless if Issues are turned off later.
+3. Paste them into the Developer Dashboard.
+
+## Still outstanding
+
+- The Chrome Web Store listing URL does not exist yet. Add it to `README.md` and
+  `README_JA.md` only after the item is published.
+- `SECURITY.md` currently states that private vulnerability reporting is not
+  enabled on the repository. If it is turned on later, update that file.
