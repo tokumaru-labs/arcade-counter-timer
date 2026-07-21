@@ -67,9 +67,9 @@ host_permissions は要求せず、content script も background service worker 
 
 本ポリシーに関するご質問は、プロジェクトの GitHub Issues で受け付けています。
 
-https://github.com/bhcir/arcade-counter-timer/issues
+https://github.com/tokumaru-labs/arcade-counter-timer/issues
 
 公開ページのため、個人情報を書き込まないようご注意ください。
 セキュリティ上の問題と思われる場合は、Issue ではなく
-[SECURITY.md](https://github.com/bhcir/arcade-counter-timer/blob/main/SECURITY.md)
+[SECURITY.md](https://github.com/tokumaru-labs/arcade-counter-timer/blob/main/SECURITY.md)
 の手順に従ってください。

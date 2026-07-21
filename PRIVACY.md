@@ -73,9 +73,9 @@ public source repository and the "Last updated" date above will change.
 
 Questions about this policy are handled through the project's GitHub Issues page:
 
-https://github.com/bhcir/arcade-counter-timer/issues
+https://github.com/tokumaru-labs/arcade-counter-timer/issues
 
 Please do not include personal information in an issue — it is a public page.
 For suspected security problems, follow
-[SECURITY.md](https://github.com/bhcir/arcade-counter-timer/blob/main/SECURITY.md)
+[SECURITY.md](https://github.com/tokumaru-labs/arcade-counter-timer/blob/main/SECURITY.md)
 instead.

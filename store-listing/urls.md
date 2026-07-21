@@ -4,17 +4,17 @@ The public repository now exists, so these are the real URLs to enter in the
 Developer Dashboard. Each one was read back from the GitHub API rather than
 assembled by hand.
 
-Repository: **bhcir/arcade-counter-timer**
+Repository: **tokumaru-labs/arcade-counter-timer**
 
 | Dashboard field | URL | Required? |
 | --- | --- | --- |
-| Homepage URL | https://github.com/bhcir/arcade-counter-timer | Optional |
-| Support URL | https://github.com/bhcir/arcade-counter-timer/issues | Recommended |
-| Privacy policy URL | https://github.com/bhcir/arcade-counter-timer/blob/main/PRIVACY.md | **Required** — the item stores user data |
-| Source code URL | https://github.com/bhcir/arcade-counter-timer | Recommended |
+| Homepage URL | https://github.com/tokumaru-labs/arcade-counter-timer | Optional |
+| Support URL | https://github.com/tokumaru-labs/arcade-counter-timer/issues | Recommended |
+| Privacy policy URL | https://github.com/tokumaru-labs/arcade-counter-timer/blob/main/PRIVACY.md | **Required** — the item stores user data |
+| Source code URL | https://github.com/tokumaru-labs/arcade-counter-timer | Recommended |
 
 Japanese privacy policy, if a Japanese listing is published:
-https://github.com/bhcir/arcade-counter-timer/blob/main/PRIVACY_JA.md
+https://github.com/tokumaru-labs/arcade-counter-timer/blob/main/PRIVACY_JA.md
 
 ## Before entering them
 
