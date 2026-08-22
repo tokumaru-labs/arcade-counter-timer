@@ -111,7 +111,6 @@ test('the production START/STOP path leaves the real-world clock loop active', a
     sessionCount: 0,
     history: {},
     settings: {
-      clock: true,
       sound: false,
       flyText: true,
       chainEffect: true,
@@ -174,7 +173,7 @@ test('the production START/STOP path leaves the real-world clock loop active', a
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     const clockInterval = () => [...intervals.values()].find(({ delay }) => delay === 1000);
-    assert.ok(clockInterval(), 'clock interval should be active after stored CLOCK=ON loads');
+    assert.ok(clockInterval(), 'clock interval should be active when an older stored state inherits CLOCK=ON');
 
     const startStop = element('btn-start-stop');
     startStop.click();

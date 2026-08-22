@@ -22,9 +22,10 @@ function fakeScheduler() {
   };
 }
 
-test('default clock state is OFF and stale states inherit OFF', () => {
-  assert.equal(defaultState().settings.clock, false);
-  assert.equal(mergeState({ settings: { sound: false } }).settings.clock, false);
+test('default clock state is ON, stale states inherit ON and an explicit OFF is preserved', () => {
+  assert.equal(defaultState().settings.clock, true);
+  assert.equal(mergeState({ settings: { sound: false } }).settings.clock, true);
+  assert.equal(mergeState({ settings: { clock: false } }).settings.clock, false);
 });
 
 test('formats local system time as 24-hour HH:MM:SS', () => {
@@ -88,7 +89,7 @@ test('ON shows and immediately renders the digital clock', () => {
   assert.equal([...scheduler.active.values()][0].delay, 1000);
 });
 
-test('the clock setting round-trips through the existing storage state', async () => {
+test('an explicit CLOCK OFF round-trips through the existing storage state', async () => {
   const stored = {};
   const previousChrome = globalThis.chrome;
   globalThis.chrome = {
@@ -106,9 +107,9 @@ test('the clock setting round-trips through the existing storage state', async (
 
   try {
     const state = defaultState();
-    state.settings.clock = true;
+    state.settings.clock = false;
     await saveState(state);
-    assert.equal((await loadState()).settings.clock, true);
+    assert.equal((await loadState()).settings.clock, false);
   } finally {
     if (previousChrome === undefined) delete globalThis.chrome;
     else globalThis.chrome = previousChrome;

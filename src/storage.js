@@ -15,7 +15,7 @@ export function defaultState() {
     sessionCount: 0,
     history: {},
     settings: {
-      clock: false,
+      clock: true,
       sound: true,
       flyText: true,
       chainEffect: true,

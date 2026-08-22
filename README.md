@@ -49,7 +49,7 @@ The timer readout and the big count area are also clickable, as mouse shortcuts
 for the two buttons.
 
 The optional `CLOCK` setting adds a small `NOW HH:MM:SS` local 24-hour clock to
-the top bar. It is off by default and keeps running independently of the elapsed
+the top bar. It is on by default and keeps running independently of the elapsed
 timer. Finite arcade pulses mark second, minute and hour changes; the displayed
 time still comes directly from the system clock, and delayed updates resynchronise
 without replaying missed motion. Reduced-motion preferences suppress the effects.

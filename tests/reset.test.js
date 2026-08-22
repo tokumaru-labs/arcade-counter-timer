@@ -79,7 +79,7 @@ test('only a full clear returns to the default empty state', () => {
   assert.equal(fresh.sessionCount, 0);
   assert.deepEqual(fresh.timer, { running: false, sessionElapsedMs: 0, runStartedAt: null });
   assert.deepEqual(fresh.settings, {
-    clock: false,
+    clock: true,
     sound: true,
     flyText: true,
     chainEffect: true,
