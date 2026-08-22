@@ -1,7 +1,7 @@
 # Builds the Chrome Web Store upload ZIP, then verifies what it actually built.
 #
-# Output : dist/arcade-counter-timer-v0.1.1-chrome-web-store.zip
-#          dist/arcade-counter-timer-v0.1.1-chrome-web-store.zip.sha256
+# Output : dist/arcade-counter-timer-v0.1.2-chrome-web-store.zip
+#          dist/arcade-counter-timer-v0.1.2-chrome-web-store.zip.sha256
 #
 # Only runtime files are included, and manifest.json sits at the archive root
 # with no wrapper directory. Everything is staged into a clean temporary folder

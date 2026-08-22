@@ -7,7 +7,7 @@ small arcade machine for a fraction of a second when you hit a milestone.
 
 <img src="store-assets/source/popup-main.png" alt="The Arcade Counter Timer popup: a running timer, a large count, and START and COUNT buttons" width="300">
 
-Version 0.1.1 · by Tokumaru Labs · Chrome Extension (Manifest V3)
+Version 0.1.2 · by Tokumaru Labs · Chrome Extension (Manifest V3)
 
 ## What it does
 

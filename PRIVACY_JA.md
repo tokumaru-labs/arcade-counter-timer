@@ -2,8 +2,8 @@
 
 # プライバシーポリシー — Arcade Counter Timer
 
-**最終更新日：2026-07-21**
-**対象：Arcade Counter Timer 0.1.0（Tokumaru Labs）**
+**最終更新日：2026-08-22**
+**対象：Arcade Counter Timer 0.1.2（Tokumaru Labs）**
 
 ## 概要
 

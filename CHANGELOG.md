@@ -8,6 +8,22 @@ project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 Nothing yet.
 
+## [0.1.2] — 2026-08-22
+
+Optional local digital clock release. No new permissions, dependencies or
+external data flows.
+
+### Added
+
+- A compact `NOW HH:MM:SS` 24-hour clock that stays independent of the elapsed
+  timer and always resynchronises from system time
+- Finite second, minute and hour arcade feedback with reduced-motion support
+
+### Changed
+
+- `CLOCK` is enabled by default for new or previously uninitialised settings;
+  an explicitly saved off preference remains off
+
 ## [0.1.1] — 2026-07-21
 
 Store listing localization. No change to the interface, the features, the stored

@@ -1,6 +1,6 @@
 {
   "name": "arcade-counter-timer",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Minimal Chrome MV3 count-up timer and counter with brief arcade-style feedback.",
   "author": "Tokumaru Labs",

@@ -7,7 +7,7 @@
 
 <img src="store-assets/source/popup-main.png" alt="Arcade Counter Timer のポップアップ。動作中のタイマー、大きなカウント、START と COUNT ボタン" width="300">
 
-バージョン 0.1.1 ／ Tokumaru Labs ／ Chrome 拡張機能（Manifest V3）
+バージョン 0.1.2 ／ Tokumaru Labs ／ Chrome 拡張機能（Manifest V3）
 
 ## できること
 

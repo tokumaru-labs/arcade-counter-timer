@@ -2,8 +2,8 @@ English | [日本語](PRIVACY_JA.md)
 
 # Privacy Policy — Arcade Counter Timer
 
-**Last updated: 2026-07-21**
-**Applies to: Arcade Counter Timer 0.1.0, by Tokumaru Labs**
+**Last updated: 2026-08-22**
+**Applies to: Arcade Counter Timer 0.1.2, by Tokumaru Labs**
 
 ## Summary
 

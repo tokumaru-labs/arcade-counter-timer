@@ -21,7 +21,7 @@ const EXPECTED = {
   name: '__MSG_extensionName__',
   description: '__MSG_extensionDescription__',
   defaultLocale: 'en',
-  version: '0.1.1',
+  version: '0.1.2',
   descriptionLimit: 132,
   permissions: ['storage']
 };

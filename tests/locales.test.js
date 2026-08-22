@@ -25,7 +25,7 @@ test('the manifest keeps its version, popup and single permission', () => {
   const manifest = readJson('manifest.json');
 
   assert.equal(manifest.manifest_version, 3);
-  assert.equal(manifest.version, '0.1.1');
+  assert.equal(manifest.version, '0.1.2');
   assert.equal(manifest.action.default_popup, 'popup.html');
   assert.deepEqual(manifest.permissions, ['storage']);
 });

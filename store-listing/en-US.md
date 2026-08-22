@@ -1,7 +1,7 @@
 # Chrome Web Store listing — en-US
 
 Copy each field below into the corresponding box in the Developer Dashboard.
-Nothing here describes a feature that is not in 0.1.1.
+Nothing here describes a feature that is not in 0.1.2.
 
 ---
 
