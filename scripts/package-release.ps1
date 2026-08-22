@@ -27,6 +27,7 @@ $runtimeFiles = @(
     'popup.html',
     'popup.css',
     'popup.js',
+    'src/clock.js',
     'src/time.js',
     'src/storage.js',
     'src/effects.js',
@@ -190,7 +191,16 @@ finally {
 
 # --- checksum ---------------------------------------------------------------
 
-$hash = (Get-FileHash $zipPath -Algorithm SHA256).Hash.ToLower()
+$stream = [System.IO.File]::OpenRead($zipPath)
+$sha256 = [System.Security.Cryptography.SHA256]::Create()
+try {
+    $hashBytes = $sha256.ComputeHash($stream)
+    $hash = ([System.BitConverter]::ToString($hashBytes)).Replace('-', '').ToLowerInvariant()
+}
+finally {
+    $sha256.Dispose()
+    $stream.Dispose()
+}
 $shaPath = "$zipPath.sha256"
 "$hash  $zipName" | Out-File -FilePath $shaPath -Encoding ascii -NoNewline
 Write-Output ''

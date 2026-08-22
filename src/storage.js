@@ -15,6 +15,7 @@ export function defaultState() {
     sessionCount: 0,
     history: {},
     settings: {
+      clock: false,
       sound: true,
       flyText: true,
       chainEffect: true,
@@ -66,6 +67,7 @@ export function mergeState(stored) {
     sessionCount: num(stored.sessionCount, 0),
     history,
     settings: {
+      clock: bool(settings.clock, base.settings.clock),
       sound: bool(settings.sound, base.settings.sound),
       flyText: bool(settings.flyText, base.settings.flyText),
       chainEffect: bool(settings.chainEffect, base.settings.chainEffect),

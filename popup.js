@@ -18,6 +18,7 @@ import {
 } from './src/storage.js';
 import { sounds, praiseForStreak, flyText, chainBurst, clearFx } from './src/effects.js';
 import { shortcutFor, isPointerActivation } from './src/input.js';
+import { createClockController } from './src/clock.js';
 
 const STREAK_WINDOW_MS = 650;
 const SESSION_HOLD_MS = 650;
@@ -35,6 +36,11 @@ const el = {
   timer: $('timer'),
   timerValue: $('timer-value'),
   timerState: $('timer-state'),
+  clock: $('clock'),
+  clockValue: $('clock-value'),
+  clockHour: $('clock-hour'),
+  clockMinute: $('clock-minute'),
+  clockSecond: $('clock-second'),
   btnStartStop: $('btn-start-stop'),
   startStopIcon: $('start-stop-icon'),
   startStopLabel: $('start-stop-label'),
@@ -58,6 +64,54 @@ let streak = 0;
 let lastCountAt = 0;
 let tickTimer = null;
 let flushTimer = null;
+const clockTestHook = globalThis.__ARCADE_CLOCK_TEST__;
+
+function clearClockMotion() {
+  el.clock.classList.remove('is-minute-change', 'is-hour-change', 'is-resync');
+  el.clockHour.classList.remove('is-hour-change');
+  el.clockMinute.classList.remove('is-minute-change');
+  el.clockSecond.classList.remove('is-second-change');
+  el.clock.dataset.motion = 'none';
+}
+
+function renderClock(frame) {
+  el.clockHour.textContent = frame.hour;
+  el.clockMinute.textContent = frame.minute;
+  el.clockSecond.textContent = frame.second;
+  clearClockMotion();
+  if (frame.motion === 'none') return;
+
+  // Restart only the one finite animation for this real system-time change.
+  void el.clock.offsetWidth;
+  el.clock.dataset.motion = frame.motion;
+  if (frame.motion === 'second') el.clockSecond.classList.add('is-second-change');
+  else if (frame.motion === 'minute') {
+    el.clock.classList.add('is-minute-change');
+    el.clockMinute.classList.add('is-minute-change');
+  } else if (frame.motion === 'hour') {
+    el.clock.classList.add('is-hour-change');
+    el.clockHour.classList.add('is-hour-change');
+  } else if (frame.motion === 'resync') {
+    el.clock.classList.add('is-resync');
+  }
+}
+
+const clockController = createClockController({
+  render: renderClock,
+  setVisible: (visible) => {
+    el.clock.hidden = !visible;
+    if (!visible) clearClockMotion();
+  },
+  // Opt-in page-local QA injection only; normal extension use always samples Date.
+  now: clockTestHook?.enabled && typeof clockTestHook.now === 'function'
+    ? () => clockTestHook.now()
+    : undefined
+});
+
+if (clockTestHook?.enabled) {
+  clockTestHook.refresh = () => clockController.refresh();
+  clockTestHook.isRunning = () => clockController.isRunning();
+}
 /** Hold controller for SESSION RESET, so the R key can drive the same button. */
 let sessionHold = null;
 
@@ -128,6 +182,7 @@ function renderSettings() {
     input.checked = Boolean(state.settings[input.dataset.setting]);
   }
   el.screen.classList.toggle('crt', state.settings.subtleCrt);
+  clockController.setEnabled(state.settings.clock);
 }
 
 function renderStats() {
@@ -375,6 +430,7 @@ function bindEvents() {
 
   window.addEventListener('pagehide', () => {
     if (flushRun()) persist();
+    clockController.dispose();
   });
 }
 
@@ -425,6 +481,7 @@ async function init() {
 window.addEventListener('unload', () => {
   clearInterval(tickTimer);
   clearInterval(flushTimer);
+  clockController.dispose();
 });
 
 init();

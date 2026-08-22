@@ -39,6 +39,7 @@ const RUNTIME_FILES = [
   'popup.html',
   'popup.css',
   'popup.js',
+  'src/clock.js',
   'src/time.js',
   'src/storage.js',
   'src/effects.js',
@@ -68,7 +69,7 @@ const FORBIDDEN_MANIFEST_KEYS = [
 ];
 
 /** Remote-reference scanning is limited to code the browser actually runs. */
-const SCANNED_SOURCES = ['popup.html', 'popup.css', 'popup.js', 'src/time.js', 'src/storage.js', 'src/effects.js', 'src/input.js'];
+const SCANNED_SOURCES = ['popup.html', 'popup.css', 'popup.js', 'src/clock.js', 'src/time.js', 'src/storage.js', 'src/effects.js', 'src/input.js'];
 
 let failures = 0;
 
@@ -248,8 +249,8 @@ section('Source tree');
 
 const srcFiles = readdirSync(join(ROOT, 'src')).sort();
 check(
-  'src/ contains only the four expected modules',
-  srcFiles.length === 4 && srcFiles.join(',') === 'effects.js,input.js,storage.js,time.js',
+  'src/ contains only the five expected modules',
+  srcFiles.length === 5 && srcFiles.join(',') === 'clock.js,effects.js,input.js,storage.js,time.js',
   srcFiles.join(', ')
 );
 

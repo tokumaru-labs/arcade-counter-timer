@@ -48,6 +48,12 @@ rather work in silence, each one can be switched off.
 The timer readout and the big count area are also clickable, as mouse shortcuts
 for the two buttons.
 
+The optional `CLOCK` setting adds a small `NOW HH:MM:SS` local 24-hour clock to
+the top bar. It is off by default and keeps running independently of the elapsed
+timer. Finite arcade pulses mark second, minute and hour changes; the displayed
+time still comes directly from the system clock, and delayed updates resynchronise
+without replaying missed motion. Reduced-motion preferences suppress the effects.
+
 ## Keyboard
 
 | Key | Action |
@@ -121,7 +127,7 @@ source:
 No build step, no dependencies, no bundler. Vanilla HTML, CSS and ES modules.
 
 ```
-npm test              # 55 unit tests, Node's built-in node:test runner
+npm test              # 66 tests, including the popup integration path
 npm run verify        # release checks: manifest, locales, permissions, icons, no remote code
 npm run package       # build the Chrome Web Store ZIP into dist/
 ```
@@ -134,10 +140,11 @@ npm run capture       # screenshot the real popup with headless Chrome
 npm run store-assets  # compose the 1280x800 store screenshots
 ```
 
-Tests cover the pure logic — duration formatting, midnight/month/year interval
-splitting, Monday-based week ranges, the statistics aggregates, the reset state
-transitions and the keyboard routing rules. They import the same modules the
-extension uses; there is no DOM test harness and no test dependency.
+Tests cover the pure logic — duration and clock formatting, clock lifecycle,
+midnight/month/year interval splitting, Monday-based week ranges, the statistics
+aggregates, the reset state transitions and the keyboard routing rules. They
+import the same modules the extension uses; there is no DOM test harness and no
+test dependency.
 
 ## Privacy
 

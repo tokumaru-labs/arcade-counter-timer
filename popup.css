@@ -93,6 +93,7 @@ body {
 /* ------------------------------------------------------------- topbar -- */
 
 .topbar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -135,6 +136,153 @@ body {
   border-color: transparent;
   background: var(--blue);
   box-shadow: 0 0 8px var(--blue-glow);
+}
+
+.clock {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 7px;
+  color: var(--dim);
+  background: rgba(10, 20, 42, 0.55);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  transform: translateX(-50%);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.clock::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  background: linear-gradient(100deg, transparent 12%, rgba(185, 221, 255, 0.35) 50%, transparent 88%);
+  opacity: 0;
+  transform: translateX(-140%);
+  pointer-events: none;
+}
+
+.clock[hidden] {
+  display: none;
+}
+
+.clock__label {
+  font-size: 7px;
+  letter-spacing: 1.5px;
+}
+
+.clock__value {
+  display: inline-flex;
+  align-items: baseline;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+  color: #86a9cd;
+  text-shadow: 0 0 5px rgba(120, 190, 255, 0.25);
+}
+
+.clock__group {
+  display: inline-block;
+  transform-origin: 50% 55%;
+}
+
+.clock__separator {
+  color: var(--dim);
+}
+
+.clock__second.is-second-change {
+  animation: clock-second-change 90ms ease-out;
+}
+
+.clock__minute.is-minute-change {
+  animation: clock-minute-change 160ms ease-out;
+}
+
+.clock.is-minute-change::after {
+  animation: clock-minute-sweep 160ms ease-out;
+}
+
+.clock__hour.is-hour-change {
+  animation: clock-hour-digits 300ms ease-out;
+}
+
+.clock.is-hour-change {
+  animation: clock-hour-panel 300ms ease-out;
+}
+
+.clock.is-resync {
+  animation: clock-resync 100ms ease-out;
+}
+
+@keyframes clock-second-change {
+  0% {
+    color: #d9efff;
+    text-shadow: 0 0 8px rgba(150, 210, 255, 0.55);
+    transform: scale(0.985);
+  }
+  100% {
+    color: #86a9cd;
+    text-shadow: 0 0 5px rgba(120, 190, 255, 0.25);
+    transform: scale(1);
+  }
+}
+
+@keyframes clock-minute-change {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  45% {
+    color: #d9efff;
+    text-shadow: 0 0 8px rgba(150, 210, 255, 0.55);
+    transform: scale(1.045);
+  }
+}
+
+@keyframes clock-minute-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-140%);
+  }
+  35% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(140%);
+  }
+}
+
+@keyframes clock-hour-digits {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  38% {
+    color: #edf8ff;
+    text-shadow: 0 0 10px rgba(160, 220, 255, 0.65);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes clock-hour-panel {
+  0%,
+  100% {
+    filter: brightness(1);
+    box-shadow: none;
+  }
+  42% {
+    filter: brightness(1.16);
+    box-shadow: 0 0 8px rgba(120, 190, 255, 0.32);
+  }
+}
+
+@keyframes clock-resync {
+  50% {
+    filter: brightness(1.1);
+  }
 }
 
 /* -------------------------------------------------------------- timer -- */
@@ -598,6 +746,19 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .clock__second.is-second-change,
+  .clock__minute.is-minute-change,
+  .clock__hour.is-hour-change,
+  .clock.is-hour-change,
+  .clock.is-resync,
+  .clock.is-minute-change::after {
+    animation: none;
+  }
+
+  .clock.is-minute-change::after {
+    opacity: 0;
+  }
+
   .countpad__value.is-bump,
   .countpad__value.is-chain,
   .hold.is-done {

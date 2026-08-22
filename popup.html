@@ -11,6 +11,18 @@
       <main id="view-main" class="view view--main">
         <header class="topbar">
           <span id="run-dot" class="run-dot" aria-hidden="true"></span>
+          <div id="clock" class="clock" aria-label="Current time" hidden>
+            <span class="clock__label">NOW</span>
+            <time id="clock-value" class="clock__value">
+              <span id="clock-hour" class="clock__group clock__hour">00</span><span class="clock__separator">:</span><span
+                id="clock-minute"
+                class="clock__group clock__minute"
+              >00</span><span class="clock__separator">:</span><span
+                id="clock-second"
+                class="clock__group clock__second"
+              >00</span>
+            </time>
+          </div>
           <button id="btn-settings" class="icon-btn" type="button" aria-label="Open statistics and settings">
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
               <path
@@ -142,6 +154,10 @@
 
         <h2 class="panel-title panel-title--sub">SETTINGS</h2>
         <ul class="settings">
+          <li>
+            <label for="set-clock">CLOCK</label>
+            <input id="set-clock" type="checkbox" data-setting="clock" />
+          </li>
           <li>
             <label for="set-sound">SOUND</label>
             <input id="set-sound" type="checkbox" data-setting="sound" />
