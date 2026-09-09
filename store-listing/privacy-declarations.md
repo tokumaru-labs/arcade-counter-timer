@@ -19,7 +19,7 @@ Arcade Counter Timer provides a local count-up timer and tally counter with opti
 **`storage`**
 
 ```
-The storage permission is used to save timer state, session count, daily history, and user settings locally so they remain available after the popup closes or the browser restarts.
+The storage permission is used to save timer state, session count, daily history, selected theme, and user settings locally so they remain available after the popup closes or the browser restarts.
 ```
 
 **Host permissions** — none requested, so no justification is required. If the
@@ -50,8 +50,8 @@ fonts, and no dynamic import of anything fetched at runtime.
 | Website content (text, images, page data) | **No** | No content scripts and no host permissions, so page content is unreachable |
 
 The only data that exists at all is the extension's own state — timer values,
-session count, daily history and settings — written to `chrome.storage.local` on
-the user's device.
+session count, daily history, selected theme and settings — written to
+`chrome.storage.local` on the user's device.
 
 ## Data handling certifications
 
@@ -75,6 +75,6 @@ the user's device.
 
 ## Privacy policy URL
 
-Required because the item stores user data. Point it at the published
-`PRIVACY.md` once the public repository exists — see `urls.md`. Do not submit an
-invented URL.
+Required because the item stores user data. Use the verified public policy URL:
+
+`https://github.com/tokumaru-labs/arcade-counter-timer/blob/main/PRIVACY.md`

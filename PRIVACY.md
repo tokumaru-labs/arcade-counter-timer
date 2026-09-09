@@ -2,8 +2,8 @@ English | [日本語](PRIVACY_JA.md)
 
 # Privacy Policy — Arcade Counter Timer
 
-**Last updated: 2026-08-22**
-**Applies to: Arcade Counter Timer 0.1.2, by Tokumaru Labs**
+**Last updated: 2026-09-09**
+**Applies to: Arcade Counter Timer 0.1.3, by Tokumaru Labs**
 
 ## Summary
 
@@ -21,7 +21,8 @@ area Chrome provides to extensions on your device:
 | Timer state (running flag, elapsed milliseconds, start timestamp) | So the timer keeps running while the popup is closed and after a browser restart |
 | Session count | So the current count survives closing the popup |
 | Daily history (`{ "YYYY-MM-DD": { timeMs, count } }`) | To show TODAY / WEEK / MONTH / YEAR statistics |
-| Settings (sound, fly text, chain effect, CRT effect) | To remember your preferences |
+| Selected theme (Original, Arcade or Editorial) | To restore your preferred presentation |
+| Settings (clock, sound, fly text, chain effect, CRT effect) | To remember your preferences |
 
 That is the complete list. Nothing else is recorded.
 
@@ -44,9 +45,9 @@ That is the complete list. Nothing else is recorded.
 
 The extension requests exactly one permission:
 
-- **`storage`** — to save the timer state, session count, daily history and
-  settings locally, so they are still there after the popup closes or the
-  browser restarts.
+- **`storage`** — to save the timer state, session count, daily history,
+  selected theme and settings locally, so they are still there after the popup
+  closes or the browser restarts.
 
 It requests no host permissions, and it uses no content scripts and no
 background service worker, so it has no access to the pages you visit.
@@ -55,7 +56,7 @@ background service worker, so it has no access to the pages you visit.
 
 - **Clear it from inside the extension.** Open the gear icon and use
   **CLEAR ALL DATA**. After the confirmation dialog, the timer, session count,
-  daily history and settings are all returned to their defaults.
+  daily history, selected theme and settings are all returned to their defaults.
 - **Clear it by uninstalling.** Removing the extension from Chrome also removes
   the local data Chrome maintains for it.
 

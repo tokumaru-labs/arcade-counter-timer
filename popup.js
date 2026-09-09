@@ -177,6 +177,13 @@ function renderCount() {
   el.countValue.textContent = formatCount(state.sessionCount);
 }
 
+function renderTheme() {
+  el.screen.dataset.theme = state.theme;
+  for (const input of document.querySelectorAll('[data-theme-option]')) {
+    input.checked = input.value === state.theme;
+  }
+}
+
 function renderSettings() {
   for (const input of document.querySelectorAll('[data-setting]')) {
     input.checked = Boolean(state.settings[input.dataset.setting]);
@@ -414,10 +421,21 @@ function bindEvents() {
     });
   }
 
+  for (const input of document.querySelectorAll('[data-theme-option]')) {
+    input.addEventListener('change', () => {
+      if (!input.checked) return;
+      state.theme = input.value;
+      persist();
+      renderTheme();
+      announce(`${input.value} theme selected`);
+    });
+  }
+
   el.btnClear.addEventListener('click', async () => {
     if (!window.confirm('Clear all data? Timer, count, history and settings reset.')) return;
     state = await clearAll();
     clearEphemeral();
+    renderTheme();
     renderTimer();
     renderCount();
     renderSettings();
@@ -467,6 +485,7 @@ async function init() {
   state.history = pruned;
   if (changed || prunedAny) persist();
 
+  renderTheme();
   renderSettings();
   renderTimer();
   renderCount();

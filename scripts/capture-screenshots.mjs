@@ -51,6 +51,7 @@ function seedScript() {
   return `// Capture-only shim. Never shipped: it lives in .render/, which is gitignored
 // and excluded from the release ZIP.
 (() => {
+  const theme = new URLSearchParams(location.search).get('theme') || 'original';
   const pad = (n) => String(n).padStart(2, '0');
   const key = (d) => \`\${d.getFullYear()}-\${pad(d.getMonth() + 1)}-\${pad(d.getDate())}\`;
   const dayBefore = (n) => {
@@ -76,10 +77,11 @@ function seedScript() {
   }
 
   const data = {
-    stateVersion: 1,
+    stateVersion: 2,
     timer: { running: true, sessionElapsedMs: 0, runStartedAt: Date.now() - (12 * 60000 + 34000) },
     sessionCount: 18,
     history,
+    theme,
     settings: { sound: true, flyText: true, chainEffect: true, subtleCrt: true }
   };
 
@@ -191,9 +193,9 @@ function startServer() {
  * Must stay async: the local server runs in this same process, so a blocking
  * spawnSync would stop it from ever answering the browser's requests.
  */
-async function capture(browser, port, hash, outFile) {
+async function capture(browser, port, theme, hash, outFile) {
   rmSync(outFile, { force: true });
-  const url = `http://127.0.0.1:${port}/popup.html${hash}`;
+  const url = `http://127.0.0.1:${port}/popup.html?theme=${theme}${hash}`;
   const stderr = await new Promise((ok, fail) => {
     const child = spawn(browser, [
       '--headless=new',
@@ -235,8 +237,12 @@ mkdirSync(OUT_DIR, { recursive: true });
 const { server, port } = await startServer();
 console.log('Capturing the real popup:');
 try {
-  await capture(browser, port, '', join(OUT_DIR, 'popup-main.png'));
-  await capture(browser, port, '#stats', join(OUT_DIR, 'popup-stats.png'));
+  for (const theme of ['original', 'arcade', 'editorial']) {
+    const mainName = theme === 'original' ? 'popup-main.png' : `popup-${theme}-main.png`;
+    const statsName = theme === 'original' ? 'popup-stats.png' : `popup-${theme}-stats.png`;
+    await capture(browser, port, theme, '', join(OUT_DIR, mainName));
+    await capture(browser, port, theme, '#stats', join(OUT_DIR, statsName));
+  }
 } finally {
   server.closeAllConnections();
   server.close();

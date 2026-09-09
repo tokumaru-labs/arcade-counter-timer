@@ -8,6 +8,24 @@ project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 Nothing yet.
 
+## [0.1.3] — 2026-09-09
+
+Selectable presentation themes. No new permissions, dependencies or external
+data flows.
+
+### Added
+
+- Three selectable presentation themes: Original, Arcade and Editorial
+- Persistent theme selection in `chrome.storage.local`, with a safe fallback
+  to Original for existing or invalid saved data
+
+### Changed
+
+- Replaced the settings symbol with a centered outlined gear
+
+The timer, counter, local clock, statistics, resets and milestone effects use
+the same existing behavior in every theme.
+
 ## [0.1.2] — 2026-08-22
 
 Optional local digital clock release. No new permissions, dependencies or

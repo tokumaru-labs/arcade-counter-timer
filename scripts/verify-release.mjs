@@ -21,7 +21,7 @@ const EXPECTED = {
   name: '__MSG_extensionName__',
   description: '__MSG_extensionDescription__',
   defaultLocale: 'en',
-  version: '0.1.2',
+  version: '0.1.3',
   descriptionLimit: 132,
   permissions: ['storage']
 };
@@ -263,9 +263,15 @@ const STORE_ASSETS = [
   ['store-assets/small-promo-440x280.png', 440, 280],
   ['store-assets/marquee-promo-1400x560.png', 1400, 560],
   ['store-assets/screenshot-main-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-arcade-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-editorial-1280x800.png', 1280, 800],
   ['store-assets/screenshot-stats-1280x800.png', 1280, 800],
   ['store-assets/source/popup-main.png', 360, 540],
-  ['store-assets/source/popup-stats.png', 360, 540]
+  ['store-assets/source/popup-stats.png', 360, 540],
+  ['store-assets/source/popup-arcade-main.png', 360, 540],
+  ['store-assets/source/popup-arcade-stats.png', 360, 540],
+  ['store-assets/source/popup-editorial-main.png', 360, 540],
+  ['store-assets/source/popup-editorial-stats.png', 360, 540]
 ];
 
 for (const [rel, w, h] of STORE_ASSETS) {

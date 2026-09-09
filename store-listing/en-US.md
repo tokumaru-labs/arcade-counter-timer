@@ -1,7 +1,7 @@
 # Chrome Web Store listing — en-US
 
 Copy each field below into the corresponding box in the Developer Dashboard.
-Nothing here describes a feature that is not in 0.1.2.
+Nothing here describes a feature that is not in 0.1.3.
 
 ---
 
@@ -13,7 +13,7 @@ Arcade Counter Timer
 
 ## Summary / short description
 
-Maximum 132 characters. This text is 110 characters and matches
+Maximum 132 characters. This text is 108 characters and matches
 `_locales/en/messages.json`'s `extensionDescription` exactly, which is what
 `manifest.json` now references as `__MSG_extensionDescription__`.
 
@@ -40,7 +40,7 @@ English (United States). A Japanese listing is prepared in `ja.md`.
 Arcade Counter Timer is a count-up timer and a tally counter in one small popup. It stays quiet while you work, and turns into a little arcade machine for a fraction of a second when you hit a milestone.
 
 TIMER
-Press START to begin and STOP to pause. The time is shown as HH:MM:SS and stays correct past 100 hours. The timer keeps running while the popup is closed and after you restart the browser, because elapsed time is calculated from a saved timestamp rather than from a running script.
+Press START to begin and STOP to pause. The time is shown as HH:MM:SS and stays correct past 100 hours. The timer keeps running while the popup is closed and after you restart the browser, because elapsed time is calculated from a saved timestamp rather than from a running script. An optional small clock in the header shows the current local time.
 
 COUNTER
 Press COUNT, or the Space key, to add one. One press is always exactly one count — holding a key down does not run away with the total.
@@ -58,7 +58,7 @@ SOUND
 All sound effects are generated in the extension with the Web Audio API. There are no audio files and no downloads. Sound can be switched off.
 
 SETTINGS
-Sound, fly text, chain effect and the subtle CRT scanlines can each be turned on or off. CLEAR ALL DATA, behind a confirmation dialog, returns everything to defaults. The extension also respects your system's reduced-motion preference.
+Choose from three visual themes: Original, Arcade and Editorial. The theme changes presentation only; all timer, counter, reset and statistics behavior stays the same. The local clock, sound, fly text, chain effect and subtle CRT scanlines can each be turned on or off. CLEAR ALL DATA, behind a confirmation dialog, returns everything to defaults. The extension also respects your system's reduced-motion preference.
 
 KEYBOARD
 Enter starts and stops the timer. Space adds a count. Holding R resets the session. Escape returns from the statistics screen.
@@ -80,6 +80,8 @@ Free and open source, licensed under GPL-3.0-only.
 - TODAY / WEEK / MONTH / YEAR statistics derived from a local daily history
 - Fly text on fast streaks and a CHAIN effect every 10 counts
 - Original Web Audio sound effects, all switchable
+- Original, Arcade and Editorial visual themes with locally saved selection
+- Optional current local time in the popup header
 - Works offline; no account
 
 ## Keyboard shortcuts
@@ -105,7 +107,7 @@ Arcade Counter Timer provides a local count-up timer and tally counter with opti
 ## Permission justification — storage
 
 ```
-The storage permission is used to save timer state, session count, daily history, and user settings locally so they remain available after the popup closes or the browser restarts.
+The storage permission is used to save timer state, session count, daily history, selected theme, and user settings locally so they remain available after the popup closes or the browser restarts.
 ```
 
 No other permission is requested. There are no host permissions, no optional
@@ -123,7 +125,7 @@ CDN references, no `eval`, no `new Function`, and no dynamically fetched code.
 ## Data handling summary
 
 ```
-The extension does not transmit user data. Timer, counter, history, and settings data remain in chrome.storage.local.
+The extension does not transmit user data. Timer, counter, history, theme, and settings data remain in chrome.storage.local.
 ```
 
 Nothing is collected, sold, shared or transferred. See `privacy-declarations.md`

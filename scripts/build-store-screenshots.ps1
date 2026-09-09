@@ -3,6 +3,8 @@
 # Input  : store-assets/source/popup-main.png   (360x540)
 #          store-assets/source/popup-stats.png  (360x540)
 # Output : store-assets/screenshot-main-1280x800.png
+#          store-assets/screenshot-arcade-1280x800.png
+#          store-assets/screenshot-editorial-1280x800.png
 #          store-assets/screenshot-stats-1280x800.png
 #
 # Produce the inputs with `npm run capture`, which screenshots the real popup
@@ -31,6 +33,22 @@ $shots = @(
         Copy    = 'A timer and counter that rewards your rhythm.'
         Details = @('Count-up timer that keeps running when the popup closes',
                     'One press, one count', 'Brief milestone effects, all switchable')
+    },
+    @{
+        Source  = Join-Path $srcDir 'popup-arcade-main.png'
+        Out     = Join-Path $outDir 'screenshot-arcade-1280x800.png'
+        Title   = 'Built for momentum'
+        Copy    = 'ARCADE turns rhythm into neon.'
+        Details = @('Same controls in a bolder presentation',
+                    'Theme selection stays on your device', 'No account and no tracking')
+    },
+    @{
+        Source  = Join-Path $srcDir 'popup-editorial-main.png'
+        Out     = Join-Path $outDir 'screenshot-editorial-1280x800.png'
+        Title   = 'Focus, stripped back'
+        Copy    = 'EDITORIAL keeps every control clear.'
+        Details = @('High-contrast black and white presentation',
+                    'Same statistics, resets and milestone logic', 'Switch themes at any time')
     },
     @{
         Source  = Join-Path $srcDir 'popup-stats.png'

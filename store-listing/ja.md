@@ -1,8 +1,8 @@
 # Chrome ウェブストア掲載情報 — ja
 
 Developer Dashboard の各項目へそのまま貼り付けられる形にしています。
-0.1.2 に実装されていない機能は記載していません。
-ポップアップの UI 表記は 0.1.2 でも英語のままです（ローカライズ対象は
+0.1.3 に実装されていない機能は記載していません。
+ポップアップの UI 表記は 0.1.3 でも英語のままです（ローカライズ対象は
 ストア掲載名と説明文のみ）。
 
 ---
@@ -43,7 +43,7 @@ Arcade Counter Timer
 Arcade Counter Timer は、カウントアップタイマーとカウンターを1つの小さなポップアップにまとめた拡張機能です。作業中は静かに佇み、節目に到達した一瞬だけ、小さなアーケード機のような手応えを返します。
 
 ■ タイマー
-START で計測を開始し、STOP で停止します。表示は HH:MM:SS 形式で、100時間を超えても桁が崩れません。経過時間は動き続けるスクリプトではなく保存したタイムスタンプから計算しているため、ポップアップを閉じても、ブラウザを再起動しても計測は続きます。
+START で計測を開始し、STOP で停止します。表示は HH:MM:SS 形式で、100時間を超えても桁が崩れません。経過時間は動き続けるスクリプトではなく保存したタイムスタンプから計算しているため、ポップアップを閉じても、ブラウザを再起動しても計測は続きます。任意で、上部の小さな時計に現在のローカル時刻を表示できます。
 
 ■ カウンター
 COUNT ボタン、または Space キーで1増えます。1回の入力は必ず1カウントです。キーを押しっぱなしにしても数字が勝手に増え続けることはありません。
@@ -61,7 +61,7 @@ COUNT ボタン、または Space キーで1増えます。1回の入力は必�
 効果音はすべて Web Audio API により拡張機能内で生成しています。音声ファイルもダウンロードもありません。サウンドはオフにできます。
 
 ■ 設定
-サウンド、Fly Text、CHAIN 演出、控えめな CRT 走査線は、それぞれ個別にオン・オフを切り替えられます。CLEAR ALL DATA は確認ダイアログを経て、すべてを初期値へ戻します。システムの「視覚効果を減らす」設定にも対応しています。
+見た目は ORIGINAL、ARCADE、EDITORIAL の3テーマから選べます。変わるのは表示だけで、タイマー、カウンター、リセット、統計の動作は共通です。ローカル時計、サウンド、Fly Text、CHAIN 演出、控えめな CRT 走査線は、それぞれ個別にオン・オフを切り替えられます。CLEAR ALL DATA は確認ダイアログを経て、すべてを初期値へ戻します。システムの「視覚効果を減らす」設定にも対応しています。
 
 ■ キーボード
 Enter でタイマーの開始・停止、Space でカウント、R の長押しでセッションリセット、Esc で統計画面から戻ります。
@@ -83,6 +83,8 @@ GPL-3.0-only のオープンソースソフトウェアです。
 - ローカルの日別履歴から算出する TODAY / WEEK / MONTH / YEAR 統計
 - 連続カウント時の Fly Text と、10回ごとの CHAIN 演出
 - すべて切り替え可能なオリジナル Web Audio 効果音
+- 選択状態を端末内へ保存する ORIGINAL / ARCADE / EDITORIAL の3テーマ
+- ポップアップ上部の任意の現在時刻表示
 - オフライン動作、アカウント不要
 
 ## キーボードショートカット
@@ -114,10 +116,10 @@ Arcade Counter Timer provides a local count-up timer and tally counter with opti
 英語での申告文：
 
 ```
-The storage permission is used to save timer state, session count, daily history, and user settings locally so they remain available after the popup closes or the browser restarts.
+The storage permission is used to save timer state, session count, daily history, selected theme, and user settings locally so they remain available after the popup closes or the browser restarts.
 ```
 
-日本語での説明：タイマーの状態、セッションカウント、日別履歴、ユーザー設定を
+日本語での説明：タイマーの状態、セッションカウント、日別履歴、選択テーマ、ユーザー設定を
 端末内に保存し、ポップアップを閉じた後やブラウザ再起動後も保持するために使用します。
 これ以外の権限、host_permissions、content script、background service worker は使用しません。
 
@@ -133,7 +135,7 @@ JavaScript はすべてパッケージ内に含まれています。外部スク
 ## データの取り扱い
 
 ```
-The extension does not transmit user data. Timer, counter, history, and settings data remain in chrome.storage.local.
+The extension does not transmit user data. Timer, counter, history, theme, and settings data remain in chrome.storage.local.
 ```
 
 収集・販売・共有・第三者提供はいずれも行いません。項目ごとの回答は

@@ -9,16 +9,23 @@ source at any time. All artwork is original to this project.
 | `small-promo-440x280.png` | 440×280 | Small promo tile (required) | `scripts/build-store-promos.ps1` |
 | `marquee-promo-1400x560.png` | 1400×560 | Marquee promo tile (optional) | `scripts/build-store-promos.ps1` |
 | `screenshot-main-1280x800.png` | 1280×800 | Main screenshot | `npm run store-assets` |
+| `screenshot-arcade-1280x800.png` | 1280×800 | Arcade theme screenshot | `npm run store-assets` |
+| `screenshot-editorial-1280x800.png` | 1280×800 | Editorial theme screenshot | `npm run store-assets` |
 | `screenshot-stats-1280x800.png` | 1280×800 | Statistics screenshot | `npm run store-assets` |
 | `source/popup-main.png` | 360×540 | Raw capture of the popup | `npm run capture` |
 | `source/popup-stats.png` | 360×540 | Raw capture of the statistics screen | `npm run capture` |
+| `source/popup-arcade-main.png` | 360×540 | Raw Arcade theme capture | `npm run capture` |
+| `source/popup-arcade-stats.png` | 360×540 | Raw Arcade settings capture | `npm run capture` |
+| `source/popup-editorial-main.png` | 360×540 | Raw Editorial theme capture | `npm run capture` |
+| `source/popup-editorial-stats.png` | 360×540 | Raw Editorial settings capture | `npm run capture` |
 
 ## How the screenshots were made
 
 `npm run capture` renders the shipped `popup.html`, `popup.css`, `popup.js` and
 `src/` modules in headless Chrome and screenshots them at the real popup size of
-360×540. The UI in these images is the actual extension, drawn by the actual
-code — not a mock-up, and not retouched.
+360×540. It captures both screens for Original, Arcade and Editorial. The UI in
+these images is the actual extension, drawn by the actual code — not a mock-up,
+and not retouched.
 
 Two things are supplied to make the capture possible and useful:
 
@@ -42,7 +49,9 @@ If you would rather ship screenshots taken from a real Chrome install:
 1. Load the extension via `chrome://extensions` → Load unpacked.
 2. Use it normally, so the statistics reflect genuine work.
 3. Screenshot the popup at exactly 360×540 with no browser chrome.
-4. Save the images as `source/popup-main.png` and `source/popup-stats.png`.
+4. Save the Original images as `source/popup-main.png` and
+   `source/popup-stats.png`; save the other themes with the filenames in the
+   table above.
 5. Run `npm run store-assets`.
 
 The compose script requires both source files to exist and to be exactly

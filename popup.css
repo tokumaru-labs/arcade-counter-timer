@@ -697,6 +697,60 @@ body {
 
 /* ----------------------------------------------------------- settings -- */
 
+.theme-picker {
+  min-width: 0;
+  margin: 0 0 10px;
+  padding: 0;
+  border: 0;
+}
+
+.theme-picker legend {
+  margin: 0 0 6px 4px;
+  padding: 0;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--dim);
+}
+
+.theme-picker__options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+
+.theme-picker__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.theme-picker label {
+  display: grid;
+  min-width: 0;
+  min-height: 30px;
+  place-items: center;
+  padding: 5px 3px;
+  overflow: hidden;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--dim);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.theme-picker__input:checked + label {
+  color: var(--blue);
+  background: rgba(120, 190, 255, 0.1);
+  border-color: currentColor;
+}
+
+.theme-picker__input:focus-visible + label {
+  outline: 2px solid #7fb6ff;
+  outline-offset: 2px;
+}
+
 .settings {
   margin: 0;
   padding: 0;
@@ -736,6 +790,684 @@ body {
 
 .danger:hover {
   background: rgba(212, 86, 79, 0.1);
+}
+
+/* ========================================================== ARCADE theme == */
+/* A premium late-night cabinet: crisp pixel displays, cyan/magenta neon and
+   tactile controls. The theme is CSS-only, so the timer and counter logic are
+   exactly the same code paths as Original. */
+
+.screen[data-theme="arcade"] {
+  --bg-top: #070019;
+  --bg-bottom: #101143;
+  --line: rgba(65, 231, 255, 0.38);
+  --dim: #8894c8;
+  --blue: #67f4ff;
+  --blue-glow: rgba(24, 224, 255, 0.72);
+  --orange: #ffe45c;
+  --orange-glow: rgba(255, 83, 214, 0.72);
+  --red: #ff5b83;
+  --font: "Lucida Console", "Courier New", ui-monospace, monospace;
+  font-family: var(--font);
+  background:
+    radial-gradient(circle at 50% 12%, rgba(74, 31, 151, 0.36), transparent 36%),
+    linear-gradient(rgba(82, 82, 180, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(82, 82, 180, 0.08) 1px, transparent 1px),
+    linear-gradient(160deg, var(--bg-top), var(--bg-bottom));
+  background-size: auto, 18px 18px, 18px 18px, auto;
+  box-shadow:
+    inset 0 0 0 2px #241257,
+    inset 0 0 0 4px rgba(71, 231, 255, 0.24),
+    inset 0 0 38px rgba(46, 19, 108, 0.75);
+}
+
+.screen[data-theme="arcade"].crt::after {
+  z-index: 20;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(120, 243, 255, 0.055) 0 1px,
+    rgba(1, 0, 14, 0.05) 1px 3px
+  );
+  mix-blend-mode: screen;
+}
+
+.screen[data-theme="arcade"] .view {
+  padding: 14px 20px 17px;
+}
+
+.screen[data-theme="arcade"] .view--main .topbar::before {
+  content: "ARCADE";
+  font-size: 8px;
+  letter-spacing: 1.3px;
+  color: #ff65d8;
+  text-shadow: 0 0 8px rgba(255, 68, 211, 0.72);
+}
+
+.screen[data-theme="arcade"] .topbar {
+  min-height: 32px;
+  padding: 0 2px 5px;
+  border-bottom: 1px solid rgba(103, 244, 255, 0.32);
+}
+
+.screen[data-theme="arcade"] .run-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+  border-color: #ff65d8;
+  transform: rotate(45deg);
+}
+
+.screen[data-theme="arcade"] .run-dot.is-running {
+  background: #67f4ff;
+  box-shadow: 0 0 5px #67f4ff, 0 0 12px #67f4ff;
+}
+
+.screen[data-theme="arcade"] .clock {
+  background: rgba(8, 3, 32, 0.78);
+  border-color: rgba(103, 244, 255, 0.38);
+  border-radius: 1px;
+}
+
+.screen[data-theme="arcade"] .clock__value {
+  color: #67f4ff;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(38, 225, 255, 0.72);
+}
+
+.screen[data-theme="arcade"] .clock__label,
+.screen[data-theme="arcade"] .clock__separator {
+  color: #8894c8;
+}
+
+.screen[data-theme="arcade"] .icon-btn {
+  color: #9ca7db;
+  border-radius: 1px;
+}
+
+.screen[data-theme="arcade"] .icon-btn:hover {
+  color: #67f4ff;
+  border-color: #67f4ff;
+  box-shadow: 0 0 10px rgba(39, 221, 255, 0.24);
+}
+
+.screen[data-theme="arcade"] .timer,
+.screen[data-theme="arcade"] .countpad {
+  position: relative;
+  border: 1px solid #4defff;
+  border-radius: 2px;
+  background: linear-gradient(180deg, rgba(1, 4, 20, 0.92), rgba(8, 9, 38, 0.84));
+  box-shadow:
+    inset 0 0 18px rgba(27, 224, 255, 0.09),
+    0 0 0 2px rgba(9, 1, 29, 0.9),
+    0 0 12px rgba(41, 222, 255, 0.27);
+}
+
+.screen[data-theme="arcade"] .timer {
+  gap: 5px;
+  margin-top: 10px;
+  padding: 15px 8px 10px;
+}
+
+.screen[data-theme="arcade"] .timer::before,
+.screen[data-theme="arcade"] .countpad::before {
+  position: absolute;
+  top: 5px;
+  left: 8px;
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: #ff65d8;
+}
+
+.screen[data-theme="arcade"] .timer::before {
+  content: "TIME";
+}
+
+.screen[data-theme="arcade"] .timer__value {
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #b9fbff;
+  text-shadow:
+    -1px 0 #ff55d5,
+    1px 0 #19dfff,
+    0 0 8px #27e5ff,
+    0 0 18px rgba(42, 219, 255, 0.58);
+}
+
+.screen[data-theme="arcade"] .timer__state {
+  color: #8692c9;
+}
+
+.screen[data-theme="arcade"] .timer.is-running .timer__state {
+  color: #65ffae;
+  text-shadow: 0 0 8px rgba(52, 255, 151, 0.7);
+}
+
+.screen[data-theme="arcade"] .mainbtn {
+  border-width: 1px 1px 3px;
+  border-radius: 2px;
+  text-shadow: 0 0 8px currentColor;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.12), 0 3px 0 rgba(2, 0, 18, 0.72);
+}
+
+.screen[data-theme="arcade"] .mainbtn:active {
+  border-bottom-width: 1px;
+  transform: translateY(2px);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.08), 0 1px 0 rgba(2, 0, 18, 0.72);
+}
+
+.screen[data-theme="arcade"] .mainbtn--timer {
+  min-height: 42px;
+  color: #67f4ff;
+  background: linear-gradient(180deg, rgba(23, 79, 123, 0.4), rgba(4, 23, 58, 0.55));
+}
+
+.screen[data-theme="arcade"] .mainbtn--timer:hover,
+.screen[data-theme="arcade"] .mainbtn--timer.is-running {
+  background: linear-gradient(180deg, rgba(44, 139, 171, 0.48), rgba(6, 31, 72, 0.68));
+}
+
+.screen[data-theme="arcade"] .mainbtn--count {
+  min-height: 50px;
+  color: #ffe45c;
+  border-color: #ff62d5;
+  background: linear-gradient(180deg, rgba(118, 25, 113, 0.52), rgba(43, 8, 72, 0.64));
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.15),
+    0 3px 0 #250531,
+    0 0 12px rgba(255, 64, 210, 0.18);
+}
+
+.screen[data-theme="arcade"] .mainbtn--count:hover,
+.screen[data-theme="arcade"] .mainbtn--count:active {
+  background: linear-gradient(180deg, rgba(172, 33, 145, 0.62), rgba(59, 10, 90, 0.72));
+}
+
+.screen[data-theme="arcade"] .countpad {
+  min-height: 88px;
+  margin-top: 10px;
+  border-color: #ff65d8;
+  box-shadow:
+    inset 0 0 22px rgba(255, 72, 208, 0.1),
+    0 0 0 2px rgba(9, 1, 29, 0.9),
+    0 0 13px rgba(255, 64, 210, 0.25);
+}
+
+.screen[data-theme="arcade"] .countpad::before {
+  content: "SCORE";
+  color: #67f4ff;
+}
+
+.screen[data-theme="arcade"] .countpad__value {
+  font-size: 66px;
+  font-weight: 700;
+  color: #fff07a;
+  text-shadow:
+    -2px 0 #ff57cc,
+    2px 0 #40e9ff,
+    0 0 12px rgba(255, 89, 213, 0.78),
+    0 0 26px rgba(255, 224, 70, 0.36);
+}
+
+.screen[data-theme="arcade"] .subrow {
+  margin-top: 5px;
+}
+
+.screen[data-theme="arcade"] .hold {
+  border-radius: 1px;
+  color: #8894c8;
+}
+
+.screen[data-theme="arcade"] .hold--timer {
+  color: #56b9d8;
+}
+
+.screen[data-theme="arcade"] .hold--count {
+  color: #d765bc;
+}
+
+.screen[data-theme="arcade"] .hold--session {
+  color: #ff5b83;
+}
+
+.screen[data-theme="arcade"] .footer {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(103, 244, 255, 0.2);
+}
+
+.screen[data-theme="arcade"] .fly--chain {
+  padding: 4px 8px;
+  color: #fff177;
+  background: rgba(32, 2, 49, 0.9);
+  border: 1px solid #ff5bd7;
+  text-shadow: -1px 0 #ff5bd7, 1px 0 #42eeff, 0 0 15px #ff4fd4;
+  box-shadow: 0 0 14px rgba(255, 76, 214, 0.6);
+}
+
+.screen[data-theme="arcade"] .spark {
+  background: #fff177;
+  border-radius: 0;
+  box-shadow: 0 0 7px #ff57d3;
+}
+
+.screen[data-theme="arcade"] .panel-title {
+  color: #ff65d8;
+  text-shadow: 0 0 8px rgba(255, 70, 210, 0.55);
+}
+
+.screen[data-theme="arcade"] .panel-title--sub {
+  margin-top: 16px;
+}
+
+.screen[data-theme="arcade"] .stats {
+  margin-top: 12px;
+}
+
+.screen[data-theme="arcade"] .stats th,
+.screen[data-theme="arcade"] .stats td,
+.screen[data-theme="arcade"] .settings li {
+  border-bottom-color: rgba(103, 244, 255, 0.22);
+}
+
+.screen[data-theme="arcade"] .stats tbody td:nth-child(2) {
+  color: #67f4ff;
+  text-shadow: 0 0 7px rgba(45, 225, 255, 0.4);
+}
+
+.screen[data-theme="arcade"] .stats tbody td:nth-child(3) {
+  color: #ffe45c;
+  text-shadow: 0 0 7px rgba(255, 77, 210, 0.4);
+}
+
+.screen[data-theme="arcade"] .theme-picker label {
+  border-radius: 1px;
+}
+
+.screen[data-theme="arcade"] .theme-picker__input:checked + label {
+  color: #fff177;
+  background: rgba(122, 25, 125, 0.48);
+  border-color: #ff65d8;
+  text-shadow: 0 0 8px rgba(255, 85, 211, 0.8);
+  box-shadow: inset 0 0 8px rgba(255, 78, 211, 0.16), 0 0 8px rgba(255, 78, 211, 0.25);
+}
+
+.screen[data-theme="arcade"] .settings input {
+  accent-color: #ff57d3;
+}
+
+.screen[data-theme="arcade"] .danger {
+  border-radius: 1px;
+}
+
+/* ======================================================== EDITORIAL theme == */
+/* Monochrome American editorial design: display serif numerals, restrained
+   sans-serif furniture, hairline rules and generous negative space. */
+
+.screen[data-theme="editorial"] {
+  --bg-top: #fbfaf6;
+  --bg-bottom: #f4f1e9;
+  --line: rgba(17, 17, 17, 0.26);
+  --dim: #5e5c57;
+  --blue: #111111;
+  --blue-glow: transparent;
+  --orange: #111111;
+  --orange-glow: transparent;
+  --red: #7a1616;
+  --font: Arial, Helvetica, sans-serif;
+  font-family: var(--font);
+  color: #111111;
+  background:
+    linear-gradient(90deg, transparent 19px, rgba(17, 17, 17, 0.06) 19px 20px, transparent 20px),
+    linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+  box-shadow: inset 0 0 0 1px rgba(17, 17, 17, 0.15);
+}
+
+.screen[data-theme="editorial"].crt::after {
+  display: none;
+}
+
+.screen[data-theme="editorial"] .view {
+  padding: 14px 20px 16px;
+}
+
+.screen[data-theme="editorial"] .topbar {
+  min-height: 38px;
+  padding: 5px 0;
+  border-top: 2px solid #111111;
+  border-bottom: 1px solid #111111;
+}
+
+.screen[data-theme="editorial"] .view--main .topbar::before {
+  content: "COUNTER TIMER";
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  color: #111111;
+}
+
+.screen[data-theme="editorial"] .run-dot {
+  width: 6px;
+  height: 6px;
+  margin-left: 2px;
+  border-color: #111111;
+  border-radius: 0;
+}
+
+.screen[data-theme="editorial"] .run-dot.is-running {
+  border-color: #111111;
+  background: #111111;
+  box-shadow: none;
+}
+
+.screen[data-theme="editorial"] .clock {
+  padding: 2px 6px;
+  color: #111111;
+  background: transparent;
+  border-color: #111111;
+  border-radius: 0;
+}
+
+.screen[data-theme="editorial"] .clock__value {
+  color: #111111;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-shadow: none;
+}
+
+.screen[data-theme="editorial"] .clock__label,
+.screen[data-theme="editorial"] .clock__separator {
+  font-weight: 400;
+  color: #5e5c57;
+}
+
+.screen[data-theme="editorial"] .icon-btn {
+  color: #111111;
+  border-radius: 0;
+}
+
+.screen[data-theme="editorial"] .icon-btn:hover {
+  color: #111111;
+  background: #111111;
+  border-color: #111111;
+}
+
+.screen[data-theme="editorial"] .icon-btn:hover svg {
+  color: #fbfaf6;
+}
+
+.screen[data-theme="editorial"] .timer {
+  align-items: flex-start;
+  gap: 1px;
+  margin-top: 12px;
+  padding: 10px 0 11px;
+  color: #111111;
+  border: 0;
+  border-bottom: 1px solid #111111;
+  border-radius: 0;
+}
+
+.screen[data-theme="editorial"] .timer__value,
+.screen[data-theme="editorial"] .countpad__value {
+  font-family: Didot, "Bodoni MT", "Times New Roman", Georgia, serif;
+  font-weight: 400;
+  color: #111111;
+  text-shadow: none;
+}
+
+.screen[data-theme="editorial"] .timer__value {
+  font-size: 43px;
+  line-height: 0.95;
+  letter-spacing: -2.5px;
+}
+
+.screen[data-theme="editorial"] .timer__state {
+  align-self: flex-end;
+  margin-top: 4px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2.2px;
+  color: #5e5c57;
+}
+
+.screen[data-theme="editorial"] .timer.is-running .timer__state {
+  color: #111111;
+}
+
+.screen[data-theme="editorial"] .mainbtn {
+  justify-content: space-between;
+  border: 0;
+  border-bottom: 1px solid #111111;
+  border-radius: 0;
+  transition: color 120ms ease-out, background-color 120ms ease-out;
+}
+
+.screen[data-theme="editorial"] .mainbtn__icon {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 16px;
+}
+
+.screen[data-theme="editorial"] .mainbtn--timer,
+.screen[data-theme="editorial"] .mainbtn--count {
+  min-height: 38px;
+  margin-top: 5px;
+  padding: 0 3px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #111111;
+}
+
+.screen[data-theme="editorial"] .mainbtn--timer:hover,
+.screen[data-theme="editorial"] .mainbtn--timer.is-running,
+.screen[data-theme="editorial"] .mainbtn--count:hover,
+.screen[data-theme="editorial"] .mainbtn--count:active {
+  color: #fbfaf6;
+  background: #111111;
+}
+
+.screen[data-theme="editorial"] .subrow {
+  margin-top: 3px;
+}
+
+.screen[data-theme="editorial"] .hold {
+  padding: 3px 0 2px 7px;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: #5e5c57;
+  border: 0;
+  border-left: 1px solid #111111;
+  border-radius: 0;
+}
+
+.screen[data-theme="editorial"] .hold::before {
+  background: #111111;
+}
+
+.screen[data-theme="editorial"] .hold.is-holding,
+.screen[data-theme="editorial"] .hold.is-done {
+  color: #111111;
+}
+
+.screen[data-theme="editorial"] .countpad {
+  position: relative;
+  align-content: center;
+  min-height: 108px;
+  margin-top: 12px;
+  color: #111111;
+  border: 0;
+  border-bottom: 1px solid #111111;
+  border-radius: 0;
+}
+
+.screen[data-theme="editorial"] .countpad::before {
+  content: "SESSION COUNT";
+  position: absolute;
+  top: 2px;
+  left: 0;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.screen[data-theme="editorial"] .countpad::after {
+  content: "TOKUMARU LABS";
+  position: absolute;
+  right: 0;
+  bottom: 5px;
+  font-size: 7px;
+  letter-spacing: 1.3px;
+  color: #5e5c57;
+}
+
+.screen[data-theme="editorial"] .countpad__value {
+  font-size: 86px;
+  line-height: 0.8;
+  letter-spacing: -4px;
+}
+
+.screen[data-theme="editorial"] .footer {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 2px solid #111111;
+}
+
+.screen[data-theme="editorial"] .hints {
+  font-size: 7px;
+  letter-spacing: 0.6px;
+  color: #111111;
+  opacity: 0.72;
+}
+
+.screen[data-theme="editorial"] .hold--session {
+  min-width: 138px;
+  min-height: 30px;
+  padding: 2px 0 2px 8px;
+  color: #111111;
+  opacity: 0.72;
+}
+
+.screen[data-theme="editorial"] .fly {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  color: #111111;
+  text-shadow: none;
+}
+
+.screen[data-theme="editorial"] .fly--chain {
+  top: 12%;
+  padding: 3px 8px;
+  font-size: 22px;
+  color: #fbfaf6;
+  background: #111111;
+}
+
+.screen[data-theme="editorial"] .spark {
+  width: 1px;
+  height: 9px;
+  background: #111111;
+  border-radius: 0;
+}
+
+.screen[data-theme="editorial"].is-flash::before {
+  background: rgba(17, 17, 17, 0.08);
+}
+
+.screen[data-theme="editorial"] .panel-title {
+  margin-left: 7px;
+  font-family: Didot, "Bodoni MT", "Times New Roman", Georgia, serif;
+  font-size: 18px;
+  letter-spacing: -0.4px;
+  color: #111111;
+}
+
+.screen[data-theme="editorial"] .panel-title--sub {
+  margin: 15px 0 8px;
+  padding-top: 7px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  border-top: 2px solid #111111;
+}
+
+.screen[data-theme="editorial"] .stats {
+  margin-top: 12px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+}
+
+.screen[data-theme="editorial"] .stats th,
+.screen[data-theme="editorial"] .stats td {
+  padding: 6px 2px;
+  border-bottom-color: rgba(17, 17, 17, 0.34);
+}
+
+.screen[data-theme="editorial"] .stats thead th,
+.screen[data-theme="editorial"] .stats tbody th {
+  color: #5e5c57;
+}
+
+.screen[data-theme="editorial"] .stats tbody td:nth-child(2),
+.screen[data-theme="editorial"] .stats tbody td:nth-child(3) {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 13px;
+  color: #111111;
+}
+
+.screen[data-theme="editorial"] .theme-picker {
+  margin-bottom: 7px;
+}
+
+.screen[data-theme="editorial"] .theme-picker legend {
+  color: #5e5c57;
+}
+
+.screen[data-theme="editorial"] .theme-picker__options {
+  gap: 0;
+  border-top: 1px solid #111111;
+  border-bottom: 1px solid #111111;
+}
+
+.screen[data-theme="editorial"] .theme-picker label {
+  min-height: 27px;
+  color: #5e5c57;
+  border: 0;
+  border-right: 1px solid #111111;
+  border-radius: 0;
+}
+
+.screen[data-theme="editorial"] .theme-picker label:last-child {
+  border-right: 0;
+}
+
+.screen[data-theme="editorial"] .theme-picker__input:checked + label {
+  color: #fbfaf6;
+  background: #111111;
+}
+
+.screen[data-theme="editorial"] .settings li {
+  padding: 5px 2px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #4b4945;
+  border-bottom-color: rgba(17, 17, 17, 0.28);
+}
+
+.screen[data-theme="editorial"] .settings input {
+  accent-color: #111111;
+}
+
+.screen[data-theme="editorial"] .danger {
+  padding: 8px;
+  color: #111111;
+  border-color: #111111;
+  border-radius: 0;
+}
+
+.screen[data-theme="editorial"] .danger:hover {
+  color: #fbfaf6;
+  background: #111111;
 }
 
 /* --------------------------------------------------------------- a11y -- */

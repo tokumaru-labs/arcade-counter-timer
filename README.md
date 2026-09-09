@@ -7,7 +7,7 @@ small arcade machine for a fraction of a second when you hit a milestone.
 
 <img src="store-assets/source/popup-main.png" alt="The Arcade Counter Timer popup: a running timer, a large count, and START and COUNT buttons" width="300">
 
-Version 0.1.2 · by Tokumaru Labs · Chrome Extension (Manifest V3)
+Version 0.1.3 · by Tokumaru Labs · Chrome Extension (Manifest V3)
 
 ## What it does
 
@@ -31,8 +31,17 @@ rather work in silence, each one can be switched off.
 - Fly text on fast streaks (`GOOD!` → `NICE!` → `GREAT!` → `FANTASTIC!`)
 - CHAIN milestone effect on every 10th count
 - Original sound effects generated with the Web Audio API — no audio files
+- Three selectable visual themes: Original, Arcade and Editorial
+- A small local clock in the popup header
 - Settings for sound, fly text, chain effect and the subtle CRT scanlines
 - Works entirely offline, with no account
+
+## Themes
+
+Choose **Original**, **Arcade** or **Editorial** from the settings screen. The
+theme changes presentation only: the timer, counter, statistics, resets and
+milestone logic are shared across all three. The selection is stored locally
+and restored the next time the popup opens.
 
 ## Main controls
 
@@ -114,8 +123,7 @@ are toned down when the system asks for less motion.
 
 ## Install
 
-The extension is not published to the Chrome Web Store yet. To run it from
-source:
+To run the current source checkout manually:
 
 1. Open `chrome://extensions`
 2. Turn on **Developer mode**
@@ -127,9 +135,11 @@ source:
 No build step, no dependencies, no bundler. Vanilla HTML, CSS and ES modules.
 
 ```
-npm test              # 66 tests, including the popup integration path
+npm test              # 71 tests, including the popup integration path
 npm run verify        # release checks: manifest, locales, permissions, icons, no remote code
 npm run package       # build the Chrome Web Store ZIP into dist/
+npm run prepare-update # rebuild screenshots, test, verify and package the update
+npm run submission-kit # collect upload files and text in one dist/ folder
 ```
 
 Helper scripts, none of which are needed to run the extension:

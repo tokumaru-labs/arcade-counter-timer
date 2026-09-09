@@ -2,7 +2,12 @@
 
 import { addIntervalToHistory } from './time.js';
 
-export const STATE_VERSION = 1;
+export const STATE_VERSION = 2;
+export const THEMES = Object.freeze(['original', 'arcade', 'editorial']);
+
+export function normalizeTheme(value) {
+  return THEMES.includes(value) ? value : 'original';
+}
 
 export function defaultState() {
   return {
@@ -14,6 +19,7 @@ export function defaultState() {
     },
     sessionCount: 0,
     history: {},
+    theme: 'original',
     settings: {
       clock: true,
       sound: true,
@@ -66,6 +72,7 @@ export function mergeState(stored) {
     },
     sessionCount: num(stored.sessionCount, 0),
     history,
+    theme: normalizeTheme(stored.theme),
     settings: {
       clock: bool(settings.clock, base.settings.clock),
       sound: bool(settings.sound, base.settings.sound),
@@ -106,7 +113,7 @@ export function resetSession(state, now = Date.now()) {
   return resetCount(resetTimer(state, now));
 }
 
-const KEYS = ['stateVersion', 'timer', 'sessionCount', 'history', 'settings'];
+const KEYS = ['stateVersion', 'timer', 'sessionCount', 'history', 'theme', 'settings'];
 
 export async function loadState() {
   const stored = await chrome.storage.local.get(KEYS);
@@ -119,6 +126,7 @@ export async function saveState(state) {
     timer: state.timer,
     sessionCount: state.sessionCount,
     history: state.history,
+    theme: normalizeTheme(state.theme),
     settings: state.settings
   });
 }
