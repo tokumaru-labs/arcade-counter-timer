@@ -1152,6 +1152,7 @@ body {
   margin-left: 2px;
   border-color: #111111;
   border-radius: 0;
+  visibility: hidden;
 }
 
 .screen[data-theme="editorial"] .run-dot.is-running {
