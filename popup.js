@@ -2,20 +2,11 @@ import {
   formatDuration,
   formatCount,
   addIntervalToHistory,
-  addCountToHistory,
   computeStats,
-  pruneHistory,
   clampMs,
   chainLevel
 } from './src/time.js';
-import {
-  loadState,
-  saveState,
-  clearAll,
-  resetTimer,
-  resetCount,
-  resetSession
-} from './src/storage.js';
+import { request, surface } from './src/client.js';
 import { sounds, praiseForStreak, flyText, chainBurst, clearFx } from './src/effects.js';
 import { shortcutFor, isPointerActivation } from './src/input.js';
 import { createClockController } from './src/clock.js';
@@ -24,7 +15,7 @@ const STREAK_WINDOW_MS = 650;
 const SESSION_HOLD_MS = 650;
 const PART_HOLD_MS = 500;
 const TICK_MS = 250;
-const FLUSH_MS = 10000;
+
 
 const $ = (id) => document.getElementById(id);
 
@@ -54,7 +45,15 @@ const el = {
   btnReset: $('btn-reset'),
   btnResetTimer: $('btn-reset-timer'),
   btnResetCount: $('btn-reset-count'),
-  btnClear: $('btn-clear')
+  btnClear: $('btn-clear'),
+  displayMode: $('display-mode'),
+  btnOpenDisplay: $('btn-open-display'),
+  displayHint: $('display-hint'),
+  notice: $('release-notice'),
+  noticeVersion: $('notice-version'),
+  noticeText: $('notice-text'),
+  noticeClose: $('notice-close'),
+  error: $('app-error')
 };
 
 /** In-memory mirror of the stored state. */
@@ -63,7 +62,10 @@ let state = null;
 let streak = 0;
 let lastCountAt = 0;
 let tickTimer = null;
-let flushTimer = null;
+let preferences = null;
+let context = null;
+let operations = Promise.resolve();
+let noticeChecked = false;
 const clockTestHook = globalThis.__ARCADE_CLOCK_TEST__;
 
 function clearClockMotion() {
@@ -117,30 +119,28 @@ let sessionHold = null;
 
 /* ------------------------------------------------------------ persist -- */
 
-function persist() {
-  saveState(state).catch(() => {
-    /* storage failures must not break the UI */
-  });
+function reportError(error) {
+  el.error.textContent = error.message || 'Could not save. Reopen the timer and try again.';
+  el.error.hidden = false;
 }
 
-/**
- * Move the time accrued since `runStartedAt` into the day history and rebase
- * the run start. Called on open, periodically, on stop and on close so long
- * runs are attributed to the right calendar days.
- */
-function flushRun(now = Date.now()) {
-  const timer = state.timer;
-  if (!timer.running || !Number.isFinite(timer.runStartedAt)) return false;
-  const start = Math.min(timer.runStartedAt, now);
-  const delta = clampMs(now - timer.runStartedAt);
-  if (delta <= 0) {
-    timer.runStartedAt = now;
-    return false;
-  }
-  state.history = addIntervalToHistory(state.history, start, now);
-  timer.sessionElapsedMs = clampMs(timer.sessionElapsedMs) + delta;
-  timer.runStartedAt = now;
-  return true;
+function applySnapshot(snapshot) {
+  state = snapshot.state;
+  preferences = snapshot.preferences;
+  renderTimer(); renderCount(); renderTheme(); renderSettings();
+  if (statsVisible()) renderStats();
+  el.displayMode.value = preferences.mode;
+}
+
+function perform(action, extra = {}) {
+  const result = operations.then(async () => {
+    const snapshot = await request(action, extra);
+    applySnapshot(snapshot);
+    el.error.hidden = true;
+    return snapshot;
+  });
+  operations = result.catch(reportError);
+  return result;
 }
 
 /* ------------------------------------------------------------- render -- */
@@ -151,7 +151,9 @@ function renderTimer() {
   const live = timer.running && Number.isFinite(timer.runStartedAt)
     ? timer.sessionElapsedMs + clampMs(Date.now() - timer.runStartedAt)
     : timer.sessionElapsedMs;
-  el.timerValue.textContent = formatDuration(live);
+  const text = formatDuration(live);
+  el.timerValue.textContent = text;
+  el.timerValue.style.setProperty('--digits', String(text.length));
   renderTimerControls();
 }
 
@@ -193,7 +195,10 @@ function renderSettings() {
 }
 
 function renderStats() {
-  const stats = computeStats(state.history, new Date());
+  const history = state.timer.running
+    ? addIntervalToHistory(state.history, Math.min(state.timer.runStartedAt, Date.now()), Date.now())
+    : state.history;
+  const stats = computeStats(history, new Date());
   for (const key of ['today', 'week', 'month', 'year']) {
     $(`stat-${key}-time`).textContent = formatDuration(stats[key].timeMs);
     $(`stat-${key}-count`).textContent = formatCount(stats[key].count);
@@ -206,33 +211,22 @@ function announce(message) {
 
 /* -------------------------------------------------------------- timer -- */
 
-function toggleTimer() {
-  const now = Date.now();
-  if (state.timer.running) {
-    flushRun(now);
-    state.timer.running = false;
-    state.timer.runStartedAt = null;
-  } else {
-    state.timer.running = true;
-    state.timer.runStartedAt = now;
-  }
-  persist();
-  renderTimer();
-  if (state.settings.sound) sounds.toggle(state.timer.running);
-  announce(state.timer.running ? 'Timer started' : 'Timer stopped');
+async function toggleTimer() {
+  try {
+    await perform('toggle');
+    if (state.settings.sound) sounds.toggle(state.timer.running);
+    announce(state.timer.running ? 'Timer started' : 'Timer stopped');
+  } catch { /* perform reports storage failures without pretending to save. */ }
 }
 
 /* ------------------------------------------------------------- counter -- */
 
-function addCount() {
+async function addCount() {
   const now = Date.now();
   streak = now - lastCountAt <= STREAK_WINDOW_MS ? streak + 1 : 1;
   lastCountAt = now;
 
-  state.sessionCount += 1;
-  state.history = addCountToHistory(state.history, new Date(now), 1);
-  persist();
-  renderCount();
+  try { await perform('count'); } catch { return; }
 
   el.countValue.classList.remove('is-bump');
   void el.countValue.offsetWidth; // restart the animation
@@ -270,30 +264,26 @@ function clearEphemeral() {
 }
 
 function finishReset(button, message) {
-  persist();
-  renderTimer();
-  renderCount();
   button.classList.add('is-done');
   setTimeout(() => button.classList.remove('is-done'), 560);
   announce(message);
 }
 
-function doResetTimer() {
-  // resetTimer() folds the in-flight run into the day history itself.
-  state = resetTimer(state, Date.now());
+async function doResetTimer() {
+  try { await perform('resetTimer'); } catch { return; }
   if (state.settings.sound) sounds.reset(false);
   finishReset(el.btnResetTimer, 'Timer reset. Count and statistics kept.');
 }
 
-function doResetCount() {
-  state = resetCount(state);
+async function doResetCount() {
+  try { await perform('resetCount'); } catch { return; }
   clearEphemeral();
   if (state.settings.sound) sounds.clear();
   finishReset(el.btnResetCount, 'Count reset. Timer and statistics kept.');
 }
 
-function doResetSession() {
-  state = resetSession(state, Date.now());
+async function doResetSession() {
+  try { await perform('resetSession'); } catch { return; }
   clearEphemeral();
   if (state.settings.sound) sounds.reset(true);
   finishReset(el.btnReset, 'Session reset. Statistics kept.');
@@ -383,8 +373,6 @@ function statsVisible() {
 }
 
 function showStats() {
-  flushRun();
-  persist();
   renderStats();
   el.viewMain.hidden = true;
   el.viewStats.hidden = false;
@@ -395,6 +383,7 @@ function showMain() {
   el.viewStats.hidden = true;
   el.viewMain.hidden = false;
   el.btnSettings.focus();
+  maybeShowNotice();
 }
 
 /* ------------------------------------------------------------- events -- */
@@ -415,39 +404,30 @@ function bindEvents() {
 
   for (const input of document.querySelectorAll('[data-setting]')) {
     input.addEventListener('change', () => {
-      state.settings[input.dataset.setting] = input.checked;
-      persist();
-      renderSettings();
+      perform('setting', { key: input.dataset.setting, value: input.checked }).catch(() => renderSettings());
     });
   }
-
   for (const input of document.querySelectorAll('[data-theme-option]')) {
     input.addEventListener('change', () => {
-      if (!input.checked) return;
-      state.theme = input.value;
-      persist();
-      renderTheme();
-      announce(`${input.value} theme selected`);
+      if (input.checked) perform('theme', { value: input.value }).catch(() => renderTheme());
     });
   }
-
   el.btnClear.addEventListener('click', async () => {
-    if (!window.confirm('Clear all data? Timer, count, history and settings reset.')) return;
-    state = await clearAll();
-    clearEphemeral();
-    renderTheme();
-    renderTimer();
-    renderCount();
-    renderSettings();
-    renderStats();
-    announce('All data cleared');
+    if (!window.confirm('Clear all data? Timer, count, history, the upgrade backup and settings reset.')) return;
+    try { await perform('clear'); clearEphemeral(); announce('All data cleared'); } catch { /* reported */ }
   });
+  el.displayMode.addEventListener('change', () => {
+    perform('preferences', { value: { mode: el.displayMode.value } }).catch(() => {});
+  });
+  el.btnOpenDisplay.addEventListener('click', openSelectedView);
+  el.noticeClose.addEventListener('click', () => { el.notice.hidden = true; });
+  document.addEventListener('visibilitychange', maybeShowNotice);
+  chrome.storage.onChanged.addListener(onStorageChanged);
 
   document.addEventListener('keydown', onKeyDown);
   document.addEventListener('keyup', onKeyUp);
 
   window.addEventListener('pagehide', () => {
-    if (flushRun()) persist();
     clockController.dispose();
   });
 }
@@ -473,34 +453,72 @@ function onKeyUp(e) {
   if ((e.key === 'r' || e.key === 'R') && sessionHold) sessionHold.cancel();
 }
 
+async function maybeShowNotice() {
+  if (noticeChecked || !state || statsVisible() || document.visibilityState === 'hidden') return;
+  noticeChecked = true;
+  try {
+    const notice = await request('claimNotice');
+    if (!notice) return;
+    const japanese = chrome.i18n.getUILanguage().startsWith('ja');
+    el.noticeVersion.textContent = `v${notice.version}`;
+    el.noticeText.textContent = notice.notes.map((note) => note[japanese ? 'ja' : 'en']).join(' / ');
+    el.notice.hidden = false;
+  } catch (error) { noticeChecked = false; reportError(error); }
+}
+
+async function openSelectedView() {
+  const mode = el.displayMode.value;
+  try {
+    // Start this API call synchronously within the button's user gesture.
+    const opening = mode === 'sidepanel' ? chrome.sidePanel.open({ windowId: context.windowId }) : null;
+    if (opening) await opening;
+    await perform('preferences', { value: { mode } });
+    if (mode === 'floating') await request('openFloating');
+    if (mode === 'popup') {
+      if (surface !== 'popup' && chrome.action.openPopup) {
+        await chrome.action.openPopup();
+        await request('leaveSurface', { surface });
+        return;
+      }
+      el.displayHint.textContent = 'Saved. Click the toolbar icon to open the popup.';
+      return;
+    }
+    if (surface !== mode) {
+      if (surface === 'popup') window.close();
+      else await request('leaveSurface', { surface });
+    }
+  } catch (error) { reportError(error); }
+}
+
+function onStorageChanged(changes, area) {
+  if (area === 'local' && ['timer', 'sessionCount', 'history', 'theme', 'settings', 'displayPreferences'].some((key) => key in changes)) {
+    perform('get').catch(() => {});
+  }
+}
+
 /* ---------------------------------------------------------------- boot -- */
-
 async function init() {
-  state = await loadState();
-
-  // Attribute anything that elapsed while the popup was closed, then tidy up.
-  const changed = flushRun();
-  const pruned = pruneHistory(state.history, new Date());
-  const prunedAny = Object.keys(pruned).length !== Object.keys(state.history).length;
-  state.history = pruned;
-  if (changed || prunedAny) persist();
-
-  renderTheme();
-  renderSettings();
-  renderTimer();
-  renderCount();
+  if (document.body) document.body.dataset.surface = surface;
+  const result = await request('get');
+  context = await request('context');
+  await request('prepareSidepanel');
+  applySnapshot(result);
   bindEvents();
-
-  tickTimer = setInterval(renderTimer, TICK_MS);
-  flushTimer = setInterval(() => {
-    if (flushRun()) persist();
-  }, FLUSH_MS);
+  el.screen.removeAttribute('inert');
+  tickTimer = setInterval(() => { renderTimer(); if (statsVisible()) renderStats(); }, TICK_MS);
+  maybeShowNotice();
+  const error = new URLSearchParams(globalThis.location?.search || '').get('error');
+  if (error) {
+    reportError(new Error(error));
+    // Restore the preferred action after opening a failure explanation.
+    request('preferences', { value: {} }).catch(reportError);
+  }
 }
 
 window.addEventListener('unload', () => {
   clearInterval(tickTimer);
-  clearInterval(flushTimer);
   clockController.dispose();
+  chrome.storage.onChanged.removeListener(onStorageChanged);
 });
 
-init();
+init().catch(reportError);

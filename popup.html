@@ -2,11 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Arcade Counter Timer</title>
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <div id="screen" class="screen">
+    <div id="screen" class="screen" inert>
       <!-- ------------------------------------------------------ main -- -->
       <main id="view-main" class="view view--main">
         <header class="topbar">
@@ -98,6 +99,11 @@
             <span class="hold__label">RESET COUNT</span>
           </button>
         </div>
+
+        <aside id="release-notice" class="release-notice" role="status" aria-live="polite" hidden>
+          <div class="release-notice__heading"><span>NEW FEATURE</span><span id="notice-version"></span><button id="notice-close" type="button" aria-label="Dismiss update notice">×</button></div>
+          <p id="notice-text"></p>
+        </aside>
 
         <p id="live-region" class="visually-hidden" role="status" aria-live="polite"></p>
 
@@ -195,6 +201,16 @@
             <label for="theme-editorial">EDITORIAL</label>
           </div>
         </fieldset>
+        <fieldset class="display-picker">
+          <legend>DISPLAY MODE</legend>
+          <select id="display-mode" aria-label="Display mode">
+            <option value="popup">POPUP / ポップアップ</option>
+            <option value="floating">FLOATING / 自由配置</option>
+            <option value="sidepanel">SIDE PANEL / サイドパネル</option>
+          </select>
+          <button id="btn-open-display" type="button">OPEN SELECTED VIEW</button>
+          <p id="display-hint">Your timer and statistics stay with you.</p>
+        </fieldset>
         <ul class="settings">
           <li>
             <label for="set-clock">CLOCK</label>
@@ -224,6 +240,7 @@
       </section>
     </div>
 
+    <p id="app-error" role="alert" hidden></p>
     <script type="module" src="popup.js"></script>
   </body>
 </html>

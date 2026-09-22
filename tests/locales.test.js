@@ -21,13 +21,16 @@ test('the manifest refers to localized strings instead of literals', () => {
   assert.equal(manifest.action.default_title, '__MSG_extensionName__');
 });
 
-test('the manifest keeps its version, popup and single permission', () => {
+test('the manifest declares only the permissions required for the three surfaces', () => {
   const manifest = readJson('manifest.json');
 
   assert.equal(manifest.manifest_version, 3);
-  assert.equal(manifest.version, '0.1.3');
+  assert.equal(manifest.version, '0.2.0');
   assert.equal(manifest.action.default_popup, 'popup.html');
-  assert.deepEqual(manifest.permissions, ['storage']);
+  assert.deepEqual(manifest.permissions, ['storage', 'activeTab', 'scripting', 'sidePanel']);
+  assert.equal(manifest.host_permissions, undefined);
+  assert.equal(manifest.content_scripts, undefined);
+  assert.equal(manifest.externally_connectable, undefined);
 });
 
 for (const locale of LOCALES) {

@@ -2,81 +2,60 @@ English | [日本語](PRIVACY_JA.md)
 
 # Privacy Policy — Arcade Counter Timer
 
-**Last updated: 2026-09-09**
-**Applies to: Arcade Counter Timer 0.1.3, by Tokumaru Labs**
+**Last updated: 2026-09-22**
+**Applies to: Arcade Counter Timer 0.2.0, by Tokumaru Labs (release candidate)**
 
-## Summary
+The extension has no server, accounts, analytics, advertising, cloud sync or
+remote code. It does not transmit data to any service.
 
-Arcade Counter Timer does not collect anything. It has no server, makes no
-network requests, and has no way to send your data anywhere. Everything it
-remembers is stored by Chrome on your own device.
+## Local records
 
-## What is stored, and where
+`chrome.storage.local` stores the timer state, session count, daily time/count
+history, selected theme, clock/sound/effect settings, preferred display mode,
+floating coordinates, size/lock preferences and the pending/seen release notice.
+When updating to 0.2.0, it also saves one local copy of the previous timer,
+statistics and settings. These records stay in the same browser profile.
 
-The extension stores the following in `chrome.storage.local`, the local storage
-area Chrome provides to extensions on your device:
+`chrome.storage.session` temporarily stores an internal grant for each floating
+view (tab identifier and a random token). It binds the inserted view to its tab,
+is not a user identifier, and is cleared when the browser restarts.
 
-| Data | Purpose |
-| --- | --- |
-| Timer state (running flag, elapsed milliseconds, start timestamp) | So the timer keeps running while the popup is closed and after a browser restart |
-| Session count | So the current count survives closing the popup |
-| Daily history (`{ "YYYY-MM-DD": { timeMs, count } }`) | To show TODAY / WEEK / MONTH / YEAR statistics |
-| Selected theme (Original, Arcade or Editorial) | To restore your preferred presentation |
-| Settings (clock, sound, fly text, chain effect, CRT effect) | To remember your preferences |
+Normal same-ID extension updates retain local data. Version 0.2.0 does not
+automatically prune old daily history. Data pruned by older versions cannot be
+reconstructed by this update.
 
-That is the complete list. Nothing else is recorded.
+## Permissions and page access
 
-## What is not done
+- `storage`: remember the records above locally.
+- `activeTab`: temporary access to the tab where you invoke the extension.
+- `scripting`: insert the floating timer UI in that permitted tab.
+- `sidePanel`: display the timer in the browser side panel.
 
-- **No transmission.** The extension makes no network requests of any kind. It
-  contains no remote code, no external scripts, fonts, or media, and no CDN
-  references.
-- **No accounts.** There is no sign-in, and no user identifier is created.
-- **No personal information.** Names, email addresses, location, browsing
-  history, page content and similar data are never accessed or stored.
-- **No analytics or telemetry.** Usage is not measured or reported.
-- **No advertising.**
-- **No selling or sharing.** Since no data leaves your device, there is nothing
-  to sell, share, or transfer to any third party.
-- **No cloud sync.** `chrome.storage.sync` is not used; data stays on the
-  device where it was created.
+There are no persistent host permissions or automatic scripts on every site.
+The injected script appends its own timer container and reads viewport dimensions
+for positioning. It does not extract the webpage's text, forms or browsing
+history. Browser-provided tab metadata is used only to place/open the timer;
+page URLs and titles are not stored. The embedded view is an extension page,
+and unauthorized embeddings cannot read or change timer data through its worker.
 
-## Permissions
+Packaged view assets are web-accessible using dynamic extension URLs so the
+injected iframe can load them. This does not grant access to website contents.
 
-The extension requests exactly one permission:
+## Your control
 
-- **`storage`** — to save the timer state, session count, daily history,
-  selected theme and settings locally, so they are still there after the popup
-  closes or the browser restarts.
+- Session/timer/count resets retain historical totals and settings.
+- Confirmed **CLEAR ALL DATA** clears the timer, count, statistics, settings,
+  display preferences and upgrade snapshot. A release-notice receipt is retained
+  so clearing statistics does not replay an announcement.
+- Uninstalling the extension removes its local data. Update the existing
+  extension instead of uninstalling/reinstalling if you want to keep records.
 
-It requests no host permissions, and it uses no content scripts and no
-background service worker, so it has no access to the pages you visit.
+No names, email addresses, location, webpage content or browsing history are
+collected, sold or shared, for users of any age.
 
-## Your control over the data
+## Changes and contact
 
-- **Clear it from inside the extension.** Open the gear icon and use
-  **CLEAR ALL DATA**. After the confirmation dialog, the timer, session count,
-  daily history, selected theme and settings are all returned to their defaults.
-- **Clear it by uninstalling.** Removing the extension from Chrome also removes
-  the local data Chrome maintains for it.
-
-## Children
-
-The extension is a timer and counter. It collects no data at all, from anyone,
-regardless of age.
-
-## Changes to this policy
-
-If this policy changes, the updated version will be published in the extension's
-public source repository and the "Last updated" date above will change.
-
-## Contact
-
-Questions about this policy are handled through the project's GitHub Issues page:
-
-https://github.com/tokumaru-labs/arcade-counter-timer/issues
-
-Please do not include personal information in an issue — it is a public page.
-For suspected security problems, follow
-[SECURITY.md](https://github.com/tokumaru-labs/arcade-counter-timer/blob/main/SECURITY.md)
-instead.
+Policy changes are published in this repository with an updated date.
+Questions: https://github.com/tokumaru-labs/arcade-counter-timer/issues
+Do not post private information in public issues. For security reports follow
+[SECURITY.md](SECURITY.md).

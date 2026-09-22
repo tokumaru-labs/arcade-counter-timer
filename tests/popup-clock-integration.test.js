@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { createStore } from '../src/controller.js';
+const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 class FakeClassList {
   values = new Set();
@@ -75,6 +77,8 @@ class FakeElement {
     this.attributes.set(name, String(value));
   }
 
+  removeAttribute(name) { this.attributes.delete(name); }
+
   focus() {}
   blur() {}
   replaceChildren() {}
@@ -144,6 +148,7 @@ test('the production START/STOP path leaves the real-world clock loop active', a
   };
   globalThis.chrome = {
     storage: {
+      onChanged: { addListener() {}, removeListener() {} },
       local: {
         async get(keys) {
           return Object.fromEntries(keys.filter((key) => key in stored).map((key) => [key, stored[key]]));
@@ -157,6 +162,15 @@ test('the production START/STOP path leaves the real-world clock loop active', a
       }
     }
   };
+  const store = createStore(globalThis.chrome.storage.local);
+  globalThis.chrome.runtime = {
+    async sendMessage(message) {
+      if (message.action === 'context') return { ok: true, value: { windowId: 1 } };
+      if (message.action === 'prepareSidepanel') return { ok: true };
+      return { ok: true, value: await store.dispatch(message) };
+    }
+  };
+  globalThis.chrome.i18n = { getUILanguage: () => 'en' };
   globalThis.setInterval = (callback, delay) => {
     const id = nextIntervalId++;
     intervals.set(id, { callback, delay });
@@ -177,8 +191,10 @@ test('the production START/STOP path leaves the real-world clock loop active', a
 
     const startStop = element('btn-start-stop');
     startStop.click();
+    await flush();
     assert.equal(stored.timer.running, true, 'actual popup START path should run');
     startStop.click();
+    await flush();
     assert.equal(stored.timer.running, false, 'actual popup STOP path should run');
     assert.ok(clockInterval(), 'STOP must not clear the clock interval');
 
@@ -193,6 +209,7 @@ test('the production START/STOP path leaves the real-world clock loop active', a
     const clockInput = element('set-clock');
     clockInput.checked = false;
     clockInput.dispatch('change');
+    await flush();
     assert.equal(clockInterval(), undefined, 'CLOCK=OFF must clear its interval');
     assert.equal(element('clock').hidden, true);
     assert.equal(element('clock').dataset.motion, 'none');
@@ -201,6 +218,7 @@ test('the production START/STOP path leaves the real-world clock loop active', a
     clockInput.checked = true;
     clockInput.dispatch('change');
     clockInput.dispatch('change');
+    await flush();
     assert.equal([...intervals.values()].filter(({ delay }) => delay === 1000).length, 1);
     assert.equal(globalThis.__ARCADE_CLOCK_TEST__.isRunning(), true);
 

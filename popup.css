@@ -1525,3 +1525,47 @@ body {
     }
   }
 }
+
+
+/* Responsive extension surfaces. The popup retains its established size. */
+body[data-surface="sidepanel"], body[data-surface="floating"] { width: 100vw; height: 100vh; }
+.view--stats { overflow-y: auto; }
+.view > * { flex-shrink: 0; }
+.view--main .countpad { flex-shrink: 1; }
+.display-picker { border: 1px solid var(--line); padding: 9px; margin: 0 0 10px; }
+.display-picker legend { color: var(--dim); font-size: 9px; letter-spacing: 1px; }
+.display-picker select, .display-picker button { width: 100%; padding: 8px; font: 11px var(--font); color: var(--blue); background: var(--bg-top); border: 1px solid var(--line); border-radius: 3px; }
+.display-picker button { margin-top: 6px; cursor: pointer; }
+.display-picker p { font-size: 10px; line-height: 1.5; margin: 6px 0 0; color: var(--dim); }
+.view--stats .danger { margin-top: 14px; }
+.screen[data-theme] .timer__value { max-width: 100%; font-size: min(40px, calc((100vw - 44px) / (var(--digits, 8) * .65))); }
+#app-error { position: fixed; z-index: 100; bottom: 0; left: 0; right: 0; margin: 0; padding: 10px; color: #ffe6bb; background: #31141a; font: 12px/1.5 var(--font); border-top: 1px solid #cf6c62; }
+[hidden] { display: none !important; }
+
+/* A single, quiet terminal transmission; no looping marquee or sound. */
+.release-notice { --news: #a9f3a2; position: relative; flex-shrink: 0; overflow: hidden; margin: 8px 0 0; padding: 8px 10px; color: var(--news); background: #05130e; border: 1px solid #558465; border-radius: 3px; font: 10px/1.5 var(--font); background-image: radial-gradient(#81d18b20 0.6px, transparent 0.8px); background-size: 3px 3px; }
+.release-notice::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(transparent, #ceffc52a, transparent); transform: translateY(-100%); animation: notice-scan 950ms ease-out 1; }
+.release-notice__heading { display: flex; align-items: center; gap: 8px; font-size: 9px; letter-spacing: 1px; }
+.release-notice__heading span:first-child::before { content: '▸ '; }
+.release-notice__heading button { margin-left: auto; min-width: 24px; min-height: 24px; padding: 0; font: 17px var(--font); color: inherit; border: 0; background: transparent; cursor: pointer; }
+.release-notice p { margin: 3px 0 0; overflow-wrap: anywhere; }
+.screen[data-theme="arcade"] .release-notice { --news: #67f4ff; border-color: #cd59ce; background-color: #0b0726; text-shadow: 0 0 4px #67f4ff40; }
+.screen[data-theme="editorial"] .release-notice { --news: #664624; color: var(--news); border-color: #bba17e; background-color: #eee6d9; background-image: none; text-shadow: none; }
+@keyframes notice-scan { to { transform: translateY(100%); } }
+@media (prefers-reduced-motion: reduce) { .release-notice::after { animation: none; } }
+@media (max-width: 310px), (max-height: 470px) {
+  body[data-surface] .screen .view { padding: 9px 12px; }
+  body[data-surface] .screen .topbar { min-height: 28px; }
+  body[data-surface] .screen .view--main .topbar::before { display: none; }
+  body[data-surface] .screen .timer { margin-top: 6px; padding: 13px 5px 7px; }
+  body[data-surface] .screen .timer__value { font-size: min(29px, calc((100vw - 36px) / (var(--digits, 8) * .68))); }
+  body[data-surface] .screen .mainbtn { margin-top: 6px; min-height: 34px; font-size: 12px; letter-spacing: 2px; }
+  body[data-surface] .screen .countpad { min-height: 45px; margin-top: 6px; }
+  body[data-surface] .screen .countpad__value { font-size: 42px; }
+  body[data-surface] .screen .subrow { margin-top: 3px; }
+  body[data-surface] .screen .footer { margin-top: 7px; padding-top: 6px; }
+  body[data-surface] .screen .hints { display: none; }
+  body[data-surface] .screen .hold--session { margin-left: auto; }
+  .release-notice { padding: 5px 7px; margin-top: 5px; }
+}
+@media (max-height: 380px) { .view--main { overflow-y: auto; } }
