@@ -19,7 +19,25 @@ Arcade Counter Timer provides a local count-up timer and tally counter with opti
 **`storage`**
 
 ```
-The storage permission is used to save timer state, session count, daily history, selected theme, and user settings locally so they remain available after the popup closes or the browser restarts.
+The storage permission saves timer state, session count, daily history, theme, settings, display preferences, upgrade backup and one-time notice receipts on the device. Session storage temporarily holds tab-bound grants for floating views. No data is sent to a server.
+```
+
+**`activeTab`**
+
+```
+Temporary access to the tab where the user invokes the extension is needed to display the floating timer. It is used only after user interaction, with no persistent access to all sites. The extension does not extract page text, form contents or browsing history.
+```
+
+**`scripting`**
+
+```
+Injects packaged code that inserts the floating timer into the user-authorized tab. The code creates only the timer container, handles its drag/size/lock controls and reads viewport dimensions for positioning. It does not collect the webpage's contents or load remote code.
+```
+
+**`sidePanel`**
+
+```
+Displays the same timer, tally counter and local statistics in Chrome's native side panel when the user selects that display mode.
 ```
 
 **Host permissions** — none requested, so no justification is required. If the
@@ -31,7 +49,7 @@ Dashboard asks anyway, state that the extension requests no host permissions.
 No. The extension does not use remote code.
 ```
 
-All logic ships inside the package: `popup.js` and the modules in `src/`. There
+All logic ships inside the package: `background.js`, `popup.js` and the modules in `src/`. There
 is no `eval`, no `new Function`, no external `<script>`, no CDN, no external
 fonts, and no dynamic import of anything fetched at runtime.
 
@@ -45,13 +63,15 @@ fonts, and no dynamic import of anything fetched at runtime.
 | Authentication information | **No** | No sign-in of any kind |
 | Personal communications | **No** | No access to messages or mail |
 | Location | **No** | No geolocation API use, no IP handling |
-| Web history | **No** | No `tabs`, `history` or host permissions |
-| User activity (clicks, keystrokes, mouse position) | **No external collection** | Key and click input drives the timer and counter in the popup and is not recorded or transmitted |
-| Website content (text, images, page data) | **No** | No content scripts and no host permissions, so page content is unreachable |
+| Web history | **No** | Temporary activeTab metadata is used only to place the timer; page URLs/titles are not stored or transmitted |
+| User activity (clicks, keystrokes, mouse position) | **No external collection** | Timer inputs update local totals; dragging saves only the timer position. General browsing activity is not recorded or transmitted |
+| Website content (text, images, page data) | **No** | User-triggered injected code positions its own UI and does not extract webpage text, forms or other content |
 
-The only data that exists at all is the extension's own state — timer values,
-session count, daily history, selected theme and settings — written to
-`chrome.storage.local` on the user's device.
+The extension stores its own timer values, session count, daily history, theme,
+settings, display preferences, upgrade backup and notice receipts in local
+storage. Temporary tab-bound floating-view grants are held in session storage.
+Both are on the user's device. No user data is transmitted or collected by the
+developer. Read the live Dashboard labels before applying these declarations.
 
 ## Data handling certifications
 

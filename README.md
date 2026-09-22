@@ -186,7 +186,7 @@ test dependency.
 Everything happens on your machine. See [PRIVACY.md](PRIVACY.md) for the full
 statement.
 
-- **Permissions:** `storage`, and nothing else
+- **Permissions:** `storage`, `activeTab`, `scripting` and `sidePanel`
 - No persistent host permissions; user-requested floating UI and a local state worker
 - No network requests, no analytics, no ads, no account, no cloud sync
 - Timer state, session count, daily history and settings live in
@@ -198,7 +198,7 @@ statement.
 - One timer and one counter — no named tasks or multiple counters
 - Statistics are numbers only; no graphs or export
 - Time that elapses while the popup is closed is credited to the correct days,
-  but written to storage the next time the popup is opened
+  but written to storage with the next timer, count or settings change
 - If the system clock jumps backwards, the affected interval counts as zero
 - Only the extension name and description are localized (English and Japanese);
   the popup interface itself is English only

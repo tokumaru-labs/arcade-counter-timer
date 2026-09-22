@@ -1,7 +1,7 @@
 # Chrome Web Store listing — en-US
 
 Copy each field below into the corresponding box in the Developer Dashboard.
-Nothing here describes a feature that is not in 0.1.3.
+This listing describes version 0.2.0.
 
 ---
 
@@ -37,7 +37,13 @@ English (United States). A Japanese listing is prepared in `ja.md`.
 ## Detailed description
 
 ```
-Arcade Counter Timer is a count-up timer and a tally counter in one small popup. It stays quiet while you work, and turns into a little arcade machine for a fraction of a second when you hit a milestone.
+Arcade Counter Timer combines a count-up timer and a tally counter. Choose a toolbar popup, a draggable timer on a web page, or Chrome's side panel. It stays quiet while you work and celebrates milestones with brief arcade-style feedback.
+
+CHOOSE YOUR PLACEMENT
+Open settings with the gear icon and select POPUP, FLOATING or SIDE PANEL. The floating timer supports dragging, position memory, compact/full size and a position lock. To place it on a new page, click the extension icon on that page. Chrome settings, the Web Store and other protected pages do not support floating placement. Keyboard shortcuts apply while the timer itself has focus.
+
+UPDATES THAT KEEP YOUR RECORDS
+Normal updates to this same extension keep your statistics and settings. Version 0.2.0 also keeps a local pre-update snapshot and stops automatically deleting older daily history. After a version upgrade, a themed NEW FEATURE strip appears once below COUNT. It does not appear on fresh installation or each reopening. Uninstalling removes local data; update the existing extension to keep your records.
 
 TIMER
 Press START to begin and STOP to pause. The time is shown as HH:MM:SS and stays correct past 100 hours. The timer keeps running while the popup is closed and after you restart the browser, because elapsed time is calculated from a saved timestamp rather than from a running script. An optional small clock in the header shows the current local time.
@@ -64,7 +70,7 @@ KEYBOARD
 Enter starts and stops the timer. Space adds a count. Holding R resets the session. Escape returns from the statistics screen.
 
 PRIVACY
-Arcade Counter Timer works entirely on your device. It requests one permission, storage, and no host permissions. It has no content scripts and no background service worker, so it cannot see the pages you visit. It makes no network requests, includes no remote code, and has no account, no advertising, no analytics and no cloud sync. Your timer state, count, daily history and settings are kept in local extension storage and never leave your computer.
+Arcade Counter Timer works entirely on your device. It uses storage to save your records, activeTab and scripting to insert the floating timer only when you invoke it, and sidePanel for the native side panel. It has no persistent host permissions. The inserted code positions its own UI; it does not extract webpage text, forms or browsing history. A local background worker keeps open views in sync. No network requests, remote code, accounts, advertising, analytics or cloud sync are used. Your records stay in local extension storage.
 
 Free and open source, licensed under GPL-3.0-only.
 ```
@@ -94,7 +100,7 @@ Free and open source, licensed under GPL-3.0-only.
 | Esc | Leave the statistics screen |
 
 The extension does not register any browser-level command shortcuts; these keys
-work inside the popup only.
+work while the timer view has focus, in any of its three display modes.
 
 ---
 
@@ -110,8 +116,10 @@ Arcade Counter Timer provides a local count-up timer and tally counter with opti
 The storage permission is used to save timer state, session count, daily history, selected theme, and user settings locally so they remain available after the popup closes or the browser restarts.
 ```
 
-No other permission is requested. There are no host permissions, no optional
-permissions, no content scripts and no background service worker.
+Version 0.2.0 also requests activeTab, scripting and sidePanel. Copy their
+separate justifications from `privacy-declarations.md`. No persistent host
+permissions or automatically running content scripts are requested. A packaged
+background service worker serializes local writes across views.
 
 ## Remote code
 

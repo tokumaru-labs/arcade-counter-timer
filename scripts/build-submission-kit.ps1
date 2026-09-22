@@ -29,7 +29,7 @@ $files = @(
     @{ Source = Join-Path $root 'store-assets/store-icon-128.png'; Name = 'store-icon-128.png' },
     @{ Source = Join-Path $root 'store-assets/small-promo-440x280.png'; Name = 'small-promo-440x280.png' },
     @{ Source = Join-Path $root 'store-assets/marquee-promo-1400x560.png'; Name = 'marquee-promo-1400x560.png' },
-    @{ Source = Join-Path $root 'store-listing/update-v0.1.3.md'; Name = 'README-FIRST.md' },
+    @{ Source = Join-Path $root "store-listing/update-v$version.md"; Name = 'README-FIRST.md' },
     @{ Source = Join-Path $root 'store-listing/en-US.md'; Name = 'listing-en-US.md' },
     @{ Source = Join-Path $root 'store-listing/ja.md'; Name = 'listing-ja.md' },
     @{ Source = Join-Path $root 'store-listing/privacy-declarations.md'; Name = 'privacy-declarations.md' },

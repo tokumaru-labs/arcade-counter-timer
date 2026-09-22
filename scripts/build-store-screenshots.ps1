@@ -30,9 +30,9 @@ $shots = @(
         Source  = Join-Path $srcDir 'popup-main.png'
         Out     = Join-Path $outDir 'screenshot-main-1280x800.png'
         Title   = 'Arcade Counter Timer'
-        Copy    = 'A timer and counter that rewards your rhythm.'
-        Details = @('Count-up timer that keeps running when the popup closes',
-                    'One press, one count', 'Brief milestone effects, all switchable')
+        Copy    = 'A little momentum for everyday work.'
+        Details = @('Popup, floating view or side panel',
+                    'One press, one count', 'Your timer keeps running when closed')
     },
     @{
         Source  = Join-Path $srcDir 'popup-arcade-main.png'
@@ -40,15 +40,15 @@ $shots = @(
         Title   = 'Built for momentum'
         Copy    = 'ARCADE turns rhythm into neon.'
         Details = @('Same controls in a bolder presentation',
-                    'Theme selection stays on your device', 'No account and no tracking')
+                    'Updates introduce new features once', 'No account and no tracking')
     },
     @{
         Source  = Join-Path $srcDir 'popup-editorial-main.png'
         Out     = Join-Path $outDir 'screenshot-editorial-1280x800.png'
         Title   = 'Focus, stripped back'
         Copy    = 'EDITORIAL keeps every control clear.'
-        Details = @('High-contrast black and white presentation',
-                    'Same statistics, resets and milestone logic', 'Switch themes at any time')
+        Details = @('A clear, black and white theme',
+                    'Same controls, statistics and effects', 'Switch themes at any time')
     },
     @{
         Source  = Join-Path $srcDir 'popup-stats.png'
@@ -56,7 +56,7 @@ $shots = @(
         Title   = 'Your totals, kept local'
         Copy    = 'Local statistics. No account. No tracking.'
         Details = @('TODAY, WEEK, MONTH and YEAR at a glance',
-                    'Derived from one local daily history', 'Permissions: storage only')
+                    'Derived from one local daily history', 'Keep your history across updates')
     }
 )
 
@@ -93,7 +93,7 @@ foreach ($shot in $shots) {
             throw "Unexpected source size for $($shot.Source): $($popup.Width)x$($popup.Height), expected 360x540"
         }
 
-        $canvas = New-Object System.Drawing.Bitmap($WIDTH, $HEIGHT, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+        $canvas = New-Object System.Drawing.Bitmap($WIDTH, $HEIGHT, [System.Drawing.Imaging.PixelFormat]::Format24bppRgb)
         $g = [System.Drawing.Graphics]::FromImage($canvas)
         $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
         $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic

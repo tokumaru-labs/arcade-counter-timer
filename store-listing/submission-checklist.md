@@ -9,15 +9,16 @@ the declarations and the final "Submit for review" are all manual.**
 - [ ] `npm test` passes
 - [ ] `npm run verify` passes
 - [ ] `npm run package` has produced
-      `dist/arcade-counter-timer-v0.1.3-chrome-web-store.zip`
+      `dist/arcade-counter-timer-v0.2.0-chrome-web-store.zip`
 - [ ] The ZIP has been loaded unpacked in Chrome once and manually exercised
 - [ ] The URLs in `urls.md` still load
 
 ## Package
 
-- [ ] Upload `dist/arcade-counter-timer-v0.1.3-chrome-web-store.zip`
-- [ ] The Dashboard's manifest analysis reports version **0.1.3**
-- [ ] It reports the **storage** permission and nothing else
+- [ ] Open the existing published Arcade Counter Timer item; retain its ID
+- [ ] Upload `dist/arcade-counter-timer-v0.2.0-chrome-web-store.zip`
+- [ ] The Dashboard's manifest analysis reports version **0.2.0**
+- [ ] It reports **storage, activeTab, scripting and sidePanel**
 - [ ] It reports no host permissions and no remote code warnings
 - [ ] The item name and description are picked up from `_locales/en` — the
       Dashboard shows the English text, not `__MSG_extensionName__`
@@ -50,6 +51,7 @@ wording before entering them.
 
 - [ ] Single purpose statement
 - [ ] `storage` permission justification
+- [ ] `activeTab`, `scripting` and `sidePanel` justifications
 - [ ] Remote code: **No**
 - [ ] Data collection: none of the categories apply
 - [ ] The three data-handling certifications ticked
@@ -57,9 +59,7 @@ wording before entering them.
 
 ## Distribution
 
-- [ ] Visibility chosen deliberately: **Unlisted** is the safer first submission;
-      switch to Public once the listing has been reviewed end to end
-- [ ] Distribution regions selected
+- [ ] Preserve the existing published item's visibility and regions
 - [ ] Pricing: free
 
 ## Support and links
@@ -80,5 +80,5 @@ Fill in from `urls.md` — leave blank rather than entering a guess.
 ## After submission
 
 - [ ] Record the item ID
-- [ ] Tag the release in git and publish release notes from `CHANGELOG.md`
+- [ ] Record submission/review/publication status accurately; do not label a pending review as published
 - [ ] Add the store URL to `README.md` and `README_JA.md`
