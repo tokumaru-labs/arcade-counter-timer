@@ -21,7 +21,7 @@ import { fileURLToPath } from 'node:url';
 import { pngSize } from './png.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const RENDER_DIR = join(ROOT, '.render');
+const RENDER_DIR = join(ROOT, '.render', 'store-capture');
 const OUT_DIR = join(ROOT, 'store-assets', 'source');
 
 const POPUP_WIDTH = 360;
