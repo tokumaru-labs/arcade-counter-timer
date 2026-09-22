@@ -87,6 +87,7 @@ function seedScript() {
 
   globalThis.chrome = {
     storage: {
+      onChanged: { addListener() {}, removeListener() {} },
       local: {
         async get(keys) {
           const out = {};
@@ -102,6 +103,16 @@ function seedScript() {
       }
     }
   };
+
+  const store = import('./src/controller.js').then(({ createStore }) => createStore(chrome.storage.local));
+  chrome.runtime = {
+    async sendMessage(message) {
+      if (message.action === 'context') return { ok: true, value: { windowId: 1 } };
+      if (message.action === 'prepareSidepanel') return { ok: true };
+      return { ok: true, value: await (await store).dispatch(message) };
+    }
+  };
+  chrome.i18n = { getUILanguage: () => 'en' };
 
   if (location.hash === '#stats') {
     // Drive the real gear button rather than un-hiding the panel by hand.

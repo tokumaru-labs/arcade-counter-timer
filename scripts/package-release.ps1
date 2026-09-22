@@ -27,6 +27,11 @@ $runtimeFiles = @(
     'popup.html',
     'popup.css',
     'popup.js',
+    'background.js',
+    'src/client.js',
+    'src/controller.js',
+    'src/overlay.js',
+    'src/release.js',
     'src/clock.js',
     'src/time.js',
     'src/storage.js',
@@ -140,9 +145,9 @@ try {
         Assert-Release 'ZIP manifest description is __MSG_extensionDescription__' ($zipManifest.description -eq '__MSG_extensionDescription__') $zipManifest.description
         Assert-Release 'ZIP manifest action.default_title is __MSG_extensionName__' ($zipManifest.action.default_title -eq '__MSG_extensionName__') $zipManifest.action.default_title
         $perms = @($zipManifest.permissions)
-        Assert-Release 'ZIP permissions are exactly ["storage"]' ($perms.Count -eq 1 -and $perms[0] -eq 'storage') ($perms -join ', ')
+        Assert-Release 'ZIP has only the four required permissions' (($perms -join ',') -eq 'storage,activeTab,scripting,sidePanel') ($perms -join ', ')
         Assert-Release 'ZIP manifest has no host_permissions' ($null -eq $zipManifest.host_permissions)
-        Assert-Release 'ZIP manifest has no background' ($null -eq $zipManifest.background)
+        Assert-Release 'ZIP uses the module worker' ($zipManifest.background.service_worker -eq 'background.js' -and $zipManifest.background.type -eq 'module')
         Assert-Release 'ZIP manifest has no content_scripts' ($null -eq $zipManifest.content_scripts)
     }
 

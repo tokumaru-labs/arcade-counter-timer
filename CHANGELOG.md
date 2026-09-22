@@ -6,7 +6,25 @@ project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-Nothing yet.
+## [0.2.0] — Unreleased
+
+### Added
+- Three display modes: toolbar popup, draggable in-page timer, native side panel.
+- Remembered placement, position lock and compact/full-size floating views.
+- One themed NEW FEATURE notice on the first visible use after a version update.
+  Fresh installs, same-version reloads and reopening do not replay it. Skipped
+  releases include only the newly added features.
+- A local snapshot of pre-0.2.0 statistics when upgrading.
+
+### Changed
+- One serialized state writer prevents lost counts and duplicated elapsed time
+  across simultaneously open views. Failed writes are reported visibly.
+- No automatic deletion of daily history older than 400 days.
+- Added activeTab, scripting and sidePanel permissions. No persistent host
+  permissions, telemetry, paid service, or remote code.
+- Minimum Chrome version is 116; popup switching uses action.openPopup when
+  supported, otherwise the next toolbar click opens the saved popup mode.
+
 
 ## [0.1.3] — 2026-09-09
 

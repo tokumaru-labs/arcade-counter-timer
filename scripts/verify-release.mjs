@@ -21,9 +21,9 @@ const EXPECTED = {
   name: '__MSG_extensionName__',
   description: '__MSG_extensionDescription__',
   defaultLocale: 'en',
-  version: '0.1.3',
+  version: '0.2.0',
   descriptionLimit: 132,
-  permissions: ['storage']
+  permissions: ['storage', 'activeTab', 'scripting', 'sidePanel']
 };
 
 /**
@@ -39,6 +39,11 @@ const RUNTIME_FILES = [
   'popup.html',
   'popup.css',
   'popup.js',
+  'background.js',
+  'src/client.js',
+  'src/controller.js',
+  'src/overlay.js',
+  'src/release.js',
   'src/clock.js',
   'src/time.js',
   'src/storage.js',
@@ -57,19 +62,17 @@ const RUNTIME_FILES = [
 const FORBIDDEN_MANIFEST_KEYS = [
   'host_permissions',
   'content_scripts',
-  'background',
   'externally_connectable',
   'oauth2',
   'key',
   'update_url',
   'optional_permissions',
   'optional_host_permissions',
-  'web_accessible_resources',
   'declarative_net_request'
 ];
 
 /** Remote-reference scanning is limited to code the browser actually runs. */
-const SCANNED_SOURCES = ['popup.html', 'popup.css', 'popup.js', 'src/clock.js', 'src/time.js', 'src/storage.js', 'src/effects.js', 'src/input.js'];
+const SCANNED_SOURCES = RUNTIME_FILES.filter((name) => /\.(js|html|css)$/.test(name));
 
 let failures = 0;
 
@@ -118,7 +121,7 @@ if (manifest) {
 
   const permissions = manifest.permissions ?? [];
   check(
-    'permissions are exactly ["storage"]',
+    'permissions are exactly storage, activeTab, scripting and sidePanel',
     permissions.length === EXPECTED.permissions.length && permissions.every((p, i) => p === EXPECTED.permissions[i]),
     JSON.stringify(permissions)
   );
@@ -128,6 +131,11 @@ if (manifest) {
   }
 
   check('action.default_popup is popup.html', manifest.action?.default_popup === 'popup.html');
+  check('module worker is background.js', manifest.background?.service_worker === 'background.js' && manifest.background?.type === 'module');
+  check('side panel uses the shared view', manifest.side_panel?.default_path === 'popup.html?surface=sidepanel');
+  check('Chrome 116 or newer is required', manifest.minimum_chrome_version === '116');
+  const resources = manifest.web_accessible_resources;
+  check('only shared view assets are web accessible, using a dynamic URL', resources?.length === 1 && resources[0].use_dynamic_url === true && JSON.stringify(resources[0].resources) === JSON.stringify(['popup.html', 'popup.css', 'popup.js', 'src/*.js']) && JSON.stringify(resources[0].matches) === JSON.stringify(['<all_urls>']));
 }
 
 /* ---------------------------------------------------------------- files -- */
@@ -249,8 +257,8 @@ section('Source tree');
 
 const srcFiles = readdirSync(join(ROOT, 'src')).sort();
 check(
-  'src/ contains only the five expected modules',
-  srcFiles.length === 5 && srcFiles.join(',') === 'clock.js,effects.js,input.js,storage.js,time.js',
+  'src/ contains only the expected runtime modules',
+  srcFiles.join(',') === 'client.js,clock.js,controller.js,effects.js,input.js,overlay.js,release.js,storage.js,time.js',
   srcFiles.join(', ')
 );
 
@@ -345,7 +353,7 @@ if (!existsSync(zipPath)) {
 
     const zipPermissions = zipManifest.permissions ?? [];
     check(
-      'ZIP permissions are exactly ["storage"]',
+      'ZIP permissions are exactly storage, activeTab, scripting and sidePanel',
       zipPermissions.length === EXPECTED.permissions.length && zipPermissions.every((p, i) => p === EXPECTED.permissions[i]),
       JSON.stringify(zipPermissions)
     );

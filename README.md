@@ -2,12 +2,37 @@ English | [日本語](README_JA.md)
 
 # Arcade Counter Timer
 
+## 0.2.0 (unreleased): display modes and preserved history
+
+In settings choose DISPLAY MODE: Popup / Floating / Side panel, then OPEN
+SELECTED VIEW. The next toolbar click remembers the selected mode. Floating
+mode supports dragging, arrow-key movement, position lock and compact/full size.
+It operates only on a web page where the user invokes the extension; restricted
+browser pages cannot host it. Side-panel position follows browser settings.
+Chrome 116+ is required. Other Chromium browsers require separate acceptance.
+
+Normal updates of the same extension ID retain saved statistics and settings.
+The 0.2.0 update also keeps a local pre-update snapshot and stops pruning daily
+history older than 400 days. Already-pruned data cannot be recovered.
+Do not uninstall/reinstall to update: uninstall and confirmed CLEAR ALL DATA
+remove stored records. All views share one serialized writer.
+
+A themed NEW FEATURE strip appears below COUNT on the first visible main view
+after a version upgrade. It has one finite scan, stays readable until dismissed
+or the view closes, and never replays on reopening. Fresh installs show no notice.
+Skipped releases list only features added since the previous version.
+
+Permissions: storage, activeTab, scripting, sidePanel. No persistent host access,
+remote services or telemetry. A user-triggered content script places only the
+timer UI; a service worker serializes local state changes. See PRIVACY.md.
+
+
 A count-up timer and tally counter that stays out of your way, and turns into a
 small arcade machine for a fraction of a second when you hit a milestone.
 
 <img src="store-assets/source/popup-main.png" alt="The Arcade Counter Timer popup: a running timer, a large count, and START and COUNT buttons" width="300">
 
-Version 0.1.3 · by Tokumaru Labs · Chrome Extension (Manifest V3)
+Version 0.2.0 (unreleased) · by Tokumaru Labs · Chrome Extension (Manifest V3)
 
 ## What it does
 
@@ -135,7 +160,7 @@ To run the current source checkout manually:
 No build step, no dependencies, no bundler. Vanilla HTML, CSS and ES modules.
 
 ```
-npm test              # 71 tests, including the popup integration path
+npm test              # existing behavior, upgrades, concurrency and notice lifecycle
 npm run verify        # release checks: manifest, locales, permissions, icons, no remote code
 npm run package       # build the Chrome Web Store ZIP into dist/
 npm run prepare-update # rebuild screenshots, test, verify and package the update
@@ -162,7 +187,7 @@ Everything happens on your machine. See [PRIVACY.md](PRIVACY.md) for the full
 statement.
 
 - **Permissions:** `storage`, and nothing else
-- No host permissions, no content scripts, no background service worker
+- No persistent host permissions; user-requested floating UI and a local state worker
 - No network requests, no analytics, no ads, no account, no cloud sync
 - Timer state, session count, daily history and settings live in
   `chrome.storage.local` on your device
