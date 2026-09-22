@@ -53,7 +53,7 @@ wording before entering them.
 - [ ] `storage` permission justification
 - [ ] `activeTab`, `scripting` and `sidePanel` justifications
 - [ ] Remote code: **No**
-- [ ] Data collection: none of the categories apply
+- [ ] Retain User activity for local timer/count/position data; other categories unselected
 - [ ] The three data-handling certifications ticked
 - [ ] Privacy policy URL entered (required — the item stores user data)
 

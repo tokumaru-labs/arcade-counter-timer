@@ -64,14 +64,17 @@ fonts, and no dynamic import of anything fetched at runtime.
 | Personal communications | **No** | No access to messages or mail |
 | Location | **No** | No geolocation API use, no IP handling |
 | Web history | **No** | Temporary activeTab metadata is used only to place the timer; page URLs/titles are not stored or transmitted |
-| User activity (clicks, keystrokes, mouse position) | **No external collection** | Timer inputs update local totals; dragging saves only the timer position. General browsing activity is not recorded or transmitted |
+| User activity (clicks, keystrokes, mouse position) | **Yes, local only** | Retain this existing Dashboard disclosure for timer/count inputs and saved timer position. No general browsing activity is recorded and no activity is transmitted |
 | Website content (text, images, page data) | **No** | User-triggered injected code positions its own UI and does not extract webpage text, forms or other content |
 
 The extension stores its own timer values, session count, daily history, theme,
 settings, display preferences, upgrade backup and notice receipts in local
 storage. Temporary tab-bound floating-view grants are held in session storage.
 Both are on the user's device. No user data is transmitted or collected by the
-developer. Read the live Dashboard labels before applying these declarations.
+developer. Local processing still requires disclosure under the
+[Chrome Web Store user-data FAQ](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq).
+The live Dashboard on 2026-09-22 already selected User activity; retain that
+selection and leave the other collection categories unselected.
 
 ## Data handling certifications
 
