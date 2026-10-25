@@ -51,6 +51,7 @@ const RUNTIME_FILES = [
   'src/storage.js',
   'src/effects.js',
   'src/input.js',
+  'src/flaps.js',
   '_locales/en/messages.json',
   '_locales/ja/messages.json',
   'assets/icons/icon16.png',
@@ -81,6 +82,8 @@ const RUNTIME_FILES = [
   'assets/themes/nixie-7.jpg',
   'assets/themes/nixie-8.jpg',
   'assets/themes/nixie-9.jpg',
+  'assets/themes/nixie-glass-shell.png',
+  'assets/themes/nixie-glass-shell-provenance.json',
   'assets/themes/BarlowCondensed-Medium.ttf',
   'assets/themes/BarlowCondensed-SemiBold.ttf',
   'assets/themes/BarlowCondensed-OFL.txt',
@@ -296,7 +299,7 @@ section('Source tree');
 const srcFiles = readdirSync(join(ROOT, 'src')).sort();
 check(
   'src/ contains only the expected runtime modules',
-  srcFiles.join(',') === 'client.js,clock.js,controller.js,effects.js,input.js,overlay.js,release.js,storage.js,time.js',
+  srcFiles.join(',') === 'client.js,clock.js,controller.js,effects.js,flaps.js,input.js,overlay.js,release.js,storage.js,time.js',
   srcFiles.join(', ')
 );
 

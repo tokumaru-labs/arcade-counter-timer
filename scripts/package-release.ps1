@@ -38,6 +38,7 @@ $runtimeFiles = @(
     'src/storage.js',
     'src/effects.js',
     'src/input.js',
+    'src/flaps.js',
     '_locales/en/messages.json',
     '_locales/ja/messages.json',
     'assets/icons/icon16.png',
@@ -68,6 +69,8 @@ $runtimeFiles = @(
     'assets/themes/nixie-7.jpg',
     'assets/themes/nixie-8.jpg',
     'assets/themes/nixie-9.jpg',
+    'assets/themes/nixie-glass-shell.png',
+    'assets/themes/nixie-glass-shell-provenance.json',
     'assets/themes/BarlowCondensed-Medium.ttf',
     'assets/themes/BarlowCondensed-SemiBold.ttf',
     'assets/themes/BarlowCondensed-OFL.txt',
@@ -212,7 +215,7 @@ try {
     foreach ($name in $names) {
         if ($name -notmatch '\.(js|html|css|json)$') { continue }
         # Attribution metadata has source links, but is never fetched or executed.
-        if ($name -eq 'assets/themes/COMMONS-SOURCES.json') { continue }
+        if ($name -in @('assets/themes/COMMONS-SOURCES.json', 'assets/themes/nixie-glass-shell-provenance.json')) { continue }
         $e = $archive.GetEntry($name)
         $r = New-Object System.IO.StreamReader($e.Open())
         $text = $r.ReadToEnd()

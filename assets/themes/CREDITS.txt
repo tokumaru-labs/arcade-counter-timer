@@ -35,6 +35,19 @@ SIL Open Font License 1.1: OFL.txt (included beside this file).
 Space Age, Steampunk, Art Deco and Nixie are original interface compositions by
 Tokumaru Labs. Interactive buttons and values are live HTML, not painted images.
 
+NIXIE GLASS HOUSING
+nixie-glass-shell.png is an AI-edited transparent derivative of
+Dalibor Farny RZ568M Nixie Tube.jpg by TofDir, CC0 1.0:
+https://commons.wikimedia.org/wiki/File:Dalibor_Farny_RZ568M_Nixie_Tube.jpg
+https://creativecommons.org/publicdomain/zero/1.0/
+Edited for Tokumaru Labs using OpenAI imagegen, October 2026. The room background,
+lit digit, mesh and internal supports were removed; the glass housing, reflections
+and black socket were retained as a separate overlay. CSS adjusts its proportions,
+opacity and clipping. Source URL, method and prompt are recorded in
+nixie-glass-shell-provenance.json. This is an edited illustration assembled with
+the Z566M digit photographs credited below, not an exact reproduction or unmodified
+photograph of either tube model. No dimming or idle brightness behavior is used.
+
 BARLOW CONDENSED
 Copyright 2017 The Barlow Project Authors (https://github.com/jpt/barlow).
 Unmodified Google Fonts files BarlowCondensed-Medium.ttf and BarlowCondensed-SemiBold.ttf.

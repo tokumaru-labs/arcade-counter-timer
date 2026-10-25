@@ -10,6 +10,7 @@ import { request, surface } from './src/client.js';
 import { sounds, praiseForStreak, flyText, chainBurst, clearFx } from './src/effects.js';
 import { shortcutFor, isPointerActivation } from './src/input.js';
 import { createClockController } from './src/clock.js';
+import { createFlapRenderer } from './src/flaps.js';
 
 const STREAK_WINDOW_MS = 650;
 const SESSION_HOLD_MS = 650;
@@ -72,6 +73,10 @@ let pendingCounts = 0;
 let undoPending = false;
 let undoStatusTimer = null;
 let tubeAssets = null;
+const instrumentMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const flapRenderer = createFlapRenderer(document, () => instrumentMotion.matches);
+const cancelInstrumentMotion = () => { if (instrumentMotion.matches) flapRenderer.cancelMotion(); };
+instrumentMotion.addEventListener?.('change', cancelInstrumentMotion);
 const clockTestHook = globalThis.__ARCADE_CLOCK_TEST__;
 
 function clearClockMotion() {
@@ -196,19 +201,41 @@ function renderCount() {
 // The values remain live text. Glass tubes / mechanical flaps wrap characters
 // only for the two instrument themes; cached values avoid rebuilding on ticks.
 function renderInstrumentValue(element, text) {
-  const instrument = ['steampunk', 'nixie'].includes(state.theme);
+  if (state.theme === 'steampunk') {
+    flapRenderer.render(element, text);
+    element.dataset.readoutValue = text;
+    element.dataset.readoutTheme = state.theme;
+    return;
+  }
+  flapRenderer.clear(element);
+  const instrument = state.theme === 'nixie';
   const previousText = element.dataset.readoutValue;
   const previousTheme = element.dataset.readoutTheme;
   if (previousText === text && previousTheme === state.theme) return;
   element.dataset.readoutValue = text;
   element.dataset.readoutTheme = state.theme;
   if (!instrument) { element.textContent = text; return; }
+  // Keep the housing/socket nodes fixed while only the cathode changes.
+  const existing = previousTheme === 'nixie' ? [...element.children] : [];
   const digits = [...text].map((character, index) => {
-    const digit = document.createElement('span');
-    digit.className = /\d/.test(character) ? 'instrument-digit' : 'instrument-separator';
-    digit.textContent = character;
-    if (/\d/.test(character)) digit.dataset.digit = character;
-    if (previousTheme === state.theme && previousText?.[index] !== character) digit.classList.add('is-changed');
+    const isDigit = /\d/.test(character);
+    const oldIndex = (previousText?.length ?? 0) - text.length + index;
+    let digit = existing[oldIndex];
+    if (!digit || digit.classList.contains('instrument-digit') !== isDigit) {
+      digit = document.createElement('span');
+      digit.className = isDigit ? 'instrument-digit' : 'instrument-separator';
+      const live = document.createElement('span');
+      live.className = 'nixie-live';
+      digit.append(live);
+      if (isDigit) {
+        const socket = document.createElement('span');
+        socket.className = 'nixie-socket';
+        socket.setAttribute('aria-hidden', 'true');
+        digit.append(socket);
+      }
+    }
+    digit.firstElementChild.textContent = character;
+    if (isDigit) digit.dataset.digit = character;
     return digit;
   });
   element.replaceChildren(...digits);
@@ -220,13 +247,14 @@ function renderTheme() {
     document.body.dataset.theme = state.theme;
     document.body.dataset.material = String(['space-age', 'steampunk', 'art-deco', 'nixie'].includes(state.theme));
     if (state.theme === 'nixie' && !tubeAssets) {
-      // Keep readable amber text until every local photograph decodes. A
+      // Keep readable amber text until every local photograph and the housing decode. A
       // missing/corrupt image leaves the text fallback available for all digits.
-      tubeAssets = Promise.all(Array.from({ length: 10 }, (_, digit) => new Promise((resolve) => {
+      const files = [...Array.from({ length: 10 }, (_, digit) => `nixie-${digit}.jpg`), 'nixie-glass-shell.png'];
+      tubeAssets = Promise.all(files.map((file) => new Promise((resolve) => {
         const image = new Image();
         image.onload = () => resolve(image.naturalWidth > 0);
         image.onerror = () => resolve(false);
-        image.src = `assets/themes/nixie-${digit}.jpg`;
+        image.src = `assets/themes/${file}`;
       })));
       tubeAssets.then((loaded) => { document.body.dataset.tubesReady = String(loaded.every(Boolean)); });
     }
@@ -505,6 +533,8 @@ function bindEvents() {
 
   window.addEventListener('pagehide', () => {
     clockController.dispose();
+    flapRenderer.dispose();
+    instrumentMotion.removeEventListener?.('change', cancelInstrumentMotion);
   });
 }
 
@@ -592,6 +622,8 @@ async function init() {
 }
 
 window.addEventListener('unload', () => {
+  flapRenderer.dispose();
+  instrumentMotion.removeEventListener?.('change', cancelInstrumentMotion);
   clearInterval(tickTimer);
   clearTimeout(undoStatusTimer);
   clockController.dispose();

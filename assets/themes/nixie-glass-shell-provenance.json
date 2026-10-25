@@ -1,0 +1,12 @@
+{
+  "file": "nixie-glass-shell.png",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Dalibor_Farny_RZ568M_Nixie_Tube.jpg",
+  "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Dalibor_Farny_RZ568M_Nixie_Tube.jpg",
+  "author": "TofDir",
+  "sourceLicense": "CC0 1.0",
+  "sourceLicenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "generatedFrom": "nixie-rz568m-reference.jpg",
+  "method": "Built-in image_gen transparent edit; no external API or post-processing",
+  "modifications": "Removed room background, illuminated digit, mesh and internal supports to retain a photographic-style glass housing and black socket as a transparent overlay. This is an AI-edited derivative, not an untouched photograph of a particular hardware model.",
+  "prompt": "Use case: background-extraction / precise-object-edit. Asset type: one transparent photographic glass tube OVERLAY for a live Nixie UI. Edit target: the attached CC0 photograph of a Dalibor Farny RZ568M tube. Preserve the real outer glass silhouette, rounded dome with small evacuation tip, asymmetric photographic specular reflections, edge thickness and realistic black bottom socket. Remove the gray room background entirely to genuine alpha transparency. Remove ALL internal contents: the glowing digit 9, the mesh cage, cathode wires and supports. The center of the glass chamber must be empty and almost fully transparent so a separately rendered luminous cathode will be visible behind this overlay. Keep only faint translucent glass tint and photographic reflected highlights across the chamber. Do not create any illuminated digit or text. Keep a realistic worn black socket at the bottom, not a new chrome design. Straight-on view, single tube centered vertically, closely framed with just 3 percent transparent margin, portrait aspect close to 1:2.4. Real photograph appearance, not an illustration, no thick vector outlines, no background shadow, no collage, no checkerboard baked into pixels."
+}

@@ -66,7 +66,7 @@ try {
       if (theme === 'nixie') {
         await page.waitForFunction(() => document.body.dataset.tubesReady === 'true');
         assert.ok(await page.locator('#count-value .instrument-digit').evaluateAll((digits) => digits.every((digit) =>
-          getComputedStyle(digit).backgroundImage.includes(`nixie-${digit.textContent}.jpg`) && getComputedStyle(digit).color === 'rgba(0, 0, 0, 0)')));
+          getComputedStyle(digit,'::before').backgroundImage.includes(`nixie-${digit.textContent}.jpg`) && getComputedStyle(digit).color === 'rgba(0, 0, 0, 0)')));
       }
       await assertLayout(page, `${theme}-${surface}`);
       if (surface === 'floating' && !['arcade','editorial'].includes(theme)) {
@@ -124,7 +124,7 @@ try {
   await page.locator('#btn-back').click();
   await page.emulateMedia({ forcedColors: 'active' });
   assert.ok(await page.locator('#count-value .instrument-digit').evaluateAll((digits) => digits.every((digit) =>
-    getComputedStyle(digit).backgroundImage === 'none' && getComputedStyle(digit).color !== 'rgba(0, 0, 0, 0)')));
+    (getComputedStyle(digit,'::before').display === 'none' && getComputedStyle(digit,'::after').display === 'none') && getComputedStyle(digit).color !== 'rgba(0, 0, 0, 0)')));
   await capture(page, 'nixie-forced-colors');
   await page.emulateMedia({ forcedColors: 'none' });
   record('six theme switches resize the popup; forced colors exposes live text instead of photos');
@@ -138,7 +138,7 @@ try {
   await fallback.waitForFunction(() => document.body.dataset.tubesReady === 'false');
   assert.ok(failedRequests > 0, 'failure fixture intercepted the actual local photo');
   assert.ok(await fallback.locator('#count-value .instrument-digit').evaluateAll((digits) => digits.length > 0 && digits.every((digit) =>
-    getComputedStyle(digit).backgroundImage === 'none' && getComputedStyle(digit).color !== 'rgba(0, 0, 0, 0)')));
+    (getComputedStyle(digit,'::before').display === 'none' && getComputedStyle(digit,'::after').display === 'none') && getComputedStyle(digit).color !== 'rgba(0, 0, 0, 0)')));
   await fallback.locator('#btn-count').click();
   await fallback.locator('#btn-undo-count:enabled').waitFor();
   await fallback.locator('#btn-undo-count').click();

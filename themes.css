@@ -82,9 +82,16 @@ body[data-material="true"] .theme-picker label{color:var(--blue)}body[data-mater
 .screen[data-theme="steampunk"] .timer::before,.screen[data-theme="steampunk"] .countpad::before{top:0;left:0;right:0;padding:6px 0;color:#251b0c;border-bottom:3px solid #5d431c;background:linear-gradient(#e9c77688,#98753844),url('assets/themes/gold-metal.jpg') center/cover;box-shadow:0 2px 3px #0009,inset 0 1px #fff8;font-size:14px;font-weight:600;letter-spacing:3px}
 .screen[data-theme="steampunk"] .timer__value{font-size:min(55px,calc(220px/(var(--digits,8)*.53)))}.screen[data-theme="steampunk"] .countpad__value{font-size:min(65px,calc(211px/(var(--digits,5)*.62)))}
 .instrument-digit,.instrument-separator{display:inline-block;position:relative;vertical-align:baseline}
-.screen[data-theme="steampunk"] .instrument-digit{width:.57em;margin:0 .018em;padding:.14em .015em .1em;border:1px solid #494438;border-radius:5px;background:linear-gradient(#2f2d24,#11100c 49%,#030302 50%,#302b20 52%,#0b0a07);box-shadow:inset 0 2px 3px #fff2,0 3px 3px #000;text-shadow:0 1px #000}
-.screen[data-theme="steampunk"] .instrument-digit::after{content:'';position:absolute;left:0;right:0;top:50%;height:2px;background:#000d;border-bottom:1px solid #fff1}.screen[data-theme="steampunk"] .instrument-digit.is-changed{animation:flap-change 270ms ease-out 1;transform-origin:center}
-@keyframes flap-change{from{transform:perspective(180px) rotateX(-32deg);filter:brightness(.6)}}
+.screen[data-theme="steampunk"] .instrument-digit{width:.57em;height:1.3em;line-height:1.3em;margin:0 .018em;padding:0;border:1px solid #494438;border-radius:5px;background:linear-gradient(#2f2d24,#11100c 49%,#030302 50%,#302b20 52%,#0b0a07);box-shadow:inset 0 2px 3px #fff2,0 3px 3px #000;text-shadow:0 1px #000}
+.screen[data-theme="steampunk"] .instrument-digit::after{content:'';position:absolute;left:0;right:0;top:50%;height:2px;background:#000d;border-bottom:1px solid #fff1}
+.screen[data-theme="steampunk"] .instrument-digit::after{z-index:4;pointer-events:none}
+.flap-live{display:block;text-align:center}
+.flap-layer{position:absolute;inset:0;perspective:3em;pointer-events:none;z-index:2}
+.flap-face{position:absolute;left:0;right:0;height:50%;overflow:hidden;backface-visibility:hidden;will-change:transform;box-shadow:0 1px 2px #0009}
+.flap-face::before{content:attr(data-glyph);position:absolute;left:0;right:0;height:200%;display:grid;place-items:center;line-height:1.3em;background:linear-gradient(#2f2d24,#11100c 49%,#030302 50%,#302b20 52%,#0b0a07);text-shadow:0 1px #000}
+.flap-old-top{top:0;transform-origin:center bottom;z-index:3}.flap-old-top::before{top:0}
+.flap-old-bottom,.flap-new-bottom{bottom:0;transform-origin:center top}.flap-old-bottom::before,.flap-new-bottom::before{bottom:0}.flap-new-bottom{z-index:2}
+@media(prefers-reduced-motion:reduce){.flap-layer{display:none}}
 .screen[data-theme="steampunk"] .mainbtn{color:#ecdbb4;border-width:7px;border-radius:23px;background:linear-gradient(#47453b77,#050804bb) padding-box,url('assets/themes/cast-charcoal.jpg') center/cover padding-box,url('assets/themes/cast-bronze.jpg') center/cover border-box;text-shadow:0 2px 2px #000}
 .screen[data-theme="steampunk"] .mainbtn--timer{background:linear-gradient(#984f3577,#2b0b08bb) padding-box,url('assets/themes/garnet-metal.jpg') center/cover padding-box,url('assets/themes/cast-bronze.jpg') center/cover border-box}
 .screen[data-theme="steampunk"] .undo-count{color:#edd7a6;border-color:#b9964b;background:radial-gradient(ellipse at 25% 15%,#494130,#090904)}
@@ -111,11 +118,18 @@ body[data-material="true"] .theme-picker label{color:var(--blue)}body[data-mater
 .screen[data-theme="nixie"] .instrument-brand strong{font-size:12px}.screen[data-theme="nixie"] .clock{color:#f79939;background:#080b07;border:2px solid #6d6c5d;border-radius:5px}.screen[data-theme="nixie"] .topbar{border-bottom:2px solid #77796b;padding-bottom:5px}
 .screen[data-theme="nixie"] .timer,.screen[data-theme="nixie"] .countpad{border:4px solid #77796a;border-radius:14px;padding:35px 5px 15px;background:#080a07;box-shadow:0 0 0 2px #14180e,inset 0 0 0 2px #161a11,0 3px 2px #000}
 .screen[data-theme="nixie"] .timer::before,.screen[data-theme="nixie"] .countpad::before{font-size:13px;color:#d3ccba;letter-spacing:4px}
-.screen[data-theme="nixie"] .timer__value,.screen[data-theme="nixie"] .countpad__value{font-family:var(--instrument-sans);font-size:min(64px,calc(235px/(var(--digits,8)*.56)));line-height:1}.screen[data-theme="nixie"] .countpad__value{font-size:min(72px,calc(230px/(var(--digits,5)*.68)))}
-.screen[data-theme="nixie"] .instrument-digit{color:var(--orange);text-shadow:0 0 8px var(--orange-glow);width:.62em;height:1.65em;line-height:1.65;margin:0 .018em;border-radius:36% 36% 8% 8% / 15% 15% 5% 5%;background-color:#030503;background-position:64% 60%;background-size:auto 120%;box-shadow:0 2px 1px #504d3e;vertical-align:bottom}
+.screen[data-theme="nixie"] .timer__value,.screen[data-theme="nixie"] .countpad__value{font-family:var(--instrument-sans);font-size:min(61px,calc(235px/(var(--digits,8)*.68)));line-height:1}.screen[data-theme="nixie"] .countpad__value{font-size:min(62px,calc(230px/(var(--digits,5)*.79)))}
+.screen[data-theme="nixie"] .instrument-digit{color:var(--orange);text-shadow:0 0 8px var(--orange-glow);width:.74em;height:1.65em;line-height:1.65;margin:0 .018em;vertical-align:bottom}
+/* Keep the complete center cathode (source x176..684, y92..932), independent
+   of the housing's display aspect ratio. The neighboring tube stays outside. */
+.screen[data-theme="nixie"] .instrument-digit::before{content:'';display:none;position:absolute;inset:17% 20% 23% 18%;background-position:77% 50%;background-size:145% 122%;background-image:var(--tube-photo);border-radius:15% 15% 10% 10%;mask:linear-gradient(transparent,#000 8% 92%,transparent)}
+.screen[data-theme="nixie"] .instrument-digit::after,.nixie-socket{content:'';display:none;position:absolute;inset:0;background:url('assets/themes/nixie-glass-shell.png') center/100% 100% no-repeat;pointer-events:none}
+.screen[data-theme="nixie"] .instrument-digit::after{opacity:.6;clip-path:inset(0 0 22% 0)}
+.nixie-socket{clip-path:inset(77% 0 0 0)}
+
 .screen[data-theme="nixie"] .instrument-separator{width:.2em;padding-bottom:.16em;vertical-align:bottom;font-size:.75em}.screen[data-theme="nixie"] .instrument-digit::selection{color:#ffdf9a;background:#45240b}
 .screen[data-theme="nixie"] .instrument-digit[data-digit="0"]{--tube-photo:url('assets/themes/nixie-0.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="1"]{--tube-photo:url('assets/themes/nixie-1.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="2"]{--tube-photo:url('assets/themes/nixie-2.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="3"]{--tube-photo:url('assets/themes/nixie-3.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="4"]{--tube-photo:url('assets/themes/nixie-4.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="5"]{--tube-photo:url('assets/themes/nixie-5.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="6"]{--tube-photo:url('assets/themes/nixie-6.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="7"]{--tube-photo:url('assets/themes/nixie-7.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="8"]{--tube-photo:url('assets/themes/nixie-8.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="9"]{--tube-photo:url('assets/themes/nixie-9.jpg')}
-.screen[data-theme="nixie"] .instrument-digit.is-changed{animation:tube-change 180ms ease-out 1}@keyframes tube-change{from{filter:brightness(.55)}}
+
 .screen[data-theme="nixie"] .mainbtn{border:4px solid transparent;border-radius:15px;color:#e8e0cc;background:linear-gradient(#33352c,#0c1009) padding-box,linear-gradient(120deg,#d0d0bb,#3e4433 30%,#b0af9b 60%,#343b2b 85%,#c2c5b2) border-box;box-shadow:0 0 0 2px #0f140b,0 3px 1px #000,inset 0 2px 3px #fff3}
 .screen[data-theme="nixie"] .mainbtn--timer{position:relative;align-self:center;justify-self:center;width:96px;height:96px;border-radius:50%;font-size:18px;letter-spacing:1px;background:linear-gradient(#e88f37,#a1450c) padding-box,linear-gradient(120deg,#d2cfb7,#343c27 30%,#adad90 60%,#39412d 85%,#c2c5b2) border-box}
 .screen[data-theme="nixie"] .undo-count{background:radial-gradient(ellipse at 30% 15%,#393b2e,#0d1008) padding-box,linear-gradient(125deg,#babda7,#424937 35%,#babda7 70%,#303a23) border-box}
@@ -151,8 +165,9 @@ body[data-material="true"] .screen .footer{min-height:23px;margin-top:2px}body[d
 @media(max-width:310px),(max-height:470px){body[data-surface] .screen:is([data-theme="arcade"],[data-theme="editorial"]) .countpad__value{font-size:min(42px,calc((100vw - 48px)/(var(--digits,1)*.78)))}}
 @media(prefers-reduced-motion:reduce){.theme-gear{transition:none}body[data-material="true"] .countpad__value:is(.is-bump,.is-chain),body[data-material="true"] .screen .instrument-digit.is-changed{animation:none}}
 
-body[data-tubes-ready="true"] .screen[data-theme="nixie"] .instrument-digit{color:transparent;text-shadow:none;background-image:var(--tube-photo)}
-@media(forced-colors:active){body[data-tubes-ready] .screen[data-theme="nixie"] .instrument-digit{color:CanvasText;background-image:none;text-shadow:none}body[data-material="true"] .screen{border:1px solid CanvasText}body[data-material="true"] :is(.timer,.countpad,.mainbtn,.undo-count,.hold){border-color:ButtonText}}
+body[data-tubes-ready="true"] .screen[data-theme="nixie"] .instrument-digit{color:transparent;text-shadow:none}
+body[data-tubes-ready="true"] .screen[data-theme="nixie"] .instrument-digit::before,body[data-tubes-ready="true"] .screen[data-theme="nixie"] .instrument-digit::after,body[data-tubes-ready="true"] .nixie-socket{display:block}
+@media(forced-colors:active){body[data-tubes-ready="true"] .screen[data-theme="nixie"] .instrument-digit::before,body[data-tubes-ready="true"] .screen[data-theme="nixie"] .instrument-digit::after,body[data-tubes-ready="true"] .nixie-socket{display:none}body[data-tubes-ready] .screen[data-theme="nixie"] .instrument-digit{color:CanvasText;background-image:none;text-shadow:none}body[data-material="true"] .screen{border:1px solid CanvasText}body[data-material="true"] :is(.timer,.countpad,.mainbtn,.undo-count,.hold){border-color:ButtonText}}
 
 .screen:not([data-theme="art-deco"]) .case-screw{background:#a8a69d url("assets/themes/screw-macro.jpg") 48% 85%/142% auto;box-shadow:0 0 0 2px #18170e,0 2px 3px #000b,inset 0 1px 2px #fff9}
 
@@ -166,7 +181,7 @@ body[data-theme="art-deco"] .screen{box-shadow:inset 0 0 0 2px #302714,inset 0 0
 .screen[data-theme="art-deco"] .case-screw{width:25px;height:15px;box-shadow:0 0 0 1px #453416,0 3px 2px #0009,inset 0 1px #fff4}
 .screen[data-theme="nixie"] .mainbtn--timer::before,.screen[data-theme="nixie"] .mainbtn--timer::after{content:'';position:absolute;top:25px;width:16px;height:5px;border-radius:4px;background:#070905;box-shadow:0 1px #888a78,0 10px #070905,0 11px #888a78,0 20px #070905,0 21px #888a78,0 30px #070905,0 31px #888a78}
 .screen[data-theme="nixie"] .mainbtn--timer::before{left:-39px}.screen[data-theme="nixie"] .mainbtn--timer::after{right:-39px}
-@media(min-width:480px){.screen[data-theme="nixie"] .timer__value{transform:scaleY(1.2)}}
+
 @media(max-width:479px){.screen[data-theme="nixie"] .mainbtn--timer{align-self:center;height:41px;width:55px;font-size:12px}.screen[data-theme="nixie"] .mainbtn--timer::before,.screen[data-theme="nixie"] .mainbtn--timer::after{top:4px;box-shadow:0 1px #888a78,0 9px #070905,0 10px #888a78,0 18px #070905,0 19px #888a78}.screen[data-theme="art-deco"] .deco-inlay{display:none}}
 @media(max-width:479px) and (max-height:470px){body[data-material="true"] .screen .mainbtn--timer{height:33px}.screen[data-theme="nixie"] .mainbtn--timer{width:50px}}
 /* A one-time update can be scrolled without covering an action. */
@@ -182,3 +197,11 @@ body[data-material="true"] .release-notice{position:relative;inset:auto;grid-col
 }
 .screen[data-theme="art-deco"] .undo-count:disabled{opacity:.88;filter:none;color:#d7bd80;background:linear-gradient(#174833,#012315) padding-box,linear-gradient(120deg,#ffe5aa,#725622 40%,#fce8ae 70%,#6e521e) border-box}
 .screen[data-theme="art-deco"] .hold:not(.hold--session){border:3px solid transparent;background:linear-gradient(#103f2e,#01271b) padding-box,url("assets/themes/gold-metal.jpg") center/cover border-box;box-shadow:0 0 0 1px #493819,inset 0 2px 2px #fff2,inset 0 -2px 2px #000a,0 2px 2px #0009}
+
+@media(min-width:480px){
+.screen[data-theme="nixie"] .timer__value{font-size:min(48px,calc(235px/(var(--digits,8)*.64)))}
+.screen[data-theme="nixie"] .countpad__value{font-size:min(46px,calc(230px/(var(--digits,5)*.85)))}
+.screen[data-theme="nixie"] .instrument-digit{width:.79em;height:2.5em;line-height:2.5em}
+.screen[data-theme="nixie"] .instrument-digit::before{inset:14% 20% 20% 18%}
+.screen[data-theme="nixie"] .timer__value .instrument-separator{translate:0 -.7em}
+}
