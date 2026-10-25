@@ -1552,7 +1552,7 @@ body[data-surface="sidepanel"], body[data-surface="floating"] { width: 100vw; he
 .display-picker button { margin-top: 6px; cursor: pointer; }
 .display-picker p { font-size: 10px; line-height: 1.5; margin: 6px 0 0; color: var(--dim); }
 .view--stats .danger { margin-top: 14px; }
-.screen[data-theme] .timer__value { max-width: 100%; font-size: min(40px, calc((100vw - 44px) / (var(--digits, 8) * .65))); }
+.screen:is([data-theme="arcade"],[data-theme="editorial"]) .timer__value { max-width: 100%; font-size: min(40px, calc((100vw - 44px) / (var(--digits, 8) * .65))); }
 #app-error { position: fixed; z-index: 100; bottom: 0; left: 0; right: 0; margin: 0; padding: 10px; color: #ffe6bb; background: #31141a; font: 12px/1.5 var(--font); border-top: 1px solid #cf6c62; }
 [hidden] { display: none !important; }
 
@@ -1568,20 +1568,20 @@ body[data-surface="sidepanel"], body[data-surface="floating"] { width: 100vw; he
 @keyframes notice-scan { to { transform: translateY(100%); } }
 @media (prefers-reduced-motion: reduce) { .release-notice::after { animation: none; } }
 @media (max-width: 310px), (max-height: 470px) {
-  body[data-surface] .screen .view { padding: 9px 12px; }
-  body[data-surface] .screen .topbar { min-height: 28px; }
-  body[data-surface] .screen .view--main .topbar::before { display: none; }
-  body[data-surface] .screen .timer { margin-top: 6px; padding: 13px 5px 7px; }
-  body[data-surface] .screen .timer__value { font-size: min(29px, calc((100vw - 36px) / (var(--digits, 8) * .68))); }
-  body[data-surface] .screen .mainbtn { margin-top: 6px; min-height: 34px; font-size: 12px; letter-spacing: 2px; }
+  body[data-surface] .screen:is([data-theme="arcade"],[data-theme="editorial"]) .view { padding: 9px 12px; }
+  body[data-surface] .screen:is([data-theme="arcade"],[data-theme="editorial"]) .topbar { min-height: 28px; }
+  body[data-surface] .screen:is([data-theme="arcade"],[data-theme="editorial"]) .view--main .topbar::before { display: none; }
+  body[data-surface] .screen:is([data-theme="arcade"],[data-theme="editorial"]) .timer { margin-top: 6px; padding: 13px 5px 7px; }
+  body[data-surface] .screen:is([data-theme="arcade"],[data-theme="editorial"]) .timer__value { font-size: min(29px, calc((100vw - 36px) / (var(--digits, 8) * .68))); }
+  body[data-surface] .screen:is([data-theme="arcade"],[data-theme="editorial"]) .mainbtn { margin-top: 6px; min-height: 34px; font-size: 12px; letter-spacing: 2px; }
   .undo-count { margin-top: 6px; width: 54px; }
   .undo-count__icon { font-size: 19px; }
-  body[data-surface] .screen .countpad { min-height: 45px; margin-top: 6px; }
-  body[data-surface] .screen .countpad__value { font-size: 42px; }
-  body[data-surface] .screen .subrow { margin-top: 3px; }
-  body[data-surface] .screen .footer { margin-top: 7px; padding-top: 6px; }
-  body[data-surface] .screen .hints { display: none; }
-  body[data-surface] .screen .hold--session { margin-left: auto; }
+  body[data-surface] .screen:is([data-theme="arcade"],[data-theme="editorial"]) .countpad { min-height: 45px; margin-top: 6px; }
+  body[data-surface] .screen:is([data-theme="arcade"],[data-theme="editorial"]) .countpad__value { font-size: 42px; }
+  body[data-surface] .screen:is([data-theme="arcade"],[data-theme="editorial"]) .subrow { margin-top: 3px; }
+  body[data-surface] .screen:is([data-theme="arcade"],[data-theme="editorial"]) .footer { margin-top: 7px; padding-top: 6px; }
+  body[data-surface] .screen:is([data-theme="arcade"],[data-theme="editorial"]) .hints { display: none; }
+  body[data-surface] .screen:is([data-theme="arcade"],[data-theme="editorial"]) .hold--session { margin-left: auto; }
   .release-notice { padding: 5px 7px; margin-top: 5px; }
 }
 @media (max-height: 380px) { .view--main { overflow-y: auto; } }

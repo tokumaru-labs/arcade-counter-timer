@@ -1,7 +1,7 @@
 # Composes the 1280x800 Chrome Web Store screenshots from real popup captures.
 #
-# Input  : store-assets/source/popup-main.png   (360x540)
-#          store-assets/source/popup-stats.png  (360x540)
+# Input  : store-assets/source/popup-main.png   (600x520, or historical 360x540)
+#          store-assets/source/popup-stats.png  (600x520, or historical 360x540)
 # Output : store-assets/screenshot-main-1280x800.png
 #          store-assets/screenshot-arcade-1280x800.png
 #          store-assets/screenshot-editorial-1280x800.png
@@ -62,7 +62,7 @@ $shots = @(
 
 foreach ($shot in $shots) {
     if (-not (Test-Path $shot.Source)) {
-        throw "Missing source capture: $($shot.Source)`nRun 'npm run capture', or place a real 360x540 popup screenshot there. This script will not fabricate one."
+        throw "Missing source capture: $($shot.Source)`nRun 'npm run capture', or place a real popup screenshot there. This script will not fabricate one."
     }
 }
 
@@ -102,7 +102,7 @@ foreach ($shot in $shots) {
         New-Background -g $g -w $WIDTH -h $HEIGHT
 
         # Popup, scaled uniformly. No cropping and no distortion.
-        $scale = 1.3
+        $scale = [Math]::Min(1.3, (600.0 / $popup.Width))
         $pw = [int]($popup.Width * $scale)
         $ph = [int]($popup.Height * $scale)
         $px = 118

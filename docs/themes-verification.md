@@ -1,5 +1,8 @@
 # Six-theme development update
 
+Historical first theme iteration at `f8982ee`. The later material rebuild and
+current evidence are recorded in [material-themes-verification.md](material-themes-verification.md).
+
 Theme-only scope above reviewed COUNT undo commit
 `a41292300cecc1528fb9fd61bd50e665fca516a9`. No store submission, push,
 merge or release was performed. Package and manifest remain version 0.2.0.

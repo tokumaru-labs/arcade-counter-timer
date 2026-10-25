@@ -71,6 +71,7 @@ let noticeChecked = false;
 let pendingCounts = 0;
 let undoPending = false;
 let undoStatusTimer = null;
+let tubeAssets = null;
 const clockTestHook = globalThis.__ARCADE_CLOCK_TEST__;
 
 function clearClockMotion() {
@@ -182,7 +183,10 @@ function renderTimerControls() {
 }
 
 function renderCount() {
-  const text = formatCount(state.sessionCount);
+  const material = ['space-age', 'steampunk', 'art-deco', 'nixie'].includes(state.theme);
+  const plain = formatCount(state.sessionCount);
+  const text = material && state.sessionCount < 100000 ? String(state.sessionCount).padStart(5, '0') : plain;
+  el.countValue.setAttribute('aria-label', plain);
   renderInstrumentValue(el.countValue, text);
   el.countValue.style.setProperty('--digits', String(text.length));
   el.screen.style.setProperty('--gear-turn', `${state.sessionCount * 3}deg`);
@@ -203,6 +207,7 @@ function renderInstrumentValue(element, text) {
     const digit = document.createElement('span');
     digit.className = /\d/.test(character) ? 'instrument-digit' : 'instrument-separator';
     digit.textContent = character;
+    if (/\d/.test(character)) digit.dataset.digit = character;
     if (previousTheme === state.theme && previousText?.[index] !== character) digit.classList.add('is-changed');
     return digit;
   });
@@ -211,6 +216,21 @@ function renderInstrumentValue(element, text) {
 
 function renderTheme() {
   el.screen.dataset.theme = state.theme;
+  if (document.body) {
+    document.body.dataset.theme = state.theme;
+    document.body.dataset.material = String(['space-age', 'steampunk', 'art-deco', 'nixie'].includes(state.theme));
+    if (state.theme === 'nixie' && !tubeAssets) {
+      // Keep readable amber text until every local photograph decodes. A
+      // missing/corrupt image leaves the text fallback available for all digits.
+      tubeAssets = Promise.all(Array.from({ length: 10 }, (_, digit) => new Promise((resolve) => {
+        const image = new Image();
+        image.onload = () => resolve(image.naturalWidth > 0);
+        image.onerror = () => resolve(false);
+        image.src = `assets/themes/nixie-${digit}.jpg`;
+      })));
+      tubeAssets.then((loaded) => { document.body.dataset.tubesReady = String(loaded.every(Boolean)); });
+    }
+  }
   for (const input of document.querySelectorAll('[data-theme-option]')) {
     input.checked = input.value === state.theme;
   }

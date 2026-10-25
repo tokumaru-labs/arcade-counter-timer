@@ -44,7 +44,7 @@ async function screenshot(page, name, options = {}) {
   const path = join(qa, `${name}.png`); await page.screenshot({ path, ...options }); images.push(path);
 }
 async function countIs(view, value) {
-  await view.locator('#count-value').filter({ hasText: new RegExp(`^${value}$`) }).waitFor();
+  await view.locator('#count-value').filter({ hasText: new RegExp(`^0*${value}$`) }).waitFor();
 }
 async function undoIs(view, enabled) {
   await view.locator(`#btn-undo-count:${enabled ? 'enabled' : 'disabled'}`).waitFor();
@@ -108,6 +108,7 @@ try {
     await popup.locator('#btn-settings').click();
     await popup.locator(`label[for="theme-${theme}"]`).click();
     await popup.locator(`#screen[data-theme="${theme}"]`).waitFor();
+    await popup.setViewportSize(theme === 'editorial' ? { width: 360, height: 540 } : { width: 600, height: 520 });
     await popup.locator('#btn-back').click();
     // Visual fixture only: show bundled text again to inspect all theme skins.
     await popup.evaluate(async () => {
@@ -154,14 +155,16 @@ try {
   for (const theme of ['space-age', 'arcade', 'editorial', 'steampunk', 'art-deco', 'nixie']) {
     await popup.evaluate((value) => chrome.runtime.sendMessage({ channel: 'arcade', action: 'theme', value }), theme);
     await floating.locator(`#screen[data-theme="${theme}"]`).waitFor();
+    await popup.setViewportSize(['arcade','editorial'].includes(theme) ? { width: 360, height: 540 } : { width: 600, height: 520 });
     await undoIs(floating, true);
     await floating.locator('#btn-undo-count').click(); await countIs(floating, 73); await countIs(popup, 73); await countIs(undoPanel, 73);
     await undoIs(undoPanel, false);
     await undoPanel.locator('#btn-count').click(); await countIs(undoPanel, 74); await countIs(floating, 74); await countIs(popup, 74);
     await popup.evaluate(() => document.fonts.ready);
-    if (['art-deco', 'nixie'].includes(theme)) assert.equal(await popup.evaluate(() => document.fonts.check('16px "Instrument Bodoni"')), true);
+    if (theme === 'art-deco') assert.equal(await popup.evaluate(() => document.fonts.check('16px "Instrument Bodoni"')), true);
     const assets = await popup.evaluate(() => [...document.querySelectorAll('.theme-gear')].every((img) => img.complete && img.naturalWidth > 0));
     assert.equal(assets, true, 'bundled gear images decoded');
+    await popup.locator('#count-value').evaluate((el) => Promise.all(el.getAnimations({ subtree: true }).map((a) => a.finished.catch(() => {}))));
     for (const [name, view] of [['popup', popup], ['compact', floating], ['sidepanel300', undoPanel]]) {
       const bounds = await view.locator('#btn-undo-count').evaluate((el) => {
         const r = el.getBoundingClientRect(); return { left: r.left, right: r.right, bottom: r.bottom, width: innerWidth, height: innerHeight };

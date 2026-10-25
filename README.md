@@ -72,9 +72,13 @@ settings or the pending undo receipt. Arcade and Editorial remain available.
 Space Age has ivory enamel, aluminium bezels and orange instrument glass.
 Steampunk layers bundled machinery and brass gear artwork under mechanical
 digit flaps; gears move a finite step when the count changes. Art Deco combines
-emerald lacquer, gold inlays and Bodoni numerals. Nixie wraps live amber digits
-in individual glass tubes over brushed graphite. These are live text and
-controls, not a picture of an interface. Long counts and 100+ hour durations
+emerald lacquer, gold inlays and Bodoni numerals. Nixie uses ten original photographs of illuminated Z566M digits, selected by
+the live value, over scratched steel. Accessible text remains available; a
+failed image or forced-colors mode falls back to readable text. The four
+material popups are 600×520 with equal TIME/COUNT instruments and tactile
+controls; Arcade and Editorial remain 360×540. Side panels and floating views
+adapt to their own width. Material faces show small counts with five digits
+(00042); saved values, spoken labels and statistics still mean 42. Long counts and 100+ hour durations
 fit the compact view; reduced motion disables tube/flap and gear motion.
 
 All six share the timer, counter, statistics, reset and undo logic. Themes are

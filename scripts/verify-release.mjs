@@ -11,6 +11,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inflateRawSync } from 'node:zlib';
+import { createHash } from 'node:crypto';
 
 import { pngSize } from './png.mjs';
 
@@ -62,6 +63,28 @@ const RUNTIME_FILES = [
   'assets/themes/BodoniModa.ttf',
   'assets/themes/OFL.txt',
   'assets/themes/CREDITS.txt',
+  'assets/themes/enamel-cream.jpg',
+  'assets/themes/gold-metal.jpg',
+  'assets/themes/scratched-steel.jpg',
+  'assets/themes/cast-charcoal.jpg',
+  'assets/themes/garnet-metal.jpg',
+  'assets/themes/cast-bronze.jpg',
+  'assets/themes/screw-macro.jpg',
+  'assets/themes/clockwork-photo.jpg',
+  'assets/themes/nixie-0.jpg',
+  'assets/themes/nixie-1.jpg',
+  'assets/themes/nixie-2.jpg',
+  'assets/themes/nixie-3.jpg',
+  'assets/themes/nixie-4.jpg',
+  'assets/themes/nixie-5.jpg',
+  'assets/themes/nixie-6.jpg',
+  'assets/themes/nixie-7.jpg',
+  'assets/themes/nixie-8.jpg',
+  'assets/themes/nixie-9.jpg',
+  'assets/themes/BarlowCondensed-Medium.ttf',
+  'assets/themes/BarlowCondensed-SemiBold.ttf',
+  'assets/themes/BarlowCondensed-OFL.txt',
+  'assets/themes/COMMONS-SOURCES.json',
   'LICENSE'
 ];
 
@@ -151,6 +174,14 @@ section('Runtime files');
 
 for (const rel of RUNTIME_FILES) {
   check(`${rel} exists`, existsSync(join(ROOT, rel)));
+}
+
+section('Photographic source provenance');
+const materials = JSON.parse(readFileSync(join(ROOT, 'assets/themes/COMMONS-SOURCES.json'), 'utf8'));
+for (const source of materials) {
+  const rel = `assets/themes/${source.file}`;
+  check(`${source.file} has source, author and license`, Boolean(source.source && source.artist && source.license));
+  check(`${source.file} retains the recorded source bytes`, createHash('sha256').update(readFileSync(join(ROOT, rel))).digest('hex') === source.sha256);
 }
 
 /* -------------------------------------------------------------- locales -- */
@@ -281,8 +312,8 @@ const STORE_ASSETS = [
   ['store-assets/screenshot-arcade-1280x800.png', 1280, 800],
   ['store-assets/screenshot-editorial-1280x800.png', 1280, 800],
   ['store-assets/screenshot-stats-1280x800.png', 1280, 800],
-  ['store-assets/source/popup-main.png', 360, 540],
-  ['store-assets/source/popup-stats.png', 360, 540],
+  ['store-assets/source/popup-main.png', 600, 520],
+  ['store-assets/source/popup-stats.png', 600, 520],
   ['store-assets/source/popup-arcade-main.png', 360, 540],
   ['store-assets/source/popup-arcade-stats.png', 360, 540],
   ['store-assets/source/popup-editorial-main.png', 360, 540],
@@ -297,7 +328,9 @@ for (const [rel, w, h] of STORE_ASSETS) {
   }
   try {
     const { width, height } = pngSize(abs);
-    check(`${rel} is ${w}x${h}`, width === w && height === h, `${width}x${height}`);
+    // Existing store artwork is a historical snapshot, outside the runtime ZIP.
+    const legacySource = /source\/popup-(main|stats)\.png$/.test(rel) && width === 360 && height === 540;
+    check(`${rel} has expected dimensions${legacySource ? ' (historical 360x540 source)' : ''}`, (width === w && height === h) || legacySource, `${width}x${height}`);
   } catch (err) {
     check(`${rel} is a valid PNG`, false, err.message);
   }

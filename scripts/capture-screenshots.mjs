@@ -24,8 +24,6 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const RENDER_DIR = join(ROOT, '.render', 'store-capture');
 const OUT_DIR = join(ROOT, 'store-assets', 'source');
 
-const POPUP_WIDTH = 360;
-const POPUP_HEIGHT = 540;
 
 const CHROME_CANDIDATES = [
   'C:/Program Files/Google/Chrome/Application/chrome.exe',
@@ -210,6 +208,7 @@ function startServer() {
  * spawnSync would stop it from ever answering the browser's requests.
  */
 async function capture(browser, port, theme, hash, outFile) {
+  const [width, height] = ['arcade', 'editorial'].includes(theme) ? [360, 540] : [600, 520];
   rmSync(outFile, { force: true });
   const url = `http://127.0.0.1:${port}/popup.html?theme=${theme}${hash}`;
   const stderr = await new Promise((ok, fail) => {
@@ -218,7 +217,7 @@ async function capture(browser, port, theme, hash, outFile) {
       '--disable-gpu',
       '--hide-scrollbars',
       '--force-device-scale-factor=1',
-      `--window-size=${POPUP_WIDTH},${POPUP_HEIGHT}`,
+      `--window-size=${width},${height}`,
       `--screenshot=${outFile}`,
       url
     ]);
@@ -237,9 +236,9 @@ async function capture(browser, port, theme, hash, outFile) {
     throw new Error(`Capture failed for ${hash || 'main'}: ${stderr}`);
   }
   const size = pngSize(outFile);
-  if (size.width !== POPUP_WIDTH || size.height !== POPUP_HEIGHT) {
+  if (size.width !== width || size.height !== height) {
     throw new Error(
-      `Unexpected capture size for ${outFile}: ${size.width}x${size.height}, expected ${POPUP_WIDTH}x${POPUP_HEIGHT}`
+      `Unexpected capture size for ${outFile}: ${size.width}x${size.height}, expected ${width}x${height}`
     );
   }
   console.log(`  ${outFile} — ${size.width}x${size.height}`);
