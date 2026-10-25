@@ -1,8 +1,8 @@
 import { STATE_VERSION, defaultState, mergeState, normalizeTheme, resetTimer, resetCount, resetSession } from './storage.js';
-import { addIntervalToHistory, addCountToHistory, clampMs } from './time.js';
+import { addIntervalToHistory, addCountToHistory, clampMs, dayKey } from './time.js';
 import { RELEASE_VERSION, updateNotice } from './release.js';
 
-export const STATE_KEYS = ['stateVersion', 'timer', 'sessionCount', 'history', 'theme', 'settings'];
+export const STATE_KEYS = ['stateVersion', 'timer', 'sessionCount', 'countUndo', 'history', 'theme', 'settings'];
 export const DISPLAY_MODES = ['popup', 'floating', 'sidepanel'];
 export function displayPreferences(value = {}) {
   return {
@@ -80,18 +80,32 @@ export function createStore(storage, now = () => Date.now()) {
       await storage.set({ ...state, displayPreferences: preferences, upgradeBackupV020: null });
       return snapshot();
     }
-    state = settle(state, now());
+    // Capture the receipt from the view's click, not whichever count happens to
+    // be latest when a delayed request reaches this serialized transaction.
+    if (action === 'undoCount' && (!state.countUndo || message.receiptId !== state.countUndo.id)) {
+      return { ...snapshot(), undone: false };
+    }
+    const operationTime = now();
+    state = settle(state, operationTime);
     switch (action) {
       case 'toggle':
-        state.timer = { ...state.timer, running: !state.timer.running, runStartedAt: state.timer.running ? null : now() };
+        state.timer = { ...state.timer, running: !state.timer.running, runStartedAt: state.timer.running ? null : operationTime };
         break;
       case 'count':
         state.sessionCount++;
-        state.history = addCountToHistory(state.history, new Date(now()), 1);
+        state.history = addCountToHistory(state.history, new Date(operationTime), 1);
+        state.countUndo = { id: crypto.randomUUID(), day: dayKey(operationTime), sessionCount: state.sessionCount };
         break;
-      case 'resetTimer': state = resetTimer(state, now()); break;
+      case 'undoCount': {
+        const day = state.countUndo.day;
+        state.sessionCount--;
+        state.history = { ...state.history, [day]: { ...state.history[day], count: state.history[day].count - 1 } };
+        state.countUndo = null;
+        break;
+      }
+      case 'resetTimer': state = resetTimer(state, operationTime); break;
       case 'resetCount': state = resetCount(state); break;
-      case 'resetSession': state = resetSession(state, now()); break;
+      case 'resetSession': state = resetSession(state, operationTime); break;
       case 'theme':
         if (normalizeTheme(message.value) !== message.value) throw new Error('Unknown theme.');
         state.theme = message.value;
@@ -103,7 +117,7 @@ export function createStore(storage, now = () => Date.now()) {
       default: throw new Error('Unknown operation.');
     }
     await storage.set(state);
-    return snapshot();
+    return action === 'undoCount' ? { ...snapshot(), undone: true } : snapshot();
   }
   return { dispatch };
 }

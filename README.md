@@ -51,6 +51,7 @@ rather work in silence, each one can be switched off.
 
 - Count-up timer with start/stop and its own reset
 - Session counter with its own reset
+- One-step UNDO beside COUNT, including the original day's statistics
 - Session reset for both at once
 - TODAY / WEEK / MONTH / YEAR statistics, kept locally
 - Fly text on fast streaks (`GOOD!` → `NICE!` → `GREAT!` → `FANTASTIC!`)
@@ -74,6 +75,7 @@ and restored the next time the popup opens.
 | --- | --- |
 | **▶ START / ■ STOP** | Start or stop the timer |
 | **+ COUNT** | Add one to the count |
+| **↶ UNDO** | Undo the latest count once, including its statistics |
 | `RESET TIMER` | Hold 500 ms — timer only |
 | `RESET COUNT` | Hold 500 ms — count only |
 | `SESSION RESET` | Hold 650 ms — timer and count |
@@ -81,6 +83,22 @@ and restored the next time the popup opens.
 
 The timer readout and the big count area are also clickable, as mouse shortcuts
 for the two buttons.
+
+UNDO is available after a successful COUNT, including after reopening a view or
+restarting the browser. Popup, floating and side-panel views share the same
+one-step receipt. A later COUNT replaces it; a timer, count, session or full-data
+reset clears it. Start/stop, themes and settings keep it. Undo corrects the day
+the count was originally recorded, even after midnight, without rewinding the
+timer. A repeated or stale request cannot remove a different count. There is no
+multi-step undo or redo. Keyboard users can Tab to UNDO and press Space/Enter;
+the existing global shortcuts are unchanged. Undo has a brief reverse-number
+effect and status, without achievement effects or sounds, and respects reduced
+motion. A failed save keeps the receipt available to retry.
+
+The development source remains version 0.2.0. Its storage schema is now 3;
+version 1/2 records are preserved and only new counts create undo receipts.
+Older schema-aware builds refuse to edit schema 3 rather than leaving an unsafe
+receipt behind. Do not downgrade a profile that has been used with this source.
 
 The optional `CLOCK` setting adds a small `NOW HH:MM:SS` local 24-hour clock to
 the top bar. It is on by default and keeps running independently of the elapsed

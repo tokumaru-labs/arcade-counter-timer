@@ -37,6 +37,8 @@ const el = {
   startStopLabel: $('start-stop-label'),
   countPad: $('count-pad'),
   btnCount: $('btn-count'),
+  btnUndoCount: $('btn-undo-count'),
+  undoStatus: $('undo-status'),
   countValue: $('count-value'),
   fxLayer: $('fx-layer'),
   live: $('live-region'),
@@ -66,6 +68,9 @@ let preferences = null;
 let context = null;
 let operations = Promise.resolve();
 let noticeChecked = false;
+let pendingCounts = 0;
+let undoPending = false;
+let undoStatusTimer = null;
 const clockTestHook = globalThis.__ARCADE_CLOCK_TEST__;
 
 function clearClockMotion() {
@@ -125,6 +130,7 @@ function reportError(error) {
 }
 
 function applySnapshot(snapshot) {
+  if (state && snapshot.state.sessionCount < state.sessionCount) clearEphemeral();
   state = snapshot.state;
   preferences = snapshot.preferences;
   renderTimer(); renderCount(); renderTheme(); renderSettings();
@@ -177,6 +183,7 @@ function renderTimerControls() {
 
 function renderCount() {
   el.countValue.textContent = formatCount(state.sessionCount);
+  el.btnUndoCount.disabled = !state.countUndo || undoPending || pendingCounts > 0;
 }
 
 function renderTheme() {
@@ -226,9 +233,12 @@ async function addCount() {
   streak = now - lastCountAt <= STREAK_WINDOW_MS ? streak + 1 : 1;
   lastCountAt = now;
 
+  pendingCounts++;
+  renderCount();
   try { await perform('count'); } catch { return; }
+  finally { pendingCounts--; renderCount(); }
 
-  el.countValue.classList.remove('is-bump');
+  el.countValue.classList.remove('is-bump', 'is-undo');
   void el.countValue.offsetWidth; // restart the animation
   el.countValue.classList.add('is-bump');
 
@@ -253,13 +263,35 @@ async function addCount() {
   }
 }
 
+async function undoCount() {
+  if (el.btnUndoCount.disabled || !state.countUndo) return;
+  const receiptId = state.countUndo.id;
+  undoPending = true;
+  renderCount();
+  try {
+    const result = await perform('undoCount', { receiptId });
+    if (result.undone) {
+      clearEphemeral();
+      void el.countValue.offsetWidth;
+      el.countValue.classList.add('is-undo');
+    }
+    const message = result.undone ? 'Count undone' : 'Count changed. Nothing undone.';
+    announce(message);
+    el.undoStatus.textContent = message;
+    clearTimeout(undoStatusTimer);
+    undoStatusTimer = setTimeout(() => { el.undoStatus.textContent = ''; }, 2400);
+  } catch { /* A failed save retains the receipt, so the user can retry. */ }
+  finally { undoPending = false; renderCount(); }
+}
+
 /* -------------------------------------------------------------- resets -- */
 
 /** Clear the ephemeral, popup-only streak / chain state. */
 function clearEphemeral() {
   streak = 0;
   lastCountAt = 0;
-  el.countValue.classList.remove('is-chain', 'is-bump');
+  el.countValue.classList.remove('is-chain', 'is-bump', 'is-undo');
+  el.screen.classList.remove('is-flash');
   clearFx(el.fxLayer);
 }
 
@@ -393,6 +425,7 @@ function bindEvents() {
   // state changes. Timer/count displays are mouse shortcuts for the buttons.
   bindPrimaryAction(el.btnStartStop, toggleTimer);
   bindPrimaryAction(el.btnCount, addCount);
+  bindPrimaryAction(el.btnUndoCount, undoCount);
   el.timer.addEventListener('click', toggleTimer);
   el.countPad.addEventListener('click', addCount);
   el.btnSettings.addEventListener('click', showStats);
@@ -491,7 +524,7 @@ async function openSelectedView() {
 }
 
 function onStorageChanged(changes, area) {
-  if (area === 'local' && ['timer', 'sessionCount', 'history', 'theme', 'settings', 'displayPreferences'].some((key) => key in changes)) {
+  if (area === 'local' && ['timer', 'sessionCount', 'countUndo', 'history', 'theme', 'settings', 'displayPreferences'].some((key) => key in changes)) {
     perform('get').catch(() => {});
   }
 }
@@ -517,6 +550,7 @@ async function init() {
 
 window.addEventListener('unload', () => {
   clearInterval(tickTimer);
+  clearTimeout(undoStatusTimer);
   clockController.dispose();
   chrome.storage.onChanged.removeListener(onStorageChanged);
 });

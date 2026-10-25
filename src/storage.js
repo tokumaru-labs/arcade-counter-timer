@@ -2,7 +2,8 @@
 
 import { addIntervalToHistory } from './time.js';
 
-export const STATE_VERSION = 2;
+// Older writers must not leave a stale receipt behind after changing counts.
+export const STATE_VERSION = 3;
 export const THEMES = Object.freeze(['original', 'arcade', 'editorial']);
 
 export function normalizeTheme(value) {
@@ -18,6 +19,7 @@ export function defaultState() {
       runStartedAt: null
     },
     sessionCount: 0,
+    countUndo: null,
     history: {},
     theme: 'original',
     settings: {
@@ -40,6 +42,13 @@ function num(value, fallback) {
 
 function bool(value, fallback) {
   return typeof value === 'boolean' ? value : fallback;
+}
+
+function countReceipt(value, sessionCount, history) {
+  if (!isPlainObject(value) || typeof value.id !== 'string' || !value.id ||
+      typeof value.day !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value.day) ||
+      value.sessionCount !== sessionCount || sessionCount < 1 || !(history[value.day]?.count >= 1)) return null;
+  return { id: value.id, day: value.day, sessionCount };
 }
 
 /** Merge a possibly missing / stale / corrupt stored blob onto the defaults. */
@@ -71,6 +80,7 @@ export function mergeState(stored) {
       runStartedAt: running ? runStartedAt : null
     },
     sessionCount: num(stored.sessionCount, 0),
+    countUndo: countReceipt(stored.countUndo, num(stored.sessionCount, 0), history),
     history,
     theme: normalizeTheme(stored.theme),
     settings: {
@@ -98,6 +108,7 @@ function settleRun(state, now) {
 export function resetTimer(state, now = Date.now()) {
   return {
     ...state,
+    countUndo: null,
     history: settleRun(state, now),
     timer: { running: false, sessionElapsedMs: 0, runStartedAt: null }
   };
@@ -105,7 +116,7 @@ export function resetTimer(state, now = Date.now()) {
 
 /** Session count back to 0. Statistics are never decremented. */
 export function resetCount(state) {
-  return { ...state, sessionCount: 0 };
+  return { ...state, sessionCount: 0, countUndo: null };
 }
 
 /** Both of the above, in one step. */
@@ -113,7 +124,7 @@ export function resetSession(state, now = Date.now()) {
   return resetCount(resetTimer(state, now));
 }
 
-const KEYS = ['stateVersion', 'timer', 'sessionCount', 'history', 'theme', 'settings'];
+const KEYS = ['stateVersion', 'timer', 'sessionCount', 'countUndo', 'history', 'theme', 'settings'];
 
 export async function loadState() {
   const stored = await chrome.storage.local.get(KEYS);
@@ -125,6 +136,7 @@ export async function saveState(state) {
     stateVersion: STATE_VERSION,
     timer: state.timer,
     sessionCount: state.sessionCount,
+    countUndo: countReceipt(state.countUndo, state.sessionCount, state.history),
     history: state.history,
     theme: normalizeTheme(state.theme),
     settings: state.settings

@@ -409,6 +409,19 @@ body {
   animation: chain-glow 700ms ease-out;
 }
 
+/* One-step correction beside COUNT; it never borrows achievement effects. */
+.count-actions { display: flex; align-items: stretch; gap: 8px; width: 100%; }
+.count-actions .mainbtn { flex: 1; min-width: 0; }
+.undo-count { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; width: 62px; flex-shrink: 0; margin-top: 10px; border: 1px solid var(--line); border-radius: 6px; color: var(--blue); background: transparent; font: 9px var(--font); letter-spacing: 1px; cursor: pointer; }
+.undo-count__icon { font: 24px/1 system-ui; }
+.undo-count:hover:enabled { background: #80baff16; }
+.undo-count:disabled { opacity: .4; cursor: default; }
+.undo-status { margin-right: auto; font: 9px/1.3 var(--font); color: var(--dim); max-width: 52%; }
+.screen[data-theme="arcade"] .undo-count { color: #78f3ff; border-color: #515587; background: #080e25; box-shadow: inset 0 0 0 2px #131a38; }
+.screen[data-theme="editorial"] .undo-count { color: #292725; border-color: #a6a19a; border-radius: 0; letter-spacing: 1.5px; }
+.countpad__value.is-undo { animation: count-undo 240ms ease-out 1; }
+@keyframes count-undo { from { transform: translateY(-5px) scale(.95); opacity: .45; } to { transform: none; opacity: 1; } }
+
 @keyframes bump {
   0% {
     transform: scale(1);
@@ -1494,6 +1507,7 @@ body {
 
   .countpad__value.is-bump,
   .countpad__value.is-chain,
+  .countpad__value.is-undo,
   .hold.is-done {
     animation: none;
   }
@@ -1560,6 +1574,8 @@ body[data-surface="sidepanel"], body[data-surface="floating"] { width: 100vw; he
   body[data-surface] .screen .timer { margin-top: 6px; padding: 13px 5px 7px; }
   body[data-surface] .screen .timer__value { font-size: min(29px, calc((100vw - 36px) / (var(--digits, 8) * .68))); }
   body[data-surface] .screen .mainbtn { margin-top: 6px; min-height: 34px; font-size: 12px; letter-spacing: 2px; }
+  .undo-count { margin-top: 6px; width: 54px; }
+  .undo-count__icon { font-size: 19px; }
   body[data-surface] .screen .countpad { min-height: 45px; margin-top: 6px; }
   body[data-surface] .screen .countpad__value { font-size: 42px; }
   body[data-surface] .screen .subrow { margin-top: 3px; }

@@ -43,6 +43,12 @@ async function idFrom(cdp) {
 async function screenshot(page, name, options = {}) {
   const path = join(qa, `${name}.png`); await page.screenshot({ path, ...options }); images.push(path);
 }
+async function countIs(view, value) {
+  await view.locator('#count-value').filter({ hasText: new RegExp(`^${value}$`) }).waitFor();
+}
+async function undoIs(view, enabled) {
+  await view.locator(`#btn-undo-count:${enabled ? 'enabled' : 'disabled'}`).waitFor();
+}
 try {
   context = await launch();
   let browserCdp = await context.browser().newBrowserCDPSession();
@@ -81,6 +87,23 @@ try {
   await popup.locator('#screen:not([inert])').waitFor();
   assert.equal(await popup.locator('#release-notice').isVisible(), false);
   record('update notice renders under COUNT once and does not replay on reopen');
+  await undoIs(popup, false);
+  await popup.locator('#btn-count').click(); await countIs(popup, 74); await undoIs(popup, true);
+  await popup.reload(); await popup.locator('#screen:not([inert])').waitFor();
+  await undoIs(popup, true);
+  await popup.locator('#btn-undo-count').focus(); await popup.keyboard.press('Space');
+  await countIs(popup, 73); await undoIs(popup, false);
+  assert.equal(await popup.locator('#live-region').innerText(), 'Count undone');
+  assert.equal((await worker.evaluate(() => chrome.storage.local.get('timer'))).timer.running, false);
+  await popup.locator('body').click({ position: { x: 2, y: 2 } });
+  await popup.keyboard.down('Space'); await popup.keyboard.down('Space'); await popup.keyboard.up('Space');
+  await countIs(popup, 74); await undoIs(popup, true);
+  await popup.locator('#btn-undo-count').click(); await countIs(popup, 73);
+  assert.notEqual(await popup.evaluate(() => document.activeElement.id), 'btn-undo-count');
+  await popup.keyboard.press('Space'); await countIs(popup, 74); await undoIs(popup, true);
+  await popup.locator('#btn-undo-count').click(); await countIs(popup, 73);
+  assert.equal(await popup.locator('#fx-layer').evaluate((el) => el.childElementCount), 0);
+  record('UNDO survives reopening; focused keyboard activation and pointer release keep one-input-one-action');
   for (const theme of ['original', 'editorial']) {
     await popup.locator('#btn-settings').click();
     await popup.locator(`label[for="theme-${theme}"]`).click();
@@ -123,6 +146,36 @@ try {
   await floating.locator('#btn-count').click();
   await floating.locator('#count-value').filter({ hasText: '74' }).waitFor();
   record('native extension action grants activeTab and floating view counts');
+  const undoPanel = await context.newPage();
+  await undoPanel.setViewportSize({ width: 300, height: 620 });
+  await undoPanel.goto(`chrome-extension://${id}/popup.html?surface=sidepanel`);
+  await undoPanel.locator('#screen:not([inert])').waitFor();
+  await popup.locator('#btn-back').click();
+  for (const theme of ['original', 'arcade', 'editorial']) {
+    await popup.evaluate((value) => chrome.runtime.sendMessage({ channel: 'arcade', action: 'theme', value }), theme);
+    await floating.locator(`#screen[data-theme="${theme}"]`).waitFor();
+    await undoIs(floating, true);
+    await floating.locator('#btn-undo-count').click(); await countIs(floating, 73); await countIs(popup, 73); await countIs(undoPanel, 73);
+    await undoIs(undoPanel, false);
+    await undoPanel.locator('#btn-count').click(); await countIs(undoPanel, 74); await countIs(floating, 74); await countIs(popup, 74);
+    for (const [name, view] of [['popup', popup], ['compact', floating], ['sidepanel300', undoPanel]]) {
+      const bounds = await view.locator('#btn-undo-count').evaluate((el) => {
+        const r = el.getBoundingClientRect(); return { left: r.left, right: r.right, bottom: r.bottom, width: innerWidth, height: innerHeight };
+      });
+      assert.ok(bounds.left >= 0 && bounds.right <= bounds.width && bounds.bottom <= bounds.height, `${theme} ${name} undo reachable`);
+      if (name === 'compact') await screenshot(web, `undo-${theme}-${name}`);
+      else await screenshot(view, `undo-${theme}-${name}`);
+    }
+    await undoPanel.emulateMedia({ reducedMotion: 'reduce' });
+    await undoPanel.locator('#btn-undo-count').click(); await countIs(undoPanel, 73);
+    assert.equal(await undoPanel.locator('#count-value').evaluate((el) => getComputedStyle(el).animationName), 'none');
+    await undoPanel.emulateMedia({ reducedMotion: 'no-preference' });
+    await undoPanel.locator('#btn-count').click(); await countIs(undoPanel, 74); await countIs(floating, 74);
+  }
+  await popup.evaluate(() => chrome.runtime.sendMessage({ channel: 'arcade', action: 'theme', value: 'arcade' }));
+  await undoPanel.close();
+  await popup.locator('#btn-settings').click();
+  record('undo synchronizes all three surfaces; all themes fit 360px popup, compact floating and 300px sidepanel with reduced motion');
   const host = web.locator('[data-arcade-counter-timer]');
   const beforeMove = await host.boundingBox();
   await web.mouse.move(beforeMove.x + 70, beforeMove.y + 16); await web.mouse.down();
@@ -222,6 +275,13 @@ try {
   assert.equal(restartedData.releaseNotice.pending, null);
   assert.equal(restartedData.displayPreferences.mode, 'sidepanel');
   record('browser restart preserves statistics, display mode and notice receipt');
+  const reopened = await context.newPage();
+  await reopened.goto(`chrome-extension://${id}/popup.html`);
+  await reopened.locator('#screen:not([inert])').waitFor();
+  await undoIs(reopened, true);
+  await reopened.locator('#btn-undo-count').click(); await countIs(reopened, 74); await undoIs(reopened, false);
+  assert.equal((await restartedWorker.evaluate(() => chrome.storage.local.get('countUndo'))).countUndo, null);
+  record('a durable receipt can be consumed once after a full browser and worker restart');
   writeFileSync(join(qa, 'results.json'), JSON.stringify({ browser: context.browser().version(), checks, images }, null, 2));
   writeFileSync(join(root, '.render', 'latest-display-qa.json'), JSON.stringify({ directory: qa, checks, images }, null, 2));
   console.log(`Browser checks: ${checks.length}; artifacts: ${qa}`);

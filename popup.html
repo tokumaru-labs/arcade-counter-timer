@@ -79,6 +79,7 @@
           <span id="fx-layer" class="fx-layer" aria-hidden="true"></span>
         </div>
 
+        <div class="count-actions">
         <button
           id="btn-count"
           class="mainbtn mainbtn--count"
@@ -88,8 +89,13 @@
           <span class="mainbtn__icon" aria-hidden="true">+</span>
           <span class="mainbtn__label">COUNT</span>
         </button>
+        <button id="btn-undo-count" class="undo-count" type="button" aria-label="Undo the last count" title="Undo the last count once. Resets clear undo." disabled>
+          <span class="undo-count__icon" aria-hidden="true">↶</span><span>UNDO</span>
+        </button>
+        </div>
 
         <div class="subrow">
+          <span id="undo-status" class="undo-status" aria-hidden="true"></span>
           <button
             id="btn-reset-count"
             class="hold hold--count"

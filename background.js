@@ -98,7 +98,7 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
       await chrome.sidePanel.setOptions({ enabled: true });
       return null;
     }
-    if (!['get', 'toggle', 'count', 'resetTimer', 'resetCount', 'resetSession', 'setting', 'theme', 'preferences', 'clear', 'claimNotice'].includes(message.action)) throw new Error('Unknown operation.');
+    if (!['get', 'toggle', 'count', 'undoCount', 'resetTimer', 'resetCount', 'resetSession', 'setting', 'theme', 'preferences', 'clear', 'claimNotice'].includes(message.action)) throw new Error('Unknown operation.');
     const result = await store.dispatch(message);
     if (message.action === 'preferences' || message.action === 'clear') await configureAction(result.preferences);
     return result;
