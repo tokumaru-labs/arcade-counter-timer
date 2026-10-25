@@ -42,8 +42,9 @@ https://commons.wikimedia.org/wiki/File:Dalibor_Farny_RZ568M_Nixie_Tube.jpg
 https://creativecommons.org/publicdomain/zero/1.0/
 Edited for Tokumaru Labs using OpenAI imagegen, October 2026. The room background,
 lit digit, mesh and internal supports were removed; the glass housing, reflections
-and black socket were retained as a separate overlay. CSS adjusts its proportions,
-opacity and clipping. Source URL, method and prompt are recorded in
+and black socket were retained as one complete overlay. CSS keeps its original
+proportions, places it above the cathode and applies uniform opacity. Source URL,
+method and prompt are recorded in
 nixie-glass-shell-provenance.json. This is an edited illustration assembled with
 the Z566M digit photographs credited below, not an exact reproduction or unmodified
 photograph of either tube model. No dimming or idle brightness behavior is used.

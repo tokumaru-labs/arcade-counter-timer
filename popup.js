@@ -215,7 +215,7 @@ function renderInstrumentValue(element, text) {
   element.dataset.readoutValue = text;
   element.dataset.readoutTheme = state.theme;
   if (!instrument) { element.textContent = text; return; }
-  // Keep the housing/socket nodes fixed while only the cathode changes.
+  // Keep one complete, correctly proportioned housing fixed as the cathode changes.
   const existing = previousTheme === 'nixie' ? [...element.children] : [];
   const digits = [...text].map((character, index) => {
     const isDigit = /\d/.test(character);
@@ -228,10 +228,15 @@ function renderInstrumentValue(element, text) {
       live.className = 'nixie-live';
       digit.append(live);
       if (isDigit) {
-        const socket = document.createElement('span');
-        socket.className = 'nixie-socket';
-        socket.setAttribute('aria-hidden', 'true');
-        digit.append(socket);
+        const housing = document.createElement('img');
+        housing.className = 'nixie-housing';
+        housing.src = 'assets/themes/nixie-glass-shell.png';
+        housing.width = 841;
+        housing.height = 1871;
+        housing.alt = '';
+        housing.draggable = false;
+        housing.setAttribute('aria-hidden', 'true');
+        digit.append(housing);
       }
     }
     digit.firstElementChild.textContent = character;

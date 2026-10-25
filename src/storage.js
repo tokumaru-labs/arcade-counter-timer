@@ -3,7 +3,7 @@
 import { addIntervalToHistory } from './time.js';
 
 // Older writers must not leave a stale receipt behind after changing counts.
-export const STATE_VERSION = 3;
+export const STATE_VERSION = 4;
 export const THEMES = Object.freeze(['space-age', 'arcade', 'editorial', 'steampunk', 'art-deco', 'nixie']);
 
 export function normalizeTheme(value) {
@@ -45,11 +45,37 @@ function bool(value, fallback) {
   return typeof value === 'boolean' ? value : fallback;
 }
 
-function countReceipt(value, sessionCount, history) {
+function validDay(day) {
+  if (typeof day !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return false;
+  const date = new Date(`${day}T12:00:00Z`);
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === day;
+}
+
+function countReceipt(value, sessionCount, history, legacy = false) {
   if (!isPlainObject(value) || typeof value.id !== 'string' || !value.id ||
-      typeof value.day !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value.day) ||
-      value.sessionCount !== sessionCount || sessionCount < 1 || !(history[value.day]?.count >= 1)) return null;
-  return { id: value.id, day: value.day, sessionCount };
+      !validDay(value.day) || value.sessionCount !== sessionCount ||
+      !Number.isSafeInteger(sessionCount) || sessionCount < 1) return null;
+  // Schema 3 only knew its last successful COUNT. Never infer older operations
+  // from aggregate statistics. Schema 4 with missing/corrupt runs fails closed.
+  const source = legacy ? [{ day: value.day, count: 1 }] : value.runs;
+  if (!Array.isArray(source) || !source.length || source.at(-1)?.day !== value.day) return null;
+  const runs = [], byDay = new Map();
+  let total = 0;
+  for (const run of source) {
+    if (!isPlainObject(run) || !validDay(run.day) || !Number.isSafeInteger(run.count) || run.count < 1) return null;
+    total += run.count;
+    const dayTotal = (byDay.get(run.day) || 0) + run.count;
+    if (!Number.isSafeInteger(total) || total > sessionCount || !(history[run.day]?.count >= dayTotal)) return null;
+    byDay.set(run.day, dayTotal);
+    runs.push({ day: run.day, count: run.count });
+  }
+  return { id: value.id, day: value.day, sessionCount, runs };
+}
+
+export function assertSupportedVersion(stored) {
+  if (Number.isFinite(stored?.stateVersion) && stored.stateVersion > STATE_VERSION) {
+    throw new Error('Data belongs to a newer version. Update the extension before editing it.');
+  }
 }
 
 /** Merge a possibly missing / stale / corrupt stored blob onto the defaults. */
@@ -81,7 +107,7 @@ export function mergeState(stored) {
       runStartedAt: running ? runStartedAt : null
     },
     sessionCount: num(stored.sessionCount, 0),
-    countUndo: countReceipt(stored.countUndo, num(stored.sessionCount, 0), history),
+    countUndo: countReceipt(stored.countUndo, num(stored.sessionCount, 0), history, stored.stateVersion === 3),
     history,
     theme: normalizeTheme(stored.theme),
     settings: {
@@ -129,15 +155,18 @@ const KEYS = ['stateVersion', 'timer', 'sessionCount', 'countUndo', 'history', '
 
 export async function loadState() {
   const stored = await chrome.storage.local.get(KEYS);
+  assertSupportedVersion(stored);
   return mergeState(stored);
 }
 
 export async function saveState(state) {
+  assertSupportedVersion(state);
+  assertSupportedVersion(await chrome.storage.local.get(['stateVersion']));
   await chrome.storage.local.set({
     stateVersion: STATE_VERSION,
     timer: state.timer,
     sessionCount: state.sessionCount,
-    countUndo: countReceipt(state.countUndo, state.sessionCount, state.history),
+    countUndo: countReceipt(state.countUndo, state.sessionCount, state.history, state.stateVersion === 3),
     history: state.history,
     theme: normalizeTheme(state.theme),
     settings: state.settings
@@ -145,6 +174,7 @@ export async function saveState(state) {
 }
 
 export async function clearAll() {
+  assertSupportedVersion(await chrome.storage.local.get(['stateVersion']));
   await chrome.storage.local.clear();
   const fresh = defaultState();
   await saveState(fresh);

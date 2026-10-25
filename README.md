@@ -51,7 +51,7 @@ rather work in silence, each one can be switched off.
 
 - Count-up timer with start/stop and its own reset
 - Session counter with its own reset
-- One-step UNDO beside COUNT, including the original day's statistics
+- Repeatable UNDO beside COUNT, including each operation's original-day statistics
 - Session reset for both at once
 - TODAY / WEEK / MONTH / YEAR statistics, kept locally
 - Fly text on fast streaks (`GOOD!` → `NICE!` → `GREAT!` → `FANTASTIC!`)
@@ -76,7 +76,8 @@ split flaps: only changed digits turn in two halves around the center hinge over
 faces. Gears move a finite step when the count changes. Art Deco combines
 emerald lacquer, gold inlays and Bodoni numerals. Nixie uses ten original photographs
 of illuminated Z566M digits inside fixed glass housings and sockets, over scratched
-steel. The housing is an AI-edited derivative of a CC0 tube photo, not a precise
+steel. Each complete housing image keeps its original proportions and shows its
+tip, glass body and socket together. The housing is an AI-edited derivative of a CC0 tube photo, not a precise
 reproduction of a single hardware model. Accessible text remains available; a
 failed image or forced-colors mode falls back to readable text. The four
 material popups are 600×520 with equal TIME/COUNT instruments and tactile
@@ -96,7 +97,7 @@ Historical store screenshots above predate these development-source themes.
 | --- | --- |
 | **▶ START / ■ STOP** | Start or stop the timer |
 | **+ COUNT** | Add one to the count |
-| **↶ UNDO** | Undo the latest count once, including its statistics |
+| **↶ UNDO** | Undo counts in reverse order, including their statistics |
 | `RESET TIMER` | Hold 500 ms — timer only |
 | `RESET COUNT` | Hold 500 ms — count only |
 | `SESSION RESET` | Hold 650 ms — timer and count |
@@ -105,21 +106,26 @@ Historical store screenshots above predate these development-source themes.
 The timer readout and the big count area are also clickable, as mouse shortcuts
 for the two buttons.
 
-UNDO is available after a successful COUNT, including after reopening a view or
-restarting the browser. Popup, floating and side-panel views share the same
-one-step receipt. A later COUNT replaces it; a timer, count, session or full-data
-reset clears it. Start/stop, themes and settings keep it. Undo corrects the day
-the count was originally recorded, even after midnight, without rewinding the
-timer. A repeated or stale request cannot remove a different count. There is no
-multi-step undo or redo. Keyboard users can Tab to UNDO and press Space/Enter;
+UNDO can be repeated until all retained successful COUNT operations are undone,
+including after reopening a view or restarting the browser. Popup, floating and
+side-panel views share the same history. A new COUNT adds a step after any undo;
+there is no redo. Timer, count, session or full-data reset clears the undo history.
+Start/stop, themes and settings keep it. Each undo corrects the count's original
+local date, even after midnight, without rewinding the timer. Every successful
+count or undo replaces the authorization token, so a repeated or stale request
+cannot remove another count. Keyboard users can Tab to UNDO and press Space/Enter;
 the existing global shortcuts are unchanged. Undo has a brief reverse-number
 effect and status, without achievement effects or sounds, and respects reduced
-motion. A failed save keeps the receipt available to retry.
+motion. A failed save keeps all remaining undo steps available to retry.
 
-The development source remains version 0.2.0. Its storage schema is now 3;
-version 1/2 records are preserved and only new counts create undo receipts.
-Older schema-aware builds refuse to edit schema 3 rather than leaving an unsafe
-receipt behind. Do not downgrade a profile that has been used with this source.
+The development source remains version 0.2.0; its storage schema is now 4.
+Schema 3's valid one-step receipt migrates as one undo step. Older counts are
+never reconstructed from aggregate statistics. New counts add further steps.
+Consecutive counts on the same local date share a compact run; there is no
+arbitrary operation-count cap. Browser storage capacity and JavaScript's exact
+integer range still apply: failed or unrepresentable operations do not change
+saved counts or consume undo. Older schema-aware builds refuse to edit schema 4;
+do not downgrade a profile that has been used with this source.
 
 The optional `CLOCK` setting adds a small `NOW HH:MM:SS` local 24-hour clock to
 the top bar. It is on by default and keeps running independently of the elapsed

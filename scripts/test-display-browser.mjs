@@ -291,9 +291,15 @@ try {
   await reopened.goto(`chrome-extension://${id}/popup.html`);
   await reopened.locator('#screen:not([inert])').waitFor();
   await undoIs(reopened, true);
-  await reopened.locator('#btn-undo-count').click(); await countIs(reopened, 74); await undoIs(reopened, false);
+  const undoDepth = restartedData.countUndo.runs.reduce((sum, run) => sum + run.count, 0);
+  assert.ok(undoDepth >= 2, 'earlier COUNT operations survive the final count and restart');
+  for (let remaining = undoDepth; remaining > 0; remaining--) {
+    await reopened.locator('#btn-undo-count').click();
+    await countIs(reopened, 75 - undoDepth + remaining - 1);
+    await undoIs(reopened, remaining > 1);
+  }
   assert.equal((await restartedWorker.evaluate(() => chrome.storage.local.get('countUndo'))).countUndo, null);
-  record('a durable receipt can be consumed once after a full browser and worker restart');
+  record('all durable undo steps remain available after a full browser and worker restart');
   writeFileSync(join(qa, 'results.json'), JSON.stringify({ browser: context.browser().version(), checks, images }, null, 2));
   writeFileSync(join(root, '.render', 'latest-display-qa.json'), JSON.stringify({ directory: qa, checks, images }, null, 2));
   console.log(`Browser checks: ${checks.length}; artifacts: ${qa}`);

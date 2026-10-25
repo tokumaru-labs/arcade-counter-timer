@@ -1,4 +1,4 @@
-import { STATE_VERSION, defaultState, mergeState, normalizeTheme, resetTimer, resetCount, resetSession } from './storage.js';
+import { assertSupportedVersion, defaultState, mergeState, normalizeTheme, resetTimer, resetCount, resetSession } from './storage.js';
 import { addIntervalToHistory, addCountToHistory, clampMs, dayKey } from './time.js';
 import { RELEASE_VERSION, updateNotice } from './release.js';
 
@@ -38,9 +38,7 @@ export function createStore(storage, now = () => Date.now()) {
   }
   async function execute(message) {
     const raw = await storage.get([...STATE_KEYS, 'displayPreferences', 'releaseNotice', 'upgradeBackupV020']);
-    if (Number.isFinite(raw.stateVersion) && raw.stateVersion > STATE_VERSION) {
-      throw new Error('Data belongs to a newer version. Update the extension before editing it.');
-    }
+    assertSupportedVersion(raw);
     let state = mergeState(raw);
     let preferences = displayPreferences(raw.displayPreferences);
     const action = message?.action;
@@ -91,16 +89,29 @@ export function createStore(storage, now = () => Date.now()) {
       case 'toggle':
         state.timer = { ...state.timer, running: !state.timer.running, runStartedAt: state.timer.running ? null : operationTime };
         break;
-      case 'count':
+      case 'count': {
+        const day = dayKey(operationTime);
+        if (!Number.isSafeInteger(state.sessionCount) || state.sessionCount >= Number.MAX_SAFE_INTEGER ||
+            !Number.isSafeInteger(state.history[day]?.count ?? 0) || (state.history[day]?.count ?? 0) >= Number.MAX_SAFE_INTEGER) {
+          throw new Error('Count exceeds the safely supported number range. Nothing was saved.');
+        }
         state.sessionCount++;
         state.history = addCountToHistory(state.history, new Date(operationTime), 1);
-        state.countUndo = { id: crypto.randomUUID(), day: dayKey(operationTime), sessionCount: state.sessionCount };
+        const runs = state.countUndo?.runs ?? [];
+        if (runs.at(-1)?.day === day) runs.at(-1).count++;
+        else runs.push({ day, count: 1 });
+        state.countUndo = { id: crypto.randomUUID(), day, sessionCount: state.sessionCount, runs };
         break;
+      }
       case 'undoCount': {
         const day = state.countUndo.day;
         state.sessionCount--;
         state.history = { ...state.history, [day]: { ...state.history[day], count: state.history[day].count - 1 } };
-        state.countUndo = null;
+        const runs = state.countUndo.runs;
+        if (--runs.at(-1).count === 0) runs.pop();
+        // A head token authorizes one mutation, not a historical count's identity.
+        // Rotating it prevents old views/replayed requests becoming valid again.
+        state.countUndo = runs.length ? { id: crypto.randomUUID(), day: runs.at(-1).day, sessionCount: state.sessionCount, runs } : null;
         break;
       }
       case 'resetTimer': state = resetTimer(state, operationTime); break;

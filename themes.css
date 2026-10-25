@@ -119,13 +119,11 @@ body[data-material="true"] .theme-picker label{color:var(--blue)}body[data-mater
 .screen[data-theme="nixie"] .timer,.screen[data-theme="nixie"] .countpad{border:4px solid #77796a;border-radius:14px;padding:35px 5px 15px;background:#080a07;box-shadow:0 0 0 2px #14180e,inset 0 0 0 2px #161a11,0 3px 2px #000}
 .screen[data-theme="nixie"] .timer::before,.screen[data-theme="nixie"] .countpad::before{font-size:13px;color:#d3ccba;letter-spacing:4px}
 .screen[data-theme="nixie"] .timer__value,.screen[data-theme="nixie"] .countpad__value{font-family:var(--instrument-sans);font-size:min(61px,calc(235px/(var(--digits,8)*.68)));line-height:1}.screen[data-theme="nixie"] .countpad__value{font-size:min(62px,calc(230px/(var(--digits,5)*.79)))}
-.screen[data-theme="nixie"] .instrument-digit{color:var(--orange);text-shadow:0 0 8px var(--orange-glow);width:.74em;height:1.65em;line-height:1.65;margin:0 .018em;vertical-align:bottom}
+.screen[data-theme="nixie"] .instrument-digit{color:var(--orange);text-shadow:0 0 8px var(--orange-glow);width:.74em;aspect-ratio:841/1871;line-height:1.65;margin:0 .018em;vertical-align:bottom}
 /* Keep the complete center cathode (source x176..684, y92..932), independent
    of the housing's display aspect ratio. The neighboring tube stays outside. */
 .screen[data-theme="nixie"] .instrument-digit::before{content:'';display:none;position:absolute;inset:17% 20% 23% 18%;background-position:77% 50%;background-size:145% 122%;background-image:var(--tube-photo);border-radius:15% 15% 10% 10%;mask:linear-gradient(transparent,#000 8% 92%,transparent)}
-.screen[data-theme="nixie"] .instrument-digit::after,.nixie-socket{content:'';display:none;position:absolute;inset:0;background:url('assets/themes/nixie-glass-shell.png') center/100% 100% no-repeat;pointer-events:none}
-.screen[data-theme="nixie"] .instrument-digit::after{opacity:.6;clip-path:inset(0 0 22% 0)}
-.nixie-socket{clip-path:inset(77% 0 0 0)}
+.nixie-housing{display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:.72;pointer-events:none}
 
 .screen[data-theme="nixie"] .instrument-separator{width:.2em;padding-bottom:.16em;vertical-align:bottom;font-size:.75em}.screen[data-theme="nixie"] .instrument-digit::selection{color:#ffdf9a;background:#45240b}
 .screen[data-theme="nixie"] .instrument-digit[data-digit="0"]{--tube-photo:url('assets/themes/nixie-0.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="1"]{--tube-photo:url('assets/themes/nixie-1.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="2"]{--tube-photo:url('assets/themes/nixie-2.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="3"]{--tube-photo:url('assets/themes/nixie-3.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="4"]{--tube-photo:url('assets/themes/nixie-4.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="5"]{--tube-photo:url('assets/themes/nixie-5.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="6"]{--tube-photo:url('assets/themes/nixie-6.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="7"]{--tube-photo:url('assets/themes/nixie-7.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="8"]{--tube-photo:url('assets/themes/nixie-8.jpg')}.screen[data-theme="nixie"] .instrument-digit[data-digit="9"]{--tube-photo:url('assets/themes/nixie-9.jpg')}
@@ -166,8 +164,8 @@ body[data-material="true"] .screen .footer{min-height:23px;margin-top:2px}body[d
 @media(prefers-reduced-motion:reduce){.theme-gear{transition:none}body[data-material="true"] .countpad__value:is(.is-bump,.is-chain),body[data-material="true"] .screen .instrument-digit.is-changed{animation:none}}
 
 body[data-tubes-ready="true"] .screen[data-theme="nixie"] .instrument-digit{color:transparent;text-shadow:none}
-body[data-tubes-ready="true"] .screen[data-theme="nixie"] .instrument-digit::before,body[data-tubes-ready="true"] .screen[data-theme="nixie"] .instrument-digit::after,body[data-tubes-ready="true"] .nixie-socket{display:block}
-@media(forced-colors:active){body[data-tubes-ready="true"] .screen[data-theme="nixie"] .instrument-digit::before,body[data-tubes-ready="true"] .screen[data-theme="nixie"] .instrument-digit::after,body[data-tubes-ready="true"] .nixie-socket{display:none}body[data-tubes-ready] .screen[data-theme="nixie"] .instrument-digit{color:CanvasText;background-image:none;text-shadow:none}body[data-material="true"] .screen{border:1px solid CanvasText}body[data-material="true"] :is(.timer,.countpad,.mainbtn,.undo-count,.hold){border-color:ButtonText}}
+body[data-tubes-ready="true"] .screen[data-theme="nixie"] .instrument-digit::before,body[data-tubes-ready="true"] .nixie-housing{display:block}
+@media(forced-colors:active){body[data-tubes-ready="true"] .screen[data-theme="nixie"] .instrument-digit::before,body[data-tubes-ready="true"] .nixie-housing{display:none}body[data-tubes-ready] .screen[data-theme="nixie"] .instrument-digit{color:CanvasText;background-image:none;text-shadow:none}body[data-material="true"] .screen{border:1px solid CanvasText}body[data-material="true"] :is(.timer,.countpad,.mainbtn,.undo-count,.hold){border-color:ButtonText}}
 
 .screen:not([data-theme="art-deco"]) .case-screw{background:#a8a69d url("assets/themes/screw-macro.jpg") 48% 85%/142% auto;box-shadow:0 0 0 2px #18170e,0 2px 3px #000b,inset 0 1px 2px #fff9}
 
@@ -201,7 +199,6 @@ body[data-material="true"] .release-notice{position:relative;inset:auto;grid-col
 @media(min-width:480px){
 .screen[data-theme="nixie"] .timer__value{font-size:min(48px,calc(235px/(var(--digits,8)*.64)))}
 .screen[data-theme="nixie"] .countpad__value{font-size:min(46px,calc(230px/(var(--digits,5)*.85)))}
-.screen[data-theme="nixie"] .instrument-digit{width:.79em;height:2.5em;line-height:2.5em}
-.screen[data-theme="nixie"] .instrument-digit::before{inset:14% 20% 20% 18%}
-.screen[data-theme="nixie"] .timer__value .instrument-separator{translate:0 -.7em}
+.screen[data-theme="nixie"] .instrument-digit{width:.79em;line-height:1.76em}
+.screen[data-theme="nixie"] .timer__value .instrument-separator{translate:0 -.4em}
 }

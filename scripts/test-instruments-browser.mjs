@@ -24,13 +24,13 @@ try{
  assert.equal(await page.locator('.instrument-digit').evaluateAll(nodes=>[...new Set(nodes.map(n=>n.dataset.digit))].sort().join('')),'0123456789');
  await capture('nixie-all-digits');
  await seed('nixie',42,1458000);await page.waitForFunction(()=>document.querySelector('#count-value').textContent==='00042');
- await page.evaluate(()=>{window.beforeTubes=[...document.querySelectorAll('#count-value .instrument-digit')];window.beforeSockets=window.beforeTubes.map(n=>n.querySelector('.nixie-socket'));});
+ await page.evaluate(()=>{window.beforeTubes=[...document.querySelectorAll('#count-value .instrument-digit')];window.beforeHousings=window.beforeTubes.map(n=>n.querySelector('.nixie-housing'));});
  await capture('nixie-housing-before');
  await page.locator('#btn-count').click();await page.waitForFunction(()=>document.querySelector('#count-value').getAttribute('aria-label')==='43');
- assert.ok(await page.evaluate(()=>window.beforeTubes.every((n,i)=>document.querySelectorAll('#count-value .instrument-digit')[i]===n&&n.querySelector('.nixie-socket')===window.beforeSockets[i])));
- assert.ok(await page.locator('#count-value .instrument-digit').evaluateAll(nodes=>nodes.every(n=>getComputedStyle(n,'::after').backgroundImage.includes('nixie-glass-shell.png')&&getComputedStyle(n,'::before').backgroundImage.includes(`nixie-${n.dataset.digit}.jpg`))));
+ assert.ok(await page.evaluate(()=>window.beforeTubes.every((n,i)=>document.querySelectorAll('#count-value .instrument-digit')[i]===n&&n.querySelector('.nixie-housing')===window.beforeHousings[i])));
+ assert.ok(await page.locator('#count-value .instrument-digit').evaluateAll(nodes=>nodes.every(n=>n.querySelector('.nixie-housing').complete&&n.querySelector('.nixie-housing').naturalWidth===841&&getComputedStyle(n,'::before').backgroundImage.includes(`nixie-${n.dataset.digit}.jpg`))));
  await page.locator('#count-value').evaluate(el=>Promise.all(el.getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{}))));
- await capture('nixie-housing-after');record('Nixie changes the cathode only; housing and socket nodes stay fixed');
+ await capture('nixie-housing-after');record('Nixie changes the cathode only; complete housing nodes stay fixed');
  await seed('steampunk');await page.locator('#screen[data-theme="steampunk"]').waitFor();await page.waitForFunction(()=>document.querySelector('#count-value').textContent==='00009');
  await page.evaluate(()=>{window.beforeFlaps=[...document.querySelector('#count-value').children]});
  await page.locator('#btn-count').click();await page.waitForFunction(()=>document.querySelector('#count-value').textContent==='00010');
