@@ -19,7 +19,7 @@ Arcade Counter Timer provides a local count-up timer and tally counter with opti
 **`storage`**
 
 ```
-The storage permission saves timer state, session count, daily history, theme, settings, display preferences, upgrade backup and one-time notice receipts on the device. Session storage temporarily holds tab-bound grants for floating views. No data is sent to a server.
+The storage permission saves timer state, session count and undo history, daily history, theme, settings, display preferences, upgrade backup and one-time notice receipts on the device. Session storage temporarily holds tab-bound grants for floating views. No data is sent to a server.
 ```
 
 **`activeTab`**
@@ -67,7 +67,7 @@ fonts, and no dynamic import of anything fetched at runtime.
 | User activity (clicks, keystrokes, mouse position) | **Yes, local only** | Retain this existing Dashboard disclosure for timer/count inputs and saved timer position. No general browsing activity is recorded and no activity is transmitted |
 | Website content (text, images, page data) | **No** | User-triggered injected code positions its own UI and does not extract webpage text, forms or other content |
 
-The extension stores its own timer values, session count, daily history, theme,
+The extension stores its own timer values, session count and undo history, daily history, theme,
 settings, display preferences, upgrade backup and notice receipts in local
 storage. Temporary tab-bound floating-view grants are held in session storage.
 Both are on the user's device. No user data is transmitted or collected by the

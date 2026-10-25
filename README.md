@@ -2,7 +2,9 @@ English | [日本語](README_JA.md)
 
 # Arcade Counter Timer
 
-## 0.2.0 (unreleased): display modes and preserved history
+[Chrome Web Store](https://chromewebstore.google.com/detail/arcade-counter-timer/cfonffmpidgimppooikhhhlceaoipkeb) · [What changed](CHANGELOG.md)
+
+## 0.3.0: six themes and repeatable undo
 
 In settings choose DISPLAY MODE: Popup / Floating / Side panel, then OPEN
 SELECTED VIEW. The next toolbar click remembers the selected mode. Floating
@@ -32,7 +34,7 @@ small arcade machine for a fraction of a second when you hit a milestone.
 
 <img src="store-assets/source/popup-main.png" alt="The Arcade Counter Timer popup: a running timer, a large count, and START and COUNT buttons" width="300">
 
-Version 0.2.0 (unreleased) · by Tokumaru Labs · Chrome Extension (Manifest V3)
+Version 0.3.0 · by Tokumaru Labs · Chrome Extension (Manifest V3)
 
 ## What it does
 
@@ -89,7 +91,7 @@ fit the compact view; reduced motion skips or cancels flap and gear motion.
 All six share the timer, counter, statistics, reset and undo logic. Themes are
 saved locally. Artwork, fonts and their licenses are bundled; **ARTWORK & FONT
 CREDITS** in settings opens the local attribution file. No runtime downloads.
-Historical store screenshots above predate these development-source themes.
+Store screenshots above show the current UI with sample records.
 
 ## Main controls
 
@@ -118,7 +120,7 @@ the existing global shortcuts are unchanged. Undo has a brief reverse-number
 effect and status, without achievement effects or sounds, and respects reduced
 motion. A failed save keeps all remaining undo steps available to retry.
 
-The development source remains version 0.2.0; its storage schema is now 4.
+Version 0.3.0 uses storage schema 4.
 Schema 3's valid one-step receipt migrates as one undo step. Older counts are
 never reconstructed from aggregate statistics. New counts add further steps.
 Consecutive counts on the same local date share a compact run; there is no
@@ -202,7 +204,11 @@ To run the current source checkout manually:
 
 ## Development
 
-No build step, no dependencies, no bundler. Vanilla HTML, CSS and ES modules.
+No runtime build step, dependency or bundler. Vanilla HTML, CSS and ES modules.
+Unit tests use Node's standard library. Native browser QA and screenshot capture
+use an existing Playwright/Chromium development installation; set
+`PLAYWRIGHT_MODULE` to its `node_modules/playwright` directory when it is outside
+this checkout. Browser tooling is never included in the extension ZIP.
 
 ```
 npm test              # existing behavior, upgrades, concurrency and notice lifecycle
@@ -223,8 +229,8 @@ npm run store-assets  # compose the 1280x800 store screenshots
 Tests cover the pure logic — duration and clock formatting, clock lifecycle,
 midnight/month/year interval splitting, Monday-based week ranges, the statistics
 aggregates, the reset state transitions and the keyboard routing rules. They
-import the same modules the extension uses; there is no DOM test harness and no
-test dependency.
+import the same modules the extension uses. Browser checks run separately in
+isolated profiles with synthetic records.
 
 ## Privacy
 

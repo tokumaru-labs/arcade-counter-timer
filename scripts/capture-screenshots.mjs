@@ -1,267 +1,57 @@
-/**
- * Render the real popup with headless Chrome and save raw captures to
- * store-assets/source/. Node standard library only.
- *
- * The captures are produced by the shipped popup.html / popup.css / popup.js —
- * nothing is drawn or mocked up. The only addition is a small shim that
- * provides `chrome.storage.local`, which does not exist on a file:// page, and
- * seeds it with a sample session so the statistics screen has something to
- * aggregate. Every number on screen is computed by the extension's own code
- * from that seeded history.
- *
- *   node scripts/capture-screenshots.mjs
+/** Capture the shipped extension UI in an isolated Chromium profile.
+ * Synthetic records only; no user profile, shim, CSS override or painted UI.
+ * PLAYWRIGHT_MODULE may point to an existing development installation.
  */
-
-import { spawn } from 'node:child_process';
-import { createServer } from 'node:http';
-import { existsSync, mkdirSync, rmSync, cpSync, copyFileSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, normalize, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-import { pngSize } from './png.mjs';
-
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const RENDER_DIR = join(ROOT, '.render', 'store-capture');
-const OUT_DIR = join(ROOT, 'store-assets', 'source');
-
-
-const CHROME_CANDIDATES = [
-  'C:/Program Files/Google/Chrome/Application/chrome.exe',
-  'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe',
-  'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
-  'C:/Program Files/Microsoft/Edge/Application/msedge.exe'
-];
-
-function findBrowser() {
-  const fromEnv = process.env.CHROME_PATH;
-  if (fromEnv && existsSync(fromEnv)) return fromEnv;
-  const found = CHROME_CANDIDATES.find((p) => existsSync(p));
-  if (!found) {
-    throw new Error(
-      'No Chrome or Edge executable found. Set CHROME_PATH to a browser binary and retry.'
-    );
-  }
-  return found;
-}
-
-/** A believable but ordinary work history, so the stats screen has real input. */
-function seedScript() {
-  return `// Capture-only shim. Never shipped: it lives in .render/, which is gitignored
-// and excluded from the release ZIP.
-(() => {
-  const theme = new URLSearchParams(location.search).get('theme') || 'space-age';
-  const pad = (n) => String(n).padStart(2, '0');
-  const key = (d) => \`\${d.getFullYear()}-\${pad(d.getMonth() + 1)}-\${pad(d.getDate())}\`;
-  const dayBefore = (n) => {
-    const now = new Date();
-    return key(new Date(now.getFullYear(), now.getMonth(), now.getDate() - n));
-  };
-
-  const MIN = 60000;
-  const history = {};
-  const add = (offset, timeMs, count) => {
-    history[dayBefore(offset)] = { timeMs, count };
-  };
-
-  // Today, then a scattering of earlier days: recent ones land in this week,
-  // the rest roll up into the month and year totals.
-  add(0, 102 * MIN + 18000, 38);
-  add(1, 187 * MIN, 61);
-  add(2, 143 * MIN, 47);
-  add(3, 96 * MIN, 33);
-  add(5, 168 * MIN, 55);
-  for (let i = 8; i < 300; i += 3) {
-    add(i, (60 + ((i * 37) % 120)) * MIN, 20 + ((i * 13) % 45));
-  }
-
-  const data = {
-    stateVersion: 2,
-    timer: { running: true, sessionElapsedMs: 0, runStartedAt: Date.now() - (12 * 60000 + 34000) },
-    sessionCount: 18,
-    history,
-    theme,
-    settings: { sound: true, flyText: true, chainEffect: true, subtleCrt: true }
-  };
-
-  globalThis.chrome = {
-    storage: {
-      onChanged: { addListener() {}, removeListener() {} },
-      local: {
-        async get(keys) {
-          const out = {};
-          for (const k of [].concat(keys)) if (k in data) out[k] = data[k];
-          return out;
-        },
-        async set(obj) {
-          Object.assign(data, obj);
-        },
-        async clear() {
-          for (const k of Object.keys(data)) delete data[k];
-        }
-      }
-    }
-  };
-
-  const store = import('./src/controller.js').then(({ createStore }) => createStore(chrome.storage.local));
-  chrome.runtime = {
-    async sendMessage(message) {
-      if (message.action === 'context') return { ok: true, value: { windowId: 1 } };
-      if (message.action === 'prepareSidepanel') return { ok: true };
-      return { ok: true, value: await (await store).dispatch(message) };
-    }
-  };
-  chrome.i18n = { getUILanguage: () => 'en' };
-
-  if (location.hash === '#stats') {
-    // Drive the real gear button rather than un-hiding the panel by hand.
-    setTimeout(() => document.getElementById('btn-settings').click(), 400);
-  }
-
-  // Headless --screenshot fires on the load event, but the popup renders from
-  // an async storage read. A deliberately slow image holds the load event open
-  // long enough for the real UI to settle. It is 1x1 and invisible.
-  addEventListener('DOMContentLoaded', () => {
-    const img = document.createElement('img');
-    img.src = '/__delay';
-    img.alt = '';
-    img.style.cssText = 'position:fixed;top:-10px;left:-10px;width:1px;height:1px;opacity:0';
-    document.body.appendChild(img);
-  });
-})();
-`;
-}
-
-function buildRenderDir() {
-  rmSync(RENDER_DIR, { recursive: true, force: true });
-  mkdirSync(RENDER_DIR, { recursive: true });
-
-  for (const file of ['popup.css', 'themes.css', 'popup.js']) {
-    copyFileSync(join(ROOT, file), join(RENDER_DIR, file));
-  }
-  cpSync(join(ROOT, 'src'), join(RENDER_DIR, 'src'), { recursive: true });
-  cpSync(join(ROOT, 'assets'), join(RENDER_DIR, 'assets'), { recursive: true });
-  writeFileSync(join(RENDER_DIR, 'shim.js'), seedScript(), 'utf8');
-
-  // Classic scripts run before deferred modules, so the shim is always in
-  // place before popup.js starts. The rest of the document is untouched.
-  const html = readFileSync(join(ROOT, 'popup.html'), 'utf8');
-  const marker = '<script type="module" src="popup.js"></script>';
-  if (!html.includes(marker)) throw new Error('popup.html no longer matches the expected script tag');
-  writeFileSync(
-    join(RENDER_DIR, 'popup.html'),
-    html.replace(marker, `<script src="shim.js"></script>\n    ${marker}`),
-    'utf8'
-  );
-}
-
-const MIME = {
-  '.html': 'text/html; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.webp': 'image/webp',
-  '.jpg': 'image/jpeg',
-  '.ttf': 'font/ttf',
-  '.txt': 'text/plain; charset=utf-8'
-};
-
-/**
- * Serve the render directory over loopback. ES modules are blocked on file://
- * origins, so popup.js would never execute from disk.
- */
-function startServer() {
-  // 1x1 transparent PNG, served late to postpone the load event.
-  const pixel = Buffer.from(
-    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-    'base64'
-  );
-
-  const server = createServer((req, res) => {
-    const rel = decodeURIComponent(req.url.split('?')[0].split('#')[0]).replace(/^\/+/, '');
-    if (rel === '__delay') {
-      setTimeout(() => {
-        res.writeHead(200, { 'Content-Type': 'image/png', Connection: 'close' });
-        res.end(pixel);
-      }, 900);
-      return;
-    }
-    const path = normalize(join(RENDER_DIR, rel || 'popup.html'));
-    if (!path.startsWith(RENDER_DIR) || !existsSync(path)) {
-      res.writeHead(404).end('not found');
-      return;
-    }
-    const ext = path.slice(path.lastIndexOf('.'));
-    res.writeHead(200, {
-      'Content-Type': MIME[ext] ?? 'application/octet-stream',
-      // Keep-alive sockets stop Chrome's "network idle" heuristic from ever
-      // settling, which leaves --screenshot waiting forever.
-      Connection: 'close'
-    });
-    res.end(readFileSync(path));
-  });
-  return new Promise((ok) => {
-    server.listen(0, '127.0.0.1', () => ok({ server, port: server.address().port }));
-  });
-}
-
-/**
- * Must stay async: the local server runs in this same process, so a blocking
- * spawnSync would stop it from ever answering the browser's requests.
- */
-async function capture(browser, port, theme, hash, outFile) {
-  const [width, height] = ['arcade', 'editorial'].includes(theme) ? [360, 540] : [600, 520];
-  rmSync(outFile, { force: true });
-  const url = `http://127.0.0.1:${port}/popup.html?theme=${theme}${hash}`;
-  const stderr = await new Promise((ok, fail) => {
-    const child = spawn(browser, [
-      '--headless=new',
-      '--disable-gpu',
-      '--hide-scrollbars',
-      '--force-device-scale-factor=1',
-      `--window-size=${width},${height}`,
-      `--screenshot=${outFile}`,
-      url
-    ]);
-    let err = '';
-    child.stderr.on('data', (chunk) => {
-      err += chunk;
-    });
-    const killer = setTimeout(() => child.kill(), 60000);
-    child.on('error', fail);
-    child.on('close', () => {
-      clearTimeout(killer);
-      ok(err);
-    });
-  });
-  if (!existsSync(outFile)) {
-    throw new Error(`Capture failed for ${hash || 'main'}: ${stderr}`);
-  }
-  const size = pngSize(outFile);
-  if (size.width !== width || size.height !== height) {
-    throw new Error(
-      `Unexpected capture size for ${outFile}: ${size.width}x${size.height}, expected ${width}x${height}`
-    );
-  }
-  console.log(`  ${outFile} — ${size.width}x${size.height}`);
-}
-
-const browser = findBrowser();
-console.log(`Browser: ${browser}`);
-buildRenderDir();
-mkdirSync(OUT_DIR, { recursive: true });
-
-const { server, port } = await startServer();
-console.log('Capturing the real popup:');
+import { createRequire } from 'node:module';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { resolve, join } from 'node:path';
+import assert from 'node:assert/strict';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const root = resolve(import.meta.dirname, '..');
+const out = join(root, 'store-assets', 'source');
+const qa = join(root, '.render', `store-capture-${Date.now()}`);
+mkdirSync(out, { recursive: true }); mkdirSync(qa, { recursive: true });
+const context = await chromium.launchPersistentContext(join(qa, 'profile'), {
+  headless: true, channel: 'chromium', locale: 'en-US',
+  args: [`--disable-extensions-except=${root}`, `--load-extension=${root}`]
+});
+const images = [], errors = [], external = [];
+context.on('request', req => { if (/^https?:/.test(req.url())) external.push(req.url()); });
 try {
-  for (const theme of ['space-age', 'arcade', 'editorial', 'steampunk', 'art-deco', 'nixie']) {
-    const mainName = theme === 'space-age' ? 'popup-main.png' : `popup-${theme}-main.png`;
-    const statsName = theme === 'space-age' ? 'popup-stats.png' : `popup-${theme}-stats.png`;
-    await capture(browser, port, theme, '', join(OUT_DIR, mainName));
-    await capture(browser, port, theme, '#stats', join(OUT_DIR, statsName));
+  const worker = context.serviceWorkers()[0] || await context.waitForEvent('serviceworker');
+  const id = new URL(worker.url()).host;
+  const page = await context.newPage(); page.on('pageerror', e => errors.push(e.message));
+  const capture = async name => {
+    await page.evaluate(() => document.fonts.ready);
+    await page.locator('#count-value').evaluate(el => Promise.all(el.getAnimations({subtree:true}).map(a => a.finished.catch(()=>{}))));
+    const file = join(out, name); await page.screenshot({ path: file }); images.push(file); console.log(file);
+  };
+  for (const theme of ['space-age','arcade','editorial','steampunk','art-deco','nixie']) {
+    await worker.evaluate(async theme => {
+      const today = new Date(), key = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      const history = {};
+      for (let i=0;i<20;i++) { const d = new Date(today.getFullYear(),today.getMonth(),today.getDate()-i); history[key(d)]={count:20+i,timeMs:(25+i)*60000}; }
+      await chrome.storage.local.set({stateVersion:4,theme,sessionCount:40,countUndo:null,history,
+        timer:{running:false,sessionElapsedMs:1458000,runStartedAt:null},
+        settings:{clock:false,sound:false,flyText:false,chainEffect:false,subtleCrt:false}});
+    }, theme);
+    await page.setViewportSize(['arcade','editorial'].includes(theme)?{width:360,height:540}:{width:600,height:520});
+    await page.goto(`chrome-extension://${id}/popup.html`); await page.locator('#screen:not([inert])').waitFor();
+    // Real controller operations establish two undoable steps and enable UNDO.
+    await page.locator('#btn-count').click(); await page.locator('#btn-count').click();
+    await page.waitForFunction(()=>document.querySelector('#count-value').getAttribute('aria-label')==='42');
+    if(theme==='nixie') await page.waitForFunction(()=>document.body.dataset.tubesReady==='true');
+    const stem = theme==='space-age'?'popup':`popup-${theme}`;
+    await capture(`${stem}-main.png`);
+    if(theme==='space-age') {
+      await page.locator('#btn-undo-count').click(); await page.waitForFunction(()=>document.querySelector('#count-value').getAttribute('aria-label')==='41');
+      await page.locator('#btn-undo-count').click(); await page.waitForFunction(()=>document.querySelector('#count-value').getAttribute('aria-label')==='40');
+      await capture('popup-undo.png');
+    }
+    await page.locator('#btn-settings').click(); await capture(`${stem}-stats.png`);
   }
-} finally {
-  server.closeAllConnections();
-  server.close();
-}
-
-rmSync(RENDER_DIR, { recursive: true, force: true });
-console.log('Done. Compose the store images with scripts/build-store-screenshots.ps1');
+  assert.deepEqual(errors, []); assert.deepEqual(external, []);
+  writeFileSync(join(qa,'results.json'),JSON.stringify({images,errors,external},null,2));
+  writeFileSync(join(root,'.render','latest-store-capture.json'),JSON.stringify({directory:qa,images},null,2));
+} finally { await context.close(); }

@@ -9,15 +9,15 @@ the declarations and the final "Submit for review" are all manual.**
 - [ ] `npm test` passes
 - [ ] `npm run verify` passes
 - [ ] `npm run package` has produced
-      `dist/arcade-counter-timer-v0.2.0-chrome-web-store.zip`
+      `dist/arcade-counter-timer-v0.3.0-chrome-web-store.zip`
 - [ ] The ZIP has been loaded unpacked in Chrome once and manually exercised
 - [ ] The URLs in `urls.md` still load
 
 ## Package
 
 - [ ] Open the existing published Arcade Counter Timer item; retain its ID
-- [ ] Upload `dist/arcade-counter-timer-v0.2.0-chrome-web-store.zip`
-- [ ] The Dashboard's manifest analysis reports version **0.2.0**
+- [ ] Upload `dist/arcade-counter-timer-v0.3.0-chrome-web-store.zip`
+- [ ] The Dashboard's manifest analysis reports version **0.3.0**
 - [ ] It reports **storage, activeTab, scripting and sidePanel**
 - [ ] It reports no host permissions and no remote code warnings
 - [ ] The item name and description are picked up from `_locales/en` — the
@@ -35,10 +35,9 @@ the declarations and the final "Submit for review" are all manual.**
 ## Graphics
 
 - [ ] Store icon 128×128 — `store-assets/store-icon-128.png`
-- [ ] At least one screenshot 1280×800 — `store-assets/screenshot-main-1280x800.png`
-- [ ] Second screenshot 1280×800 — `store-assets/screenshot-stats-1280x800.png`
-- [ ] Arcade theme screenshot 1280×800 — `store-assets/screenshot-arcade-1280x800.png`
-- [ ] Editorial theme screenshot 1280×800 — `store-assets/screenshot-editorial-1280x800.png`
+- [ ] Five English 1280×800 images — `screenshot-{main,machinery,style,arcade,undo}-1280x800.png`
+- [ ] Five Japanese 1280×800 images — matching names with `-ja-1280x800.png`
+- [ ] Replace prior screenshots so no obsolete Original-theme artwork remains
 - [ ] Small promo tile 440×280 — `store-assets/small-promo-440x280.png`
 - [ ] Marquee promo tile 1400×560 — `store-assets/marquee-promo-1400x560.png` (optional)
 - [ ] Every screenshot shows the real, current UI — no mock-ups, no invented
@@ -72,7 +71,7 @@ Fill in from `urls.md` — leave blank rather than entering a guess.
 
 ## Final steps
 
-- [ ] Notes for reviewers pasted from `review-notes.md`
+- [ ] The 500-character test-instructions field uses `review-instructions-short.txt`; detailed notes remain in `review-notes.md`
 - [ ] Preview the listing and re-read it for claims the extension does not make
 - [ ] One last manual test of the exact ZIP being submitted
 - [ ] **Submit for review** (manual, deliberate action)

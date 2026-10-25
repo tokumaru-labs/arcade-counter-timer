@@ -26,7 +26,7 @@ test('updating preserves every old data key exactly and saves a separate recover
   const actual = f.data();
   for (const key of Object.keys(old)) assert.deepEqual(actual[key], old[key], key);
   assert.deepEqual(actual.upgradeBackupV020, old);
-  assert.equal(actual.releaseNotice.pending.version, '0.2.0');
+  assert.equal(actual.releaseNotice.pending.version, '0.3.0');
   await f.store.dispatch({ action: 'installed', reason: 'update', previousVersion: '0.1.3' });
   assert.deepEqual(f.data().upgradeBackupV020, old);
 });
@@ -81,7 +81,7 @@ test('update notification is claimed once across clients, reloads, resets and re
 });
 
 test('fresh installation, same-version reload and downgrade never announce an update', async () => {
-  for (const details of [{ reason: 'install' }, { reason: 'update', previousVersion: '0.2.0' }, { reason: 'update', previousVersion: '0.3.0' }]) {
+  for (const details of [{ reason: 'install' }, { reason: 'update', previousVersion: '0.3.0' }, { reason: 'update', previousVersion: '0.4.0' }]) {
     const f = fixture();
     await f.store.dispatch({ action: 'installed', ...details });
     assert.equal(await f.store.dispatch({ action: 'claimNotice' }), null);
@@ -89,8 +89,23 @@ test('fresh installation, same-version reload and downgrade never announce an up
 });
 
 test('skipped releases mention only features added after the installed version', () => {
-  assert.equal(updateNotice('0.1.3').notes.length, 1);
-  assert.deepEqual(updateNotice('0.1.2').notes.map((note) => note.version), ['0.1.3', '0.2.0']);
+  assert.equal(updateNotice('0.2.0').notes.length, 1);
+  assert.deepEqual(updateNotice('0.1.2').notes.map((note) => note.version), ['0.1.3', '0.2.0', '0.3.0']);
+});
+
+test('0.2.0 update announces six themes and undo once without replacing the existing recovery snapshot', async () => {
+  const backup = { retained: 'pre-0.2.0 snapshot' };
+  const f = fixture({ ...old, upgradeBackupV020: backup, releaseNotice: { seenVersion: '0.2.0', pending: null } });
+  await f.store.dispatch({ action: 'installed', reason: 'update', previousVersion: '0.2.0' });
+  for (const key of Object.keys(old)) assert.deepEqual(f.data()[key], old[key]);
+  assert.deepEqual(f.data().upgradeBackupV020, backup);
+  const notice = await f.store.dispatch({ action: 'claimNotice' });
+  assert.equal(notice.version, '0.3.0');
+  assert.equal(notice.notes.length, 1);
+  assert.match(notice.notes[0].en, /Six themes.*undo/);
+  assert.match(notice.notes[0].ja, /6つのテーマ.*取り消し/);
+  await f.store.dispatch({ action: 'installed', reason: 'update', previousVersion: '0.2.0' });
+  assert.equal(await f.store.dispatch({ action: 'claimNotice' }), null);
 });
 
 test('a failed save makes no optimistic mutation; subsequent operations can recover', async () => {

@@ -1,4 +1,4 @@
-# Builds the Chrome Web Store promotional tiles with System.Drawing.
+﻿# Builds the Chrome Web Store promotional tiles with System.Drawing.
 #
 # Output : store-assets/small-promo-440x280.png     (required by the store)
 #          store-assets/marquee-promo-1400x560.png  (optional)
@@ -77,7 +77,7 @@ function New-Tile {
     $y += $titleSize * 2.0
     $g.DrawString('COUNTER TIMER', $titleFont, $blue, $textX, $y)
     $y += $titleSize * 2.3
-    $g.DrawString('TIME IT.  COUNT IT.', $copyFont, $orange, $textX, $y)
+    $g.DrawString('6 THEMES.  UNDO.', $copyFont, $orange, $textX, $y)
     $y += $copySize * 2.1
     $g.DrawString('Local statistics. No account.', $copyFont, $dim, $textX, $y)
 

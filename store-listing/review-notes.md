@@ -1,29 +1,16 @@
-# Notes for the reviewer
+# Notes for reviewers — 0.3.0
 
-Paste into the **Notes for reviewers** box in the Developer Dashboard.
+Paste the block into the Developer Dashboard. Existing item cfonffmpidgimppooikhhhlceaoipkeb.
 
 ```
-Arcade Counter Timer is a local count-up timer and tally counter with a popup, user-triggered floating view and native Chrome side panel. No login or external service is required. This is a 0.1.3 to 0.2.0 update of the existing item; keep the same extension ID.
+Arcade Counter Timer is a local count-up timer and counter. This updates the same item from 0.2.0 to 0.3.0 with six themes and repeatable COUNT undo. No login, remote service, new permission or paid feature is needed.
 
-How to test:
+1. Open the toolbar popup and press START/STOP. Closing and reopening preserves elapsed time.
+2. Press COUNT three times, then UNDO repeatedly. Each operation removes one retained count and its original day's statistics. Reopen Chrome between operations to verify that undo history persists. Older aggregate counts are not retrospectively undoable; a valid one-step receipt from a prior build imports as one step.
+3. Settings offers Space Age, Arcade, Editorial, Steampunk, Art Deco and Nixie. Space Age replaces the old default while preserving all records. Steampunk flips changed digit halves; Nixie shows complete glass housings. Sound and effects are optional, and reduced motion is respected.
+4. Try the existing FLOATING mode on a normal HTTPS page and the native SIDE PANEL. All views share the same timer, counts and undo history. Protected browser/Web Store pages cannot host floating UI.
+5. Hold RESET TIMER, RESET COUNT or SESSION RESET. Daily statistics remain; all undo history clears. START/STOP, theme and ordinary settings changes preserve undo history. Use disposable data for reset tests. CLEAR ALL DATA remains confirmation-protected.
+6. Update the existing 0.2.0 item without uninstalling. Records/settings and any existing upgradeBackupV020 snapshot remain. The 0.3.0 NEW FEATURE notice appears once, then does not replay on reopen or same-version reload. Fresh installs show no update notice.
 
-1. Click the extension's toolbar icon to open the popup.
-2. Click START to begin the timer. The display updates once per second and the label changes to STOP. Closing and reopening the popup shows the timer still running, because elapsed time is derived from a stored timestamp.
-3. Click COUNT, or press the Space key, to increment the counter. Each press adds exactly one.
-4. Press COUNT several times in quick succession. A short line of text (GOOD!, NICE!, GREAT!, FANTASTIC!) appears briefly, and every tenth count shows a CHAIN effect with a short generated sound.
-5. Click the gear icon in the top right to see TODAY / WEEK / MONTH / YEAR statistics and the settings. Select Original, Arcade or Editorial to change the visual theme; timer and counter behavior stays the same. Sound and the visual effects can each be switched off here. Press Escape or the back arrow to return.
-6. Press and hold RESET TIMER or RESET COUNT for about half a second to reset one of them; hold SESSION RESET (or the R key) for about two thirds of a second to reset both. A short click deliberately does nothing. Statistics are preserved by all three.
-7. On a regular HTTPS webpage, open settings and select FLOATING, then open the selected view. Drag the header, switch size, lock the position and count. Chrome settings and the Chrome Web Store are protected pages and cannot host the floating view. Click the toolbar icon on a different normal page to place it there.
-8. Select SIDE PANEL and open it, then select POPUP to return. All views share timer/count/statistics and persist display preferences. Floating mode does not require permanent host permissions.
-9. Upgrade the same extension from 0.1.3 to 0.2.0 with existing statistics. Confirm records remain and NEW FEATURE appears once below COUNT on the first visible main view. It must not replay on reopening, same-version reload or fresh installation. A raw pre-upgrade snapshot is retained locally; history is no longer age-pruned.
-10. CLEAR ALL DATA, at the bottom of settings, clears statistics and settings after confirmation. A notice receipt remains to prevent replay. Use disposable test data for this destructive check; it is not part of the update procedure.
-
-Notes:
-
-- No account, login, or external service is required or offered.
-- There are no paid features, no in-app purchases and no advertising.
-- The extension makes no network requests. It contains no remote code, no external scripts, no CDN references and no external fonts. All sound is synthesised at runtime with the Web Audio API; there are no audio files in the package.
-- Local storage holds timer/count/history/settings, display preferences, the upgrade snapshot and notice receipt. Session storage holds temporary tab-bound grants for floating views.
-- Permissions: storage, activeTab, scripting and sidePanel. No persistent host permissions. User-triggered packaged code inserts its own UI without extracting page contents; a packaged worker serializes shared state writes.
-- Source code is available under GPL-3.0-only.
+Only storage, activeTab, scripting and sidePanel are requested. No persistent host permissions. User-triggered code places its own UI without extracting page contents. A local worker serializes changes. Stored records include timer, count, local undo history, daily totals, preferences, an existing recovery snapshot and notice receipt. Nothing is transmitted. All fonts, images and scripts are bundled; attribution is accessible in settings.
 ```

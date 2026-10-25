@@ -22,7 +22,7 @@ const EXPECTED = {
   name: '__MSG_extensionName__',
   description: '__MSG_extensionDescription__',
   defaultLocale: 'en',
-  version: '0.2.0',
+  version: '0.3.0',
   descriptionLimit: 132,
   permissions: ['storage', 'activeTab', 'scripting', 'sidePanel']
 };
@@ -312,15 +312,28 @@ const STORE_ASSETS = [
   ['store-assets/small-promo-440x280.png', 440, 280],
   ['store-assets/marquee-promo-1400x560.png', 1400, 560],
   ['store-assets/screenshot-main-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-machinery-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-style-1280x800.png', 1280, 800],
   ['store-assets/screenshot-arcade-1280x800.png', 1280, 800],
-  ['store-assets/screenshot-editorial-1280x800.png', 1280, 800],
-  ['store-assets/screenshot-stats-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-undo-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-main-ja-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-machinery-ja-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-style-ja-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-arcade-ja-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-undo-ja-1280x800.png', 1280, 800],
   ['store-assets/source/popup-main.png', 600, 520],
   ['store-assets/source/popup-stats.png', 600, 520],
   ['store-assets/source/popup-arcade-main.png', 360, 540],
   ['store-assets/source/popup-arcade-stats.png', 360, 540],
   ['store-assets/source/popup-editorial-main.png', 360, 540],
-  ['store-assets/source/popup-editorial-stats.png', 360, 540]
+  ['store-assets/source/popup-editorial-stats.png', 360, 540],
+  ['store-assets/source/popup-steampunk-main.png', 600, 520],
+  ['store-assets/source/popup-steampunk-stats.png', 600, 520],
+  ['store-assets/source/popup-art-deco-main.png', 600, 520],
+  ['store-assets/source/popup-art-deco-stats.png', 600, 520],
+  ['store-assets/source/popup-nixie-main.png', 600, 520],
+  ['store-assets/source/popup-nixie-stats.png', 600, 520],
+  ['store-assets/source/popup-undo.png', 600, 520]
 ];
 
 for (const [rel, w, h] of STORE_ASSETS) {
@@ -331,9 +344,7 @@ for (const [rel, w, h] of STORE_ASSETS) {
   }
   try {
     const { width, height } = pngSize(abs);
-    // Existing store artwork is a historical snapshot, outside the runtime ZIP.
-    const legacySource = /source\/popup-(main|stats)\.png$/.test(rel) && width === 360 && height === 540;
-    check(`${rel} has expected dimensions${legacySource ? ' (historical 360x540 source)' : ''}`, (width === w && height === h) || legacySource, `${width}x${height}`);
+    check(`${rel} has expected dimensions`, width === w && height === h, `${width}x${height}`);
   } catch (err) {
     check(`${rel} is a valid PNG`, false, err.message);
   }
