@@ -4,10 +4,11 @@ import { addIntervalToHistory } from './time.js';
 
 // Older writers must not leave a stale receipt behind after changing counts.
 export const STATE_VERSION = 3;
-export const THEMES = Object.freeze(['original', 'arcade', 'editorial']);
+export const THEMES = Object.freeze(['space-age', 'arcade', 'editorial', 'steampunk', 'art-deco', 'nixie']);
 
 export function normalizeTheme(value) {
-  return THEMES.includes(value) ? value : 'original';
+  // Original's initial/default role moves to Space Age; no data is reset.
+  return THEMES.includes(value) ? value : 'space-age';
 }
 
 export function defaultState() {
@@ -21,7 +22,7 @@ export function defaultState() {
     sessionCount: 0,
     countUndo: null,
     history: {},
-    theme: 'original',
+    theme: 'space-age',
     settings: {
       clock: true,
       sound: true,

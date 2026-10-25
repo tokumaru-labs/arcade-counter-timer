@@ -1,0 +1,222 @@
+@font-face {
+  font-family: "Instrument Bodoni";
+  src: url("assets/themes/BodoniModa.ttf") format("truetype");
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+/* Six skins share the same live controls. Decoration never receives input. */
+.theme-machinery { display: none; position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.theme-picker__options, .screen[data-theme="editorial"] .theme-picker__options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.theme-credits { display: block; margin: 14px 0 0; color: var(--blue); font: 9px/1.6 var(--font); text-align: center; text-underline-offset: 3px; }
+.screen .countpad__value { max-width: 100%; white-space: nowrap; font-size: min(66px, calc((100vw - 64px) / (var(--digits, 1) * .72))); }
+.screen[data-theme="arcade"] .countpad__value { font-size: min(66px, calc((100vw - 64px) / (var(--digits, 1) * .72))); }
+.screen[data-theme="editorial"] .countpad__value { font-size: min(76px, calc((100vw - 64px) / (var(--digits, 1) * .64))); }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]).crt::after { display: none; }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .topbar::before { margin-right: auto; font: 8px/1.2 var(--font); letter-spacing: 1.7px; white-space: nowrap; }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .clock { margin-left: auto; }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .clock__value { color: inherit; text-shadow: none; }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .clock__label { color: inherit; opacity: .8; }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .icon-btn { color: var(--blue); }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .hold { color: var(--blue); opacity: .85; }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .undo-count { color: var(--blue); }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) :focus-visible { outline-color: var(--blue); outline-offset: 3px; }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .view--stats { background: var(--bg-top); }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .countpad__value.is-bump { animation: instrument-bump 180ms ease-out 1; }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .countpad__value.is-chain { animation: instrument-chain 600ms ease-out 1; }
+@keyframes instrument-bump { 40% { transform: scale(1.035); } }
+@keyframes instrument-chain { 30% { filter: brightness(1.4); } }
+
+/* SPACE AGE — enamel casing, polished aluminium lips, orange instrument glass. */
+.screen[data-theme="space-age"] {
+  --bg-top: #eee9dd; --bg-bottom: #cbc6b8; --line: #b7ad98; --dim: #655b4c;
+  --blue: #443b30; --orange: #ff5e23; --orange-glow: #ef491a77; --red: #a32e18;
+  color: #443b30; border: 7px ridge #e7e1d2; border-radius: 24px;
+  background: radial-gradient(ellipse at 25% 0, #fffdf1 0, #eee8d8 43%, #c5bda9 100%);
+  box-shadow: inset 0 0 0 2px #fff8e5, inset 0 0 0 5px #a39985;
+}
+.screen[data-theme="space-age"] .view { padding: 10px 12px 12px; }
+.screen[data-theme="space-age"] .view--main::before,
+.screen[data-theme="space-age"] .view--main::after { content: ''; position: absolute; left: 7px; right: 7px; height: 4px; border-radius: 99px; background: #d95525; box-shadow: 0 2px #fff4dd; pointer-events: none; }
+.screen[data-theme="space-age"] .view--main::before { top: 0; }
+.screen[data-theme="space-age"] .view--main::after { bottom: 1px; }
+.screen[data-theme="space-age"] .view--main .topbar::before { content: 'ORBIT / 01'; color: #6b5946; }
+.screen[data-theme="space-age"] .run-dot { border-color: #a7987f; background: #9b8163; box-shadow: inset 0 1px 3px #4b3c2c; }
+.screen[data-theme="space-age"] .run-dot.is-running { background: #ec5e26; box-shadow: 0 0 8px #e9603280; }
+.screen[data-theme="space-age"] .clock { color: #ac3818; background: #e6dfcc; border-color: #b7ac96; box-shadow: inset 0 1px 3px #62564444, 0 1px #fffdf4; }
+.screen[data-theme="space-age"] .timer,
+.screen[data-theme="space-age"] .countpad { background: radial-gradient(ellipse at 30% 0, #504538, #171410 60%); border: 5px ridge #c8c0ae; border-radius: 25px; box-shadow: 0 0 0 2px #877e6c, 0 0 0 4px #fff8e9, inset 0 4px 8px #000, 0 7px 8px #5c503730; }
+.screen[data-theme="space-age"] .timer { padding: 18px 6px 10px; margin-top: 12px; }
+.screen[data-theme="space-age"] .timer__value { color: #ff632e; font-weight: 700; letter-spacing: -1px; text-shadow: 0 0 3px #ff4b1a, 0 0 15px #fa411f88; }
+.screen[data-theme="space-age"] .timer__state { color: #c4b497; margin-top: 7px; }
+.screen[data-theme="space-age"] .countpad { min-height: 84px; margin-top: 12px; }
+.screen[data-theme="space-age"] .countpad::before { content: 'COUNT'; position: absolute; left: 15px; top: 9px; font: 8px var(--font); letter-spacing: 2px; color: #c7b99b; }
+.screen[data-theme="space-age"] .countpad__value { font-weight: 700; color: #ff6a30; text-shadow: 0 0 4px #ff4b1a, 0 0 18px #fa411f77; }
+.screen[data-theme="space-age"] .mainbtn { border: 3px ridge #ded8c7; border-radius: 20px; min-height: 48px; box-shadow: 0 0 0 1px #716a5e, 0 3px 1px #8b806b, inset 0 2px 3px #fff8e5aa; font-weight: 700; color: #332a20; }
+.screen[data-theme="space-age"] .mainbtn--timer { background: linear-gradient(#ff8939 0, #ed591d 42%, #b43913 100%); color: #fff3da; border-color: #e8d8b9; text-shadow: 0 1px #6f260e; }
+.screen[data-theme="space-age"] .mainbtn--timer.is-running { background: linear-gradient(#d14718, #f67f31); }
+.screen[data-theme="space-age"] .mainbtn--count { background: linear-gradient(#fff9e9, #d6cbb5); }
+.screen[data-theme="space-age"] .mainbtn:hover { filter: brightness(1.06); }
+.screen[data-theme="space-age"] .undo-count { border: 3px ridge #ded8c7; border-radius: 24px; background: linear-gradient(#ff8536, #c7481a); color: #fff3df; box-shadow: 0 2px 2px #84715d, inset 0 2px #ffa965; }
+.screen[data-theme="space-age"] .subrow { margin-top: 7px; }
+.screen[data-theme="space-age"] .hold { border: 1px solid #b7aa91; border-radius: 20px; padding: 4px 8px; box-shadow: inset 0 1px #fffaeb, 0 1px #ffffff66; background: #e2d8c2; }
+.screen[data-theme="space-age"] .footer { margin-top: 9px; border-color: #a69982; }
+.screen[data-theme="space-age"] .release-notice { color: #5e3a20; background: #fff4dc; border-color: #b78e58; background-image: none; }
+
+/* STEAMPUNK — real material under brass bezels and live mechanical flaps. */
+.screen[data-theme="steampunk"] {
+  --bg-top: #261c11; --bg-bottom: #0e0c09; --line: #9a7743; --dim: #d4bd8c;
+  --blue: #eddbaf; --orange: #f3e6ba; --orange-glow: #e2a75833; --red: #f0a889;
+  border: 7px ridge #8f7448; border-radius: 11px; color: #eddcaf;
+  background: linear-gradient(#07060338,#100a0455), url('assets/themes/airship-machinery.webp') center/cover;
+  box-shadow: inset 0 0 0 2px #25190e, inset 0 0 24px 8px #000;
+}
+.screen[data-theme="steampunk"] .theme-machinery { display: block; }
+.theme-gear { position: absolute; filter: drop-shadow(2px 6px 3px #000); transform-origin: 50% 50%; transition: transform 500ms cubic-bezier(.15,.7,.3,1); }
+.theme-gear--large { width: 144px; top: 29%; left: -72px; transform: rotate(var(--gear-turn, 0deg)); }
+.theme-gear--small { width: 96px; top: 24%; left: 42px; transform: rotate(calc(var(--gear-turn, 0deg) * -1.5)); }
+.theme-gear--lower { width: 130px; bottom: -40px; right: -33px; transform: rotate(calc(var(--gear-turn, 0deg) * -1.1)); }
+.screen[data-theme="steampunk"] .view { padding: 10px 16px 12px; }
+.screen[data-theme="steampunk"] .topbar { padding: 0 4px 5px; border-bottom: 3px ridge #ad8950; }
+.screen[data-theme="steampunk"] .view--main .topbar::before { content: 'ENGINE ROOM'; color: #f5dfaa; text-shadow: 0 2px #000; font-size: 7px; letter-spacing: 1px; }
+.screen[data-theme="steampunk"] .clock { color: #ffba5b; background: #130f0b; border: 2px ridge #c1a16b; }
+.screen[data-theme="steampunk"] .run-dot { background: #64341b; border-color: #d0a264; box-shadow: inset 0 0 3px #000; }
+.screen[data-theme="steampunk"] .run-dot.is-running { background: #ffc467; box-shadow: 0 0 7px #ffac24; }
+.screen[data-theme="steampunk"] .timer,
+.screen[data-theme="steampunk"] .countpad { border: 6px ridge #b18a4b; border-radius: 11px; background: linear-gradient(#000b, #060403bb), url('assets/themes/brushed-aluminium.jpg') center/cover; box-shadow: 0 3px 5px #000, inset 0 0 8px #000, 0 0 0 2px #261a0e; }
+.screen[data-theme="steampunk"] .timer { margin-top: 11px; padding: 24px 4px 8px; position: relative; }
+.screen[data-theme="steampunk"] .timer::before,
+.screen[data-theme="steampunk"] .countpad::before { position: absolute; top: -2px; left: 20%; right: 20%; padding: 3px; content: 'ELAPSED TIME'; color: #20180d; font: 7px var(--font); font-weight: bold; letter-spacing: 1px; text-align: center; border: 2px ridge #ddbf7d; border-radius: 0 0 8px 8px; background: linear-gradient(#b88f3b7d, #bf923a99), url('assets/themes/brushed-aluminium.jpg') center/cover; box-shadow: 0 2px 2px #000; }
+.screen[data-theme="steampunk"] .countpad::before { content: 'TALLY REGISTER'; }
+.screen[data-theme="steampunk"] .timer__value,
+.screen[data-theme="steampunk"] .countpad__value { color: #ece1bd; font-family: var(--font); font-weight: 400; letter-spacing: -1px; text-shadow: 0 1px 2px #000; white-space: nowrap; }
+.screen[data-theme="steampunk"] .timer__value { font-size: min(30px, calc((100vw - 80px) / (var(--digits, 8) * .72))); }
+.screen[data-theme="steampunk"] .timer__state { color: #c8b68d; font-size: 7px; margin-top: 8px; }
+.screen[data-theme="steampunk"] .countpad { margin-top: 11px; min-height: 85px; padding: 20px 5px 9px; }
+.screen[data-theme="steampunk"] .countpad__value { font-size: min(64px, calc((100vw - 86px) / (var(--digits, 1) * .76))); }
+.instrument-digit { display: inline-block; position: relative; vertical-align: baseline; }
+.instrument-separator { display: inline-block; }
+.screen[data-theme="steampunk"] .instrument-digit { min-width: .63em; padding: .08em .025em .04em; margin: 0 .018em; border: 1px solid #413b30; border-radius: 3px; background: linear-gradient(#403c32, #161511 49%, #070706 50%, #29271f 53%, #0d0d0a); box-shadow: inset 0 1px #fff2, 1px 2px 2px #000; }
+.screen[data-theme="steampunk"] .instrument-digit::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid #000d; box-shadow: 0 1px #ffffff13; }
+.screen[data-theme="steampunk"] .instrument-digit.is-changed { animation: flap-change 270ms ease-out 1; transform-origin: center; }
+@keyframes flap-change { from { transform: perspective(180px) rotateX(-35deg); filter: brightness(.55); } to { transform: none; filter: none; } }
+.screen[data-theme="steampunk"] .mainbtn { min-height: 44px; color: #f4e2b5; border: 4px ridge #ae854b; border-radius: 13px; background: linear-gradient(#ffffff14,#0006), #171818; box-shadow: inset 0 2px 4px #fff3, inset 0 -4px 4px #000a, 0 3px 3px #000; font-weight: 700; letter-spacing: 3px; }
+.screen[data-theme="steampunk"] .mainbtn--timer { background-color: #5c2518; }
+.screen[data-theme="steampunk"] .mainbtn:hover { filter: brightness(1.2); }
+.screen[data-theme="steampunk"] .mainbtn--timer.is-running { color: #ffe8ac; background-color: #87512a; }
+.screen[data-theme="steampunk"] .undo-count { border: 4px ridge #b68c50; border-radius: 28px; color: #eddbaf; background: radial-gradient(#3d382b,#0e0c09); box-shadow: 0 2px 3px #000, inset 0 1px 4px #fff3; }
+.screen[data-theme="steampunk"] .hold { border: 2px ridge #b78e4d; background: linear-gradient(#bd974abb,#a17c3999), url('assets/themes/brushed-aluminium.jpg') center/cover; color: #19120a; font-weight: 700; opacity: 1; border-radius: 3px; text-shadow: 0 1px #fff4; }
+.screen[data-theme="steampunk"] .undo-status { color: #f7e3b8; background: #17100bdd; }
+.screen[data-theme="steampunk"] .footer { border: 0; margin-top: 8px; padding-top: 3px; }
+.screen[data-theme="steampunk"] .hints { color: #ecd8a7; text-shadow: 0 2px #000; font-size: 6px; }
+.screen[data-theme="steampunk"] .release-notice { color: #ead9af; background: #21170e; border: 2px ridge #c19a58; background-image: none; }
+.screen[data-theme="steampunk"] .view--stats { background: linear-gradient(#1b1309ee,#21180dee), url('assets/themes/airship-machinery.webp') center/cover; }
+
+/* ART DECO — emerald lacquer, concentric gold inlays and a restrained fan. */
+.screen[data-theme="art-deco"] {
+  --bg-top: #062b26; --bg-bottom: #021713; --line: #a58c51; --dim: #c7b782;
+  --blue: #eedbad; --orange: #ffe5b2; --orange-glow: #d7c18f22; --red: #ffbca1;
+  border: 4px double #e2c782; border-radius: 20px; color: #ead6a5;
+  background: radial-gradient(ellipse at 25% 4%, #235448, #062923 50%, #011c17);
+  box-shadow: inset 0 0 0 3px #06201c, inset 0 0 0 4px #b49859;
+}
+.screen[data-theme="art-deco"] .view { padding: 13px 16px 17px; }
+.screen[data-theme="art-deco"] .view--main::after { content: ''; position: absolute; bottom: 0; left: calc(50% - 26px); width: 52px; height: 18px; clip-path: polygon(0 100%,8% 55%,18% 80%,26% 22%,39% 65%,50% 0,61% 65%,74% 22%,82% 80%,92% 55%,100% 100%); background: repeating-conic-gradient(from 250deg at 50% 100%,#f5d797 0deg 10deg,#9b7c40 11deg 15deg); pointer-events: none; }
+.screen[data-theme="art-deco"] .topbar { border-bottom: 3px double #a58c51; padding-bottom: 5px; }
+.screen[data-theme="art-deco"] .view--main .topbar::before { content: 'ATELIER / 26'; color: #ddc48c; font-size: 7px; }
+.screen[data-theme="art-deco"] .clock { background: #001b16; border-color: #958355; color: #ead6a5; }
+.screen[data-theme="art-deco"] .run-dot { border-color: #ddbd79; background: #927747; transform: rotate(45deg); border-radius: 0; }
+.screen[data-theme="art-deco"] .run-dot.is-running { background: #ffeab9; box-shadow: 0 0 7px #c8a057; }
+.screen[data-theme="art-deco"] .timer,
+.screen[data-theme="art-deco"] .countpad { background: radial-gradient(ellipse at 40% 0,#12392f,#011c16 70%); border: 4px double #c9ad6e; border-radius: 34px 34px 9px 9px; box-shadow: 0 0 0 2px #06221c, 0 0 0 3px #7c6b42, inset 0 0 12px #0008; }
+.screen[data-theme="art-deco"] .timer { margin-top: 12px; padding: 16px 7px 9px; }
+.screen[data-theme="art-deco"] .timer__value,
+.screen[data-theme="art-deco"] .countpad__value { font-family: "Instrument Bodoni", Georgia, serif; font-weight: 400; letter-spacing: -1px; color: #ffe6b9; text-shadow: 0 1px 2px #000; }
+.screen[data-theme="art-deco"] .timer__value { font-size: min(43px, calc((100vw - 70px) / (var(--digits, 8) * .6))); }
+.screen[data-theme="art-deco"] .timer__state { color: #c8b680; font-size: 7px; letter-spacing: 3px; margin-top: 3px; }
+.screen[data-theme="art-deco"] .countpad { margin-top: 12px; min-height: 90px; border-radius: 9px 9px 35px 35px; padding: 15px 5px 8px; }
+.screen[data-theme="art-deco"] .countpad::before { content: 'T A L L Y'; position: absolute; top: 10px; color: #cdb57c; font-size: 7px; }
+.screen[data-theme="art-deco"] .countpad__value { font-size: min(79px, calc((100vw - 80px) / (var(--digits, 1) * .61))); }
+.screen[data-theme="art-deco"] .mainbtn { min-height: 43px; color: #f7dfac; font-size: 13px; border: 3px double #d7bc7f; border-radius: 16px; background: linear-gradient(#1c5042, #02241b); box-shadow: inset 0 2px #e4c37b44, inset 0 -3px #0009, 0 3px 3px #0005; letter-spacing: 3px; }
+.screen[data-theme="art-deco"] .mainbtn:hover { background: linear-gradient(#2b6653,#083d2b); }
+.screen[data-theme="art-deco"] .mainbtn--timer.is-running { background: #27583e; }
+.screen[data-theme="art-deco"] .undo-count { border: 3px double #d7bc7f; border-radius: 25px 25px 9px 9px; background: linear-gradient(#1c5042,#02241b); }
+.screen[data-theme="art-deco"] .hold { border: 1px solid #98834e; border-radius: 12px; padding: 4px 9px; background: #01271e; color: #ead6a5; }
+.screen[data-theme="art-deco"] .footer { margin-top: 9px; border-top: 3px double #99864f; }
+.screen[data-theme="art-deco"] .release-notice { color: #ead9ad; border: 3px double #c7a55d; background: #052b21; background-image: none; }
+
+/* NIXIE — brushed graphite chassis, individual glass envelopes and amber wire. */
+.screen[data-theme="nixie"] {
+  --bg-top: #242626; --bg-bottom: #141616; --line: #696b65; --dim: #c5c3af;
+  --blue: #f0e7d0; --orange: #ff8b2f; --orange-glow: #fa6b1455; --red: #ffc09e;
+  border: 7px ridge #696b68; border-radius: 16px; color: #f0e7d0;
+  background: linear-gradient(#050708b5,#080b0bd1), url('assets/themes/brushed-aluminium.jpg') center/cover;
+  box-shadow: inset 0 0 0 1px #060807, inset 0 0 0 3px #979a8b55, inset 0 0 25px #000;
+}
+.screen[data-theme="nixie"] .view { padding: 10px 14px 13px; }
+.screen[data-theme="nixie"] .topbar { border-bottom: 2px groove #74776a; padding-bottom: 5px; }
+.screen[data-theme="nixie"] .view--main .topbar::before { content: 'TUBE / SERIES'; color: #d7d3c4; font-size: 7px; }
+.screen[data-theme="nixie"] .clock { color: #f99b45; background: #090b0a; border: 2px inset #686b60; }
+.screen[data-theme="nixie"] .run-dot { background: #683014; border: 2px ridge #929282; }
+.screen[data-theme="nixie"] .run-dot.is-running { background: #ffa843; box-shadow: 0 0 9px #ee620e; }
+.screen[data-theme="nixie"] .timer,
+.screen[data-theme="nixie"] .countpad { position: relative; background: linear-gradient(#050605,#191b17); border: 3px ridge #5d6055; border-radius: 11px; box-shadow: 0 2px 5px #000b, inset 0 0 10px #000; }
+.screen[data-theme="nixie"] .timer { padding: 22px 4px 8px; margin-top: 11px; }
+.screen[data-theme="nixie"] .timer::before,
+.screen[data-theme="nixie"] .countpad::before { content: 'ELAPSED / HV'; position: absolute; left: 11px; top: 5px; color: #bfbda5; font: 7px var(--font); letter-spacing: 1.5px; }
+.screen[data-theme="nixie"] .countpad::before { content: 'COUNT / HV'; }
+.screen[data-theme="nixie"] .timer__value,
+.screen[data-theme="nixie"] .countpad__value { font-family: "Instrument Bodoni", Georgia, serif; font-weight: 500; color: #ff9a3d; text-shadow: 0 0 2px #ffc36a, 0 0 6px #ff640c, 0 0 14px #e94c1670; letter-spacing: -1px; }
+.screen[data-theme="nixie"] .timer__value { font-size: min(34px, calc((100vw - 84px) / (var(--digits, 8) * .73))); }
+.screen[data-theme="nixie"] .timer__state { margin-top: 8px; color: #c8c2a8; font-size: 7px; letter-spacing: 2px; }
+.screen[data-theme="nixie"] .countpad { margin-top: 11px; min-height: 90px; padding: 23px 7px 12px; }
+.screen[data-theme="nixie"] .countpad__value { font-size: min(64px, calc((100vw - 88px) / (var(--digits, 1) * .76))); }
+.screen[data-theme="nixie"] .instrument-digit { min-width: .61em; padding: .17em .025em .1em; margin: 0 .025em; border: 1px solid #857c69; border-radius: 35% 35% 17% 17% / 17% 17% 8% 8%; background: linear-gradient(90deg,#fff2,transparent 17%,#0004 65%,#ffcb7130 95%,#fff3), repeating-linear-gradient(0deg,transparent 0 3px,#d6812d16 3px 4px), #15100b; box-shadow: 0 3px 0 #080908, 0 5px 0 #5c5140, inset 0 2px 3px #fff4, inset 0 -4px 4px #0009; }
+.screen[data-theme="nixie"] .instrument-digit::before { content: ''; position: absolute; top: 8%; left: 9%; width: 10%; height: 32%; border-radius: 50%; background: #fff7; transform: rotate(9deg); filter: blur(.3px); }
+.screen[data-theme="nixie"] .instrument-digit::after { content: ''; position: absolute; bottom: 5%; left: 3%; right: 3%; height: 2px; background: #97805c; box-shadow: 0 -2px #23160a; }
+.screen[data-theme="nixie"] .instrument-separator { width: .22em; text-align: center; }
+.screen[data-theme="nixie"] .instrument-digit.is-changed { animation: tube-change 250ms ease-out 1; }
+@keyframes tube-change { from { opacity: .55; filter: brightness(1.7); } to { opacity: 1; filter: none; } }
+.screen[data-theme="nixie"] .mainbtn { min-height: 44px; border: 3px ridge #858577; border-radius: 12px; color: #e6dcc3; background: linear-gradient(#35352e,#10130f); box-shadow: inset 0 1px 2px #fff5, inset 0 -3px 2px #0008, 0 3px 3px #000; font-weight: 700; letter-spacing: 3px; }
+.screen[data-theme="nixie"] .mainbtn--timer { border-radius: 30px; color: #fff1ce; background: linear-gradient(#eb8d33,#a34411); }
+.screen[data-theme="nixie"] .mainbtn--timer.is-running { background: linear-gradient(#bc4e14,#f7a33d); }
+.screen[data-theme="nixie"] .mainbtn:hover { filter: brightness(1.18); }
+.screen[data-theme="nixie"] .undo-count { border: 3px ridge #858577; border-radius: 26px; background: radial-gradient(#3a382c,#12140e); }
+.screen[data-theme="nixie"] .hold { border: 1px solid #77796b; border-radius: 9px; background: #171b15; color: #d4ceb9; padding: 4px 7px; }
+.screen[data-theme="nixie"] .footer { border-top: 3px double #5e6153; margin-top: 9px; }
+.screen[data-theme="nixie"] .release-notice { color: #ffbf77; border: 2px ridge #727265; background: #17120b; background-image: none; }
+
+/* Keep foreground controls quiet and readable over materials on settings. */
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .theme-picker label { color: var(--blue); }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .theme-picker__input:checked + label { background: var(--blue); color: var(--bg-top); border-color: var(--blue); font-weight: 700; }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .stats th { color: var(--dim); }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .stats td { color: var(--blue); text-shadow: none; }
+.screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .theme-credits:focus-visible { outline-offset: 1px; }
+
+@media (max-width: 310px), (max-height: 470px) {
+  body[data-surface] .screen:is([data-theme="arcade"], [data-theme="editorial"]) .countpad__value { font-size: min(42px, calc((100vw - 48px) / (var(--digits, 1) * .78))); }
+  .screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) { border-width: 5px; border-radius: 11px; }
+  body[data-surface] .screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .view { padding: 7px 10px 9px; }
+  .screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .topbar { min-height: 25px; padding-bottom: 2px; }
+  body[data-surface] .screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .mainbtn { min-height: 33px; border-width: 2px; margin-top: 7px; }
+  .screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .undo-count { margin-top: 7px; border-width: 2px; }
+  body[data-surface] .screen:is([data-theme="steampunk"], [data-theme="nixie"]) .timer { padding: 18px 3px 5px; gap: 3px; }
+  body[data-surface] .screen[data-theme="steampunk"] .timer { border-width: 4px; }
+  body[data-surface] .screen:is([data-theme="steampunk"], [data-theme="nixie"]) .timer__value { font-size: min(23px, calc((100vw - 66px) / (var(--digits, 8) * .76))); }
+  body[data-surface] .screen[data-theme="space-age"] .timer { padding: 7px 3px 5px; border-width: 4px; }
+  body[data-surface] .screen[data-theme="space-age"] .timer__value { font-size: min(25px, calc((100vw - 66px) / (var(--digits, 8) * .68))); }
+  body[data-surface] .screen[data-theme="art-deco"] .timer { padding: 10px 4px 6px; }
+  body[data-surface] .screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .countpad { min-height: 76px; margin-top: 7px; padding: 19px 4px 6px; }
+  body[data-surface] .screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .countpad__value { font-size: min(33px, calc((100vw - 72px) / (var(--digits, 1) * .76))); line-height: 1; }
+  body[data-surface] .screen[data-theme="nixie"] .countpad__value { font-size: min(30px, calc((100vw - 72px) / (var(--digits, 1) * .76))); }
+  body[data-surface] .screen:is([data-theme="steampunk"], [data-theme="nixie"]) .timer__state { margin-top: 3px; }
+  body[data-surface] .screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .hold { padding: 3px 6px; font-size: 7px; }
+  body[data-surface] .screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .hold--session { min-height: 28px; }
+  .screen[data-theme="steampunk"] .timer::before, .screen[data-theme="steampunk"] .countpad::before { font-size: 6px; }
+  body[data-surface] .screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .footer { margin-top: 6px; padding-top: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-gear { transition: none; }
+  .screen:is([data-theme="steampunk"], [data-theme="nixie"]) .instrument-digit.is-changed { animation: none; }
+  .screen:is([data-theme="space-age"], [data-theme="steampunk"], [data-theme="art-deco"], [data-theme="nixie"]) .countpad__value:is(.is-bump, .is-chain) { animation: none; }
+}

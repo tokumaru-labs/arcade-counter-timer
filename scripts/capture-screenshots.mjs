@@ -51,7 +51,7 @@ function seedScript() {
   return `// Capture-only shim. Never shipped: it lives in .render/, which is gitignored
 // and excluded from the release ZIP.
 (() => {
-  const theme = new URLSearchParams(location.search).get('theme') || 'original';
+  const theme = new URLSearchParams(location.search).get('theme') || 'space-age';
   const pad = (n) => String(n).padStart(2, '0');
   const key = (d) => \`\${d.getFullYear()}-\${pad(d.getMonth() + 1)}-\${pad(d.getDate())}\`;
   const dayBefore = (n) => {
@@ -137,10 +137,11 @@ function buildRenderDir() {
   rmSync(RENDER_DIR, { recursive: true, force: true });
   mkdirSync(RENDER_DIR, { recursive: true });
 
-  for (const file of ['popup.css', 'popup.js']) {
+  for (const file of ['popup.css', 'themes.css', 'popup.js']) {
     copyFileSync(join(ROOT, file), join(RENDER_DIR, file));
   }
   cpSync(join(ROOT, 'src'), join(RENDER_DIR, 'src'), { recursive: true });
+  cpSync(join(ROOT, 'assets'), join(RENDER_DIR, 'assets'), { recursive: true });
   writeFileSync(join(RENDER_DIR, 'shim.js'), seedScript(), 'utf8');
 
   // Classic scripts run before deferred modules, so the shim is always in
@@ -158,7 +159,11 @@ function buildRenderDir() {
 const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
-  '.css': 'text/css; charset=utf-8'
+  '.css': 'text/css; charset=utf-8',
+  '.webp': 'image/webp',
+  '.jpg': 'image/jpeg',
+  '.ttf': 'font/ttf',
+  '.txt': 'text/plain; charset=utf-8'
 };
 
 /**
@@ -248,9 +253,9 @@ mkdirSync(OUT_DIR, { recursive: true });
 const { server, port } = await startServer();
 console.log('Capturing the real popup:');
 try {
-  for (const theme of ['original', 'arcade', 'editorial']) {
-    const mainName = theme === 'original' ? 'popup-main.png' : `popup-${theme}-main.png`;
-    const statsName = theme === 'original' ? 'popup-stats.png' : `popup-${theme}-stats.png`;
+  for (const theme of ['space-age', 'arcade', 'editorial', 'steampunk', 'art-deco', 'nixie']) {
+    const mainName = theme === 'space-age' ? 'popup-main.png' : `popup-${theme}-main.png`;
+    const statsName = theme === 'space-age' ? 'popup-stats.png' : `popup-${theme}-stats.png`;
     await capture(browser, port, theme, '', join(OUT_DIR, mainName));
     await capture(browser, port, theme, '#stats', join(OUT_DIR, statsName));
   }

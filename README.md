@@ -57,17 +57,30 @@ rather work in silence, each one can be switched off.
 - Fly text on fast streaks (`GOOD!` → `NICE!` → `GREAT!` → `FANTASTIC!`)
 - CHAIN milestone effect on every 10th count
 - Original sound effects generated with the Web Audio API — no audio files
-- Three selectable visual themes: Original, Arcade and Editorial
+- Six visual themes: Space Age, Arcade, Editorial, Steampunk, Art Deco and Nixie
 - A small local clock in the popup header
 - Settings for sound, fly text, chain effect and the subtle CRT scanlines
 - Works entirely offline, with no account
 
 ## Themes
 
-Choose **Original**, **Arcade** or **Editorial** from the settings screen. The
-theme changes presentation only: the timer, counter, statistics, resets and
-milestone logic are shared across all three. The selection is stored locally
-and restored the next time the popup opens.
+Choose **Space Age**, **Arcade**, **Editorial**, **Steampunk**, **Art Deco** or
+**Nixie** in settings. Space Age replaces Original as the default: an existing
+Original preference maps to Space Age without altering timer, counts, history,
+settings or the pending undo receipt. Arcade and Editorial remain available.
+
+Space Age has ivory enamel, aluminium bezels and orange instrument glass.
+Steampunk layers bundled machinery and brass gear artwork under mechanical
+digit flaps; gears move a finite step when the count changes. Art Deco combines
+emerald lacquer, gold inlays and Bodoni numerals. Nixie wraps live amber digits
+in individual glass tubes over brushed graphite. These are live text and
+controls, not a picture of an interface. Long counts and 100+ hour durations
+fit the compact view; reduced motion disables tube/flap and gear motion.
+
+All six share the timer, counter, statistics, reset and undo logic. Themes are
+saved locally. Artwork, fonts and their licenses are bundled; **ARTWORK & FONT
+CREDITS** in settings opens the local attribution file. No runtime downloads.
+Historical store screenshots above predate these development-source themes.
 
 ## Main controls
 

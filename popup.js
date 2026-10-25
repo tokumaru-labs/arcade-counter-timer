@@ -158,7 +158,7 @@ function renderTimer() {
     ? timer.sessionElapsedMs + clampMs(Date.now() - timer.runStartedAt)
     : timer.sessionElapsedMs;
   const text = formatDuration(live);
-  el.timerValue.textContent = text;
+  renderInstrumentValue(el.timerValue, text);
   el.timerValue.style.setProperty('--digits', String(text.length));
   renderTimerControls();
 }
@@ -182,8 +182,31 @@ function renderTimerControls() {
 }
 
 function renderCount() {
-  el.countValue.textContent = formatCount(state.sessionCount);
+  const text = formatCount(state.sessionCount);
+  renderInstrumentValue(el.countValue, text);
+  el.countValue.style.setProperty('--digits', String(text.length));
+  el.screen.style.setProperty('--gear-turn', `${state.sessionCount * 3}deg`);
   el.btnUndoCount.disabled = !state.countUndo || undoPending || pendingCounts > 0;
+}
+
+// The values remain live text. Glass tubes / mechanical flaps wrap characters
+// only for the two instrument themes; cached values avoid rebuilding on ticks.
+function renderInstrumentValue(element, text) {
+  const instrument = ['steampunk', 'nixie'].includes(state.theme);
+  const previousText = element.dataset.readoutValue;
+  const previousTheme = element.dataset.readoutTheme;
+  if (previousText === text && previousTheme === state.theme) return;
+  element.dataset.readoutValue = text;
+  element.dataset.readoutTheme = state.theme;
+  if (!instrument) { element.textContent = text; return; }
+  const digits = [...text].map((character, index) => {
+    const digit = document.createElement('span');
+    digit.className = /\d/.test(character) ? 'instrument-digit' : 'instrument-separator';
+    digit.textContent = character;
+    if (previousTheme === state.theme && previousText?.[index] !== character) digit.classList.add('is-changed');
+    return digit;
+  });
+  element.replaceChildren(...digits);
 }
 
 function renderTheme() {

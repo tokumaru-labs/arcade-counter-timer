@@ -38,6 +38,7 @@ const RUNTIME_FILES = [
   'manifest.json',
   'popup.html',
   'popup.css',
+  'themes.css',
   'popup.js',
   'background.js',
   'src/client.js',
@@ -55,6 +56,12 @@ const RUNTIME_FILES = [
   'assets/icons/icon32.png',
   'assets/icons/icon48.png',
   'assets/icons/icon128.png',
+  'assets/themes/airship-machinery.webp',
+  'assets/themes/brass-gear-cutout.webp',
+  'assets/themes/brushed-aluminium.jpg',
+  'assets/themes/BodoniModa.ttf',
+  'assets/themes/OFL.txt',
+  'assets/themes/CREDITS.txt',
   'LICENSE'
 ];
 
@@ -135,7 +142,7 @@ if (manifest) {
   check('side panel uses the shared view', manifest.side_panel?.default_path === 'popup.html?surface=sidepanel');
   check('Chrome 116 or newer is required', manifest.minimum_chrome_version === '116');
   const resources = manifest.web_accessible_resources;
-  check('only shared view assets are web accessible, using a dynamic URL', resources?.length === 1 && resources[0].use_dynamic_url === true && JSON.stringify(resources[0].resources) === JSON.stringify(['popup.html', 'popup.css', 'popup.js', 'src/*.js']) && JSON.stringify(resources[0].matches) === JSON.stringify(['<all_urls>']));
+  check('only shared view assets are web accessible, using a dynamic URL', resources?.length === 1 && resources[0].use_dynamic_url === true && JSON.stringify(resources[0].resources) === JSON.stringify(['popup.html', 'popup.css', 'themes.css', 'popup.js', 'src/*.js']) && JSON.stringify(resources[0].matches) === JSON.stringify(['<all_urls>']));
 }
 
 /* ---------------------------------------------------------------- files -- */
@@ -326,6 +333,9 @@ if (!existsSync(zipPath)) {
 
   const missing = RUNTIME_FILES.filter((f) => !names.includes(f));
   check('ZIP contains every runtime file', missing.length === 0, missing.join(', '));
+  for (const rel of RUNTIME_FILES) {
+    if (names.includes(rel)) check(`ZIP ${rel} matches current source`, Buffer.compare(readZipEntry(zip, rel, true), readFileSync(join(ROOT, rel))) === 0);
+  }
 
   for (const excluded of ['tests/', 'scripts/', 'store-assets/', 'store-listing/', 'node_modules/', '.git/']) {
     check(`ZIP excludes ${excluded}`, !names.some((n) => n.startsWith(excluded)));
@@ -409,7 +419,7 @@ function readZipDirectory(path) {
 }
 
 /** Decompress one entry's bytes as UTF-8 text. */
-function readZipEntry({ buf, entries }, name) {
+function readZipEntry({ buf, entries }, name, binary = false) {
   const entry = entries.find((e) => e.name === name);
   if (!entry) throw new Error(`${name} is not in the archive`);
 
@@ -421,8 +431,8 @@ function readZipEntry({ buf, entries }, name) {
   const start = local + 30 + nameLen + extraLen;
   const body = buf.subarray(start, start + compressedSize);
 
-  if (entry.method === 0) return body.toString('utf8');
-  if (entry.method === 8) return inflateRawSync(body).toString('utf8');
+  if (entry.method === 0) return binary ? body : body.toString('utf8');
+  if (entry.method === 8) { const result = inflateRawSync(body); return binary ? result : result.toString('utf8'); }
   throw new Error(`Unsupported compression method ${entry.method} for ${name}`);
 }
 

@@ -1,0 +1,36 @@
+Arcade Counter Timer — artwork and typography
+
+All artwork and fonts are packaged in the extension. No image, font, analytics,
+or other network service is contacted during use.
+
+AIRSHIP MACHINERY
+Original fictional mechanical background generated for Tokumaru Labs using
+OpenAI imagegen, October 2026. Decorative machinery is not a live measurement.
+File: airship-machinery.webp
+
+BRASS GEAR
+Derived from Gears-th.JPG by VladimirZhV, public domain.
+https://commons.wikimedia.org/wiki/File:Gears-th.JPG
+The photograph was edited using imagegen to remove the background, face the
+gear forward, and adjust the tooth shape. Resized and encoded as WebP.
+File: brass-gear-cutout.webp
+
+METAL TEXTURE
+Brushed Aluminium.jpg by Andrezadnik.
+https://commons.wikimedia.org/wiki/File:Brushed_Aluminium.jpg
+Creative Commons Attribution-ShareAlike 3.0 Unported:
+https://creativecommons.org/licenses/by-sa/3.0/
+Display is cropped and tinted with CSS. Adaptations of this image retain that
+license. The included source image is available beside this file:
+brushed-aluminium.jpg
+
+TYPOGRAPHY
+Bodoni Moda by the Bodoni Moda Project Authors:
+https://github.com/indestructible-type/Bodoni
+Distributed through the Google Fonts repository:
+https://github.com/google/fonts/tree/main/ofl/bodonimoda
+Unmodified normal variable font: BodoniModa.ttf
+SIL Open Font License 1.1: OFL.txt (included beside this file).
+
+Space Age, Steampunk, Art Deco and Nixie are original interface compositions by
+Tokumaru Labs. Interactive buttons and values are live HTML, not painted images.

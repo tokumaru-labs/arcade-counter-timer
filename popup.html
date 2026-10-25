@@ -5,9 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Arcade Counter Timer</title>
     <link rel="stylesheet" href="popup.css" />
+    <link rel="stylesheet" href="themes.css" />
   </head>
   <body>
     <div id="screen" class="screen" inert>
+      <div class="theme-machinery" aria-hidden="true">
+        <img class="theme-gear theme-gear--large" src="assets/themes/brass-gear-cutout.webp" alt="" />
+        <img class="theme-gear theme-gear--small" src="assets/themes/brass-gear-cutout.webp" alt="" />
+        <img class="theme-gear theme-gear--lower" src="assets/themes/brass-gear-cutout.webp" alt="" />
+      </div>
       <!-- ------------------------------------------------------ main -- -->
       <main id="view-main" class="view view--main">
         <header class="topbar">
@@ -179,14 +185,14 @@
           <legend>THEME</legend>
           <div class="theme-picker__options">
             <input
-              id="theme-original"
+              id="theme-space-age"
               class="theme-picker__input"
               type="radio"
               name="theme"
-              value="original"
+              value="space-age"
               data-theme-option
             />
-            <label for="theme-original">ORIGINAL</label>
+            <label for="theme-space-age">SPACE AGE</label>
             <input
               id="theme-arcade"
               class="theme-picker__input"
@@ -205,6 +211,12 @@
               data-theme-option
             />
             <label for="theme-editorial">EDITORIAL</label>
+            <input id="theme-steampunk" class="theme-picker__input" type="radio" name="theme" value="steampunk" data-theme-option />
+            <label for="theme-steampunk">STEAMPUNK</label>
+            <input id="theme-art-deco" class="theme-picker__input" type="radio" name="theme" value="art-deco" data-theme-option />
+            <label for="theme-art-deco">ART DECO</label>
+            <input id="theme-nixie" class="theme-picker__input" type="radio" name="theme" value="nixie" data-theme-option />
+            <label for="theme-nixie">NIXIE</label>
           </div>
         </fieldset>
         <fieldset class="display-picker">
@@ -243,6 +255,7 @@
         <button id="btn-clear" class="danger" type="button" aria-label="Clear all stored data">
           CLEAR ALL DATA
         </button>
+        <a class="theme-credits" href="assets/themes/CREDITS.txt" target="_blank" rel="noopener">ARTWORK &amp; FONT CREDITS ↗</a>
       </section>
     </div>
 

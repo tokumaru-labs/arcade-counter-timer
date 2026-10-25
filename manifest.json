@@ -39,6 +39,7 @@
       "resources": [
         "popup.html",
         "popup.css",
+        "themes.css",
         "popup.js",
         "src/*.js"
       ],

@@ -14,7 +14,7 @@ const extension = join(qa, 'extension');
 const profile = join(qa, 'profile');
 mkdirSync(extension, { recursive: true });
 const base = '8925b8d382f10553cb39274ad3d8b3e2c6890859';
-const files = ['manifest.json', 'popup.html', 'popup.css', 'popup.js', ...readdirSync(join(root, 'src')).map((name) => `src/${name}`)];
+const files = ['manifest.json', 'popup.html', 'popup.css', 'themes.css', 'popup.js', ...readdirSync(join(root, 'src')).map((name) => `src/${name}`)];
 for (const file of files) {
   try {
     const content = execFileSync('git', ['show', `${base}:${file}`], { cwd: root, stdio: ['ignore', 'pipe', 'ignore'] });
@@ -104,7 +104,7 @@ try {
   await popup.locator('#btn-undo-count').click(); await countIs(popup, 73);
   assert.equal(await popup.locator('#fx-layer').evaluate((el) => el.childElementCount), 0);
   record('UNDO survives reopening; focused keyboard activation and pointer release keep one-input-one-action');
-  for (const theme of ['original', 'editorial']) {
+  for (const theme of ['space-age', 'editorial']) {
     await popup.locator('#btn-settings').click();
     await popup.locator(`label[for="theme-${theme}"]`).click();
     await popup.locator(`#screen[data-theme="${theme}"]`).waitFor();
@@ -117,7 +117,7 @@ try {
     await popup.reload(); await popup.locator('#release-notice:not([hidden])').waitFor();
     await screenshot(popup, `${theme}-update-notice`);
   }
-  record('all three theme-specific update strips render');
+  record('theme-specific update strips render');
   await popup.locator('#notice-close').click();
   await popup.locator('#btn-settings').click();
   await popup.locator('label[for="theme-arcade"]').click();
@@ -151,13 +151,17 @@ try {
   await undoPanel.goto(`chrome-extension://${id}/popup.html?surface=sidepanel`);
   await undoPanel.locator('#screen:not([inert])').waitFor();
   await popup.locator('#btn-back').click();
-  for (const theme of ['original', 'arcade', 'editorial']) {
+  for (const theme of ['space-age', 'arcade', 'editorial', 'steampunk', 'art-deco', 'nixie']) {
     await popup.evaluate((value) => chrome.runtime.sendMessage({ channel: 'arcade', action: 'theme', value }), theme);
     await floating.locator(`#screen[data-theme="${theme}"]`).waitFor();
     await undoIs(floating, true);
     await floating.locator('#btn-undo-count').click(); await countIs(floating, 73); await countIs(popup, 73); await countIs(undoPanel, 73);
     await undoIs(undoPanel, false);
     await undoPanel.locator('#btn-count').click(); await countIs(undoPanel, 74); await countIs(floating, 74); await countIs(popup, 74);
+    await popup.evaluate(() => document.fonts.ready);
+    if (['art-deco', 'nixie'].includes(theme)) assert.equal(await popup.evaluate(() => document.fonts.check('16px "Instrument Bodoni"')), true);
+    const assets = await popup.evaluate(() => [...document.querySelectorAll('.theme-gear')].every((img) => img.complete && img.naturalWidth > 0));
+    assert.equal(assets, true, 'bundled gear images decoded');
     for (const [name, view] of [['popup', popup], ['compact', floating], ['sidepanel300', undoPanel]]) {
       const bounds = await view.locator('#btn-undo-count').evaluate((el) => {
         const r = el.getBoundingClientRect(); return { left: r.left, right: r.right, bottom: r.bottom, width: innerWidth, height: innerHeight };
@@ -171,11 +175,16 @@ try {
     assert.equal(await undoPanel.locator('#count-value').evaluate((el) => getComputedStyle(el).animationName), 'none');
     await undoPanel.emulateMedia({ reducedMotion: 'no-preference' });
     await undoPanel.locator('#btn-count').click(); await countIs(undoPanel, 74); await countIs(floating, 74);
+    await popup.locator('#btn-settings').click();
+    assert.equal(await popup.locator('[data-theme-option]').count(), 6);
+    assert.equal(await popup.locator('label[for="theme-original"]').count(), 0);
+    await screenshot(popup, `themes-${theme}-settings`);
+    await popup.locator('#btn-back').click();
   }
   await popup.evaluate(() => chrome.runtime.sendMessage({ channel: 'arcade', action: 'theme', value: 'arcade' }));
   await undoPanel.close();
   await popup.locator('#btn-settings').click();
-  record('undo synchronizes all three surfaces; all themes fit 360px popup, compact floating and 300px sidepanel with reduced motion');
+  record('undo synchronizes all three surfaces; all six themes fit popup, compact floating and 300px sidepanel with bundled fonts/assets and reduced motion');
   const host = web.locator('[data-arcade-counter-timer]');
   const beforeMove = await host.boundingBox();
   await web.mouse.move(beforeMove.x + 70, beforeMove.y + 16); await web.mouse.down();

@@ -26,6 +26,7 @@ $runtimeFiles = @(
     'manifest.json',
     'popup.html',
     'popup.css',
+    'themes.css',
     'popup.js',
     'background.js',
     'src/client.js',
@@ -43,6 +44,12 @@ $runtimeFiles = @(
     'assets/icons/icon32.png',
     'assets/icons/icon48.png',
     'assets/icons/icon128.png',
+    'assets/themes/airship-machinery.webp',
+    'assets/themes/brass-gear-cutout.webp',
+    'assets/themes/brushed-aluminium.jpg',
+    'assets/themes/BodoniModa.ttf',
+    'assets/themes/OFL.txt',
+    'assets/themes/CREDITS.txt',
     'LICENSE'
 )
 
