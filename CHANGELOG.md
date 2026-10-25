@@ -6,7 +6,21 @@ project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.2.0] — Unreleased
+## [0.3.0] — 2026-10-25
+
+### Added
+- Repeatable COUNT undo, persisted across browser restarts and shared across views.
+- Six distinct themes: Space Age, Arcade, Editorial, Steampunk, Art Deco and Nixie.
+- Bundled photographic materials, real split-flap transitions and full Nixie glass housings.
+
+### Changed
+- Space Age replaces Original while preserving existing records and settings.
+- Undo restores each count on its original local date; resets clear undo history.
+- Schema 3 imports its one known undo step; older aggregate totals do not invent past operations.
+- Same-day consecutive operations are compressed without an arbitrary undo-count cap.
+- Refresh store screenshots and bundled English/Japanese update notes. No new permissions.
+
+## [0.2.0]
 
 ### Added
 - Three display modes: toolbar popup, draggable in-page timer, native side panel.

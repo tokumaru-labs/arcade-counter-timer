@@ -2,7 +2,9 @@ English | [日本語](README_JA.md)
 
 # Arcade Counter Timer
 
-## 0.2.0 (unreleased): display modes and preserved history
+[Chrome Web Store](https://chromewebstore.google.com/detail/arcade-counter-timer/cfonffmpidgimppooikhhhlceaoipkeb) · [What changed](CHANGELOG.md)
+
+## 0.3.0: six themes and repeatable undo
 
 In settings choose DISPLAY MODE: Popup / Floating / Side panel, then OPEN
 SELECTED VIEW. The next toolbar click remembers the selected mode. Floating
@@ -32,7 +34,7 @@ small arcade machine for a fraction of a second when you hit a milestone.
 
 <img src="store-assets/source/popup-main.png" alt="The Arcade Counter Timer popup: a running timer, a large count, and START and COUNT buttons" width="300">
 
-Version 0.2.0 (unreleased) · by Tokumaru Labs · Chrome Extension (Manifest V3)
+Version 0.3.0 · by Tokumaru Labs · Chrome Extension (Manifest V3)
 
 ## What it does
 
@@ -51,22 +53,45 @@ rather work in silence, each one can be switched off.
 
 - Count-up timer with start/stop and its own reset
 - Session counter with its own reset
+- Repeatable UNDO beside COUNT, including each operation's original-day statistics
 - Session reset for both at once
 - TODAY / WEEK / MONTH / YEAR statistics, kept locally
 - Fly text on fast streaks (`GOOD!` → `NICE!` → `GREAT!` → `FANTASTIC!`)
 - CHAIN milestone effect on every 10th count
 - Original sound effects generated with the Web Audio API — no audio files
-- Three selectable visual themes: Original, Arcade and Editorial
+- Six visual themes: Space Age, Arcade, Editorial, Steampunk, Art Deco and Nixie
 - A small local clock in the popup header
 - Settings for sound, fly text, chain effect and the subtle CRT scanlines
 - Works entirely offline, with no account
 
 ## Themes
 
-Choose **Original**, **Arcade** or **Editorial** from the settings screen. The
-theme changes presentation only: the timer, counter, statistics, resets and
-milestone logic are shared across all three. The selection is stored locally
-and restored the next time the popup opens.
+Choose **Space Age**, **Arcade**, **Editorial**, **Steampunk**, **Art Deco** or
+**Nixie** in settings. Space Age replaces Original as the default: an existing
+Original preference maps to Space Age without altering timer, counts, history,
+settings or the pending undo receipt. Arcade and Editorial remain available.
+
+Space Age has ivory enamel, aluminium bezels and orange instrument glass.
+Steampunk layers bundled machinery and brass gear artwork under mechanical
+split flaps: only changed digits turn in two halves around the center hinge over
+440ms, while the value updates immediately. Rapid counts and undo cancel stale
+faces. Gears move a finite step when the count changes. Art Deco combines
+emerald lacquer, gold inlays and Bodoni numerals. Nixie uses ten original photographs
+of illuminated Z566M digits inside fixed glass housings and sockets, over scratched
+steel. Each complete housing image keeps its original proportions and shows its
+tip, glass body and socket together. The housing is an AI-edited derivative of a CC0 tube photo, not a precise
+reproduction of a single hardware model. Accessible text remains available; a
+failed image or forced-colors mode falls back to readable text. The four
+material popups are 600×520 with equal TIME/COUNT instruments and tactile
+controls; Arcade and Editorial remain 360×540. Side panels and floating views
+adapt to their own width. Material faces show small counts with five digits
+(00042); saved values, spoken labels and statistics still mean 42. Long counts and 100+ hour durations
+fit the compact view; reduced motion skips or cancels flap and gear motion.
+
+All six share the timer, counter, statistics, reset and undo logic. Themes are
+saved locally. Artwork, fonts and their licenses are bundled; **ARTWORK & FONT
+CREDITS** in settings opens the local attribution file. No runtime downloads.
+Store screenshots above show the current UI with sample records.
 
 ## Main controls
 
@@ -74,6 +99,7 @@ and restored the next time the popup opens.
 | --- | --- |
 | **▶ START / ■ STOP** | Start or stop the timer |
 | **+ COUNT** | Add one to the count |
+| **↶ UNDO** | Undo counts in reverse order, including their statistics |
 | `RESET TIMER` | Hold 500 ms — timer only |
 | `RESET COUNT` | Hold 500 ms — count only |
 | `SESSION RESET` | Hold 650 ms — timer and count |
@@ -81,6 +107,27 @@ and restored the next time the popup opens.
 
 The timer readout and the big count area are also clickable, as mouse shortcuts
 for the two buttons.
+
+UNDO can be repeated until all retained successful COUNT operations are undone,
+including after reopening a view or restarting the browser. Popup, floating and
+side-panel views share the same history. A new COUNT adds a step after any undo;
+there is no redo. Timer, count, session or full-data reset clears the undo history.
+Start/stop, themes and settings keep it. Each undo corrects the count's original
+local date, even after midnight, without rewinding the timer. Every successful
+count or undo replaces the authorization token, so a repeated or stale request
+cannot remove another count. Keyboard users can Tab to UNDO and press Space/Enter;
+the existing global shortcuts are unchanged. Undo has a brief reverse-number
+effect and status, without achievement effects or sounds, and respects reduced
+motion. A failed save keeps all remaining undo steps available to retry.
+
+Version 0.3.0 uses storage schema 4.
+Schema 3's valid one-step receipt migrates as one undo step. Older counts are
+never reconstructed from aggregate statistics. New counts add further steps.
+Consecutive counts on the same local date share a compact run; there is no
+arbitrary operation-count cap. Browser storage capacity and JavaScript's exact
+integer range still apply: failed or unrepresentable operations do not change
+saved counts or consume undo. Older schema-aware builds refuse to edit schema 4;
+do not downgrade a profile that has been used with this source.
 
 The optional `CLOCK` setting adds a small `NOW HH:MM:SS` local 24-hour clock to
 the top bar. It is on by default and keeps running independently of the elapsed
@@ -157,7 +204,11 @@ To run the current source checkout manually:
 
 ## Development
 
-No build step, no dependencies, no bundler. Vanilla HTML, CSS and ES modules.
+No runtime build step, dependency or bundler. Vanilla HTML, CSS and ES modules.
+Unit tests use Node's standard library. Native browser QA and screenshot capture
+use an existing Playwright/Chromium development installation; set
+`PLAYWRIGHT_MODULE` to its `node_modules/playwright` directory when it is outside
+this checkout. Browser tooling is never included in the extension ZIP.
 
 ```
 npm test              # existing behavior, upgrades, concurrency and notice lifecycle
@@ -178,8 +229,8 @@ npm run store-assets  # compose the 1280x800 store screenshots
 Tests cover the pure logic — duration and clock formatting, clock lifecycle,
 midnight/month/year interval splitting, Monday-based week ranges, the statistics
 aggregates, the reset state transitions and the keyboard routing rules. They
-import the same modules the extension uses; there is no DOM test harness and no
-test dependency.
+import the same modules the extension uses. Browser checks run separately in
+isolated profiles with synthetic records.
 
 ## Privacy
 

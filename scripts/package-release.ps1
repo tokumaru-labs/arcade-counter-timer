@@ -26,6 +26,7 @@ $runtimeFiles = @(
     'manifest.json',
     'popup.html',
     'popup.css',
+    'themes.css',
     'popup.js',
     'background.js',
     'src/client.js',
@@ -37,12 +38,43 @@ $runtimeFiles = @(
     'src/storage.js',
     'src/effects.js',
     'src/input.js',
+    'src/flaps.js',
     '_locales/en/messages.json',
     '_locales/ja/messages.json',
     'assets/icons/icon16.png',
     'assets/icons/icon32.png',
     'assets/icons/icon48.png',
     'assets/icons/icon128.png',
+    'assets/themes/airship-machinery.webp',
+    'assets/themes/brass-gear-cutout.webp',
+    'assets/themes/brushed-aluminium.jpg',
+    'assets/themes/BodoniModa.ttf',
+    'assets/themes/OFL.txt',
+    'assets/themes/CREDITS.txt',
+    'assets/themes/enamel-cream.jpg',
+    'assets/themes/gold-metal.jpg',
+    'assets/themes/scratched-steel.jpg',
+    'assets/themes/cast-charcoal.jpg',
+    'assets/themes/garnet-metal.jpg',
+    'assets/themes/cast-bronze.jpg',
+    'assets/themes/screw-macro.jpg',
+    'assets/themes/clockwork-photo.jpg',
+    'assets/themes/nixie-0.jpg',
+    'assets/themes/nixie-1.jpg',
+    'assets/themes/nixie-2.jpg',
+    'assets/themes/nixie-3.jpg',
+    'assets/themes/nixie-4.jpg',
+    'assets/themes/nixie-5.jpg',
+    'assets/themes/nixie-6.jpg',
+    'assets/themes/nixie-7.jpg',
+    'assets/themes/nixie-8.jpg',
+    'assets/themes/nixie-9.jpg',
+    'assets/themes/nixie-glass-shell.png',
+    'assets/themes/nixie-glass-shell-provenance.json',
+    'assets/themes/BarlowCondensed-Medium.ttf',
+    'assets/themes/BarlowCondensed-SemiBold.ttf',
+    'assets/themes/BarlowCondensed-OFL.txt',
+    'assets/themes/COMMONS-SOURCES.json',
     'LICENSE'
 )
 
@@ -182,6 +214,8 @@ try {
     $remote = @()
     foreach ($name in $names) {
         if ($name -notmatch '\.(js|html|css|json)$') { continue }
+        # Attribution metadata has source links, but is never fetched or executed.
+        if ($name -in @('assets/themes/COMMONS-SOURCES.json', 'assets/themes/nixie-glass-shell-provenance.json')) { continue }
         $e = $archive.GetEntry($name)
         $r = New-Object System.IO.StreamReader($e.Open())
         $text = $r.ReadToEnd()

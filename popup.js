@@ -10,6 +10,7 @@ import { request, surface } from './src/client.js';
 import { sounds, praiseForStreak, flyText, chainBurst, clearFx } from './src/effects.js';
 import { shortcutFor, isPointerActivation } from './src/input.js';
 import { createClockController } from './src/clock.js';
+import { createFlapRenderer } from './src/flaps.js';
 
 const STREAK_WINDOW_MS = 650;
 const SESSION_HOLD_MS = 650;
@@ -37,6 +38,8 @@ const el = {
   startStopLabel: $('start-stop-label'),
   countPad: $('count-pad'),
   btnCount: $('btn-count'),
+  btnUndoCount: $('btn-undo-count'),
+  undoStatus: $('undo-status'),
   countValue: $('count-value'),
   fxLayer: $('fx-layer'),
   live: $('live-region'),
@@ -66,6 +69,14 @@ let preferences = null;
 let context = null;
 let operations = Promise.resolve();
 let noticeChecked = false;
+let pendingCounts = 0;
+let undoPending = false;
+let undoStatusTimer = null;
+let tubeAssets = null;
+const instrumentMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const flapRenderer = createFlapRenderer(document, () => instrumentMotion.matches);
+const cancelInstrumentMotion = () => { if (instrumentMotion.matches) flapRenderer.cancelMotion(); };
+instrumentMotion.addEventListener?.('change', cancelInstrumentMotion);
 const clockTestHook = globalThis.__ARCADE_CLOCK_TEST__;
 
 function clearClockMotion() {
@@ -125,6 +136,7 @@ function reportError(error) {
 }
 
 function applySnapshot(snapshot) {
+  if (state && snapshot.state.sessionCount < state.sessionCount) clearEphemeral();
   state = snapshot.state;
   preferences = snapshot.preferences;
   renderTimer(); renderCount(); renderTheme(); renderSettings();
@@ -152,7 +164,7 @@ function renderTimer() {
     ? timer.sessionElapsedMs + clampMs(Date.now() - timer.runStartedAt)
     : timer.sessionElapsedMs;
   const text = formatDuration(live);
-  el.timerValue.textContent = text;
+  renderInstrumentValue(el.timerValue, text);
   el.timerValue.style.setProperty('--digits', String(text.length));
   renderTimerControls();
 }
@@ -176,11 +188,82 @@ function renderTimerControls() {
 }
 
 function renderCount() {
-  el.countValue.textContent = formatCount(state.sessionCount);
+  const material = ['space-age', 'steampunk', 'art-deco', 'nixie'].includes(state.theme);
+  const plain = formatCount(state.sessionCount);
+  const text = material && state.sessionCount < 100000 ? String(state.sessionCount).padStart(5, '0') : plain;
+  el.countValue.setAttribute('aria-label', plain);
+  renderInstrumentValue(el.countValue, text);
+  el.countValue.style.setProperty('--digits', String(text.length));
+  el.screen.style.setProperty('--gear-turn', `${state.sessionCount * 3}deg`);
+  el.btnUndoCount.disabled = !state.countUndo || undoPending || pendingCounts > 0;
+}
+
+// The values remain live text. Glass tubes / mechanical flaps wrap characters
+// only for the two instrument themes; cached values avoid rebuilding on ticks.
+function renderInstrumentValue(element, text) {
+  if (state.theme === 'steampunk') {
+    flapRenderer.render(element, text);
+    element.dataset.readoutValue = text;
+    element.dataset.readoutTheme = state.theme;
+    return;
+  }
+  flapRenderer.clear(element);
+  const instrument = state.theme === 'nixie';
+  const previousText = element.dataset.readoutValue;
+  const previousTheme = element.dataset.readoutTheme;
+  if (previousText === text && previousTheme === state.theme) return;
+  element.dataset.readoutValue = text;
+  element.dataset.readoutTheme = state.theme;
+  if (!instrument) { element.textContent = text; return; }
+  // Keep one complete, correctly proportioned housing fixed as the cathode changes.
+  const existing = previousTheme === 'nixie' ? [...element.children] : [];
+  const digits = [...text].map((character, index) => {
+    const isDigit = /\d/.test(character);
+    const oldIndex = (previousText?.length ?? 0) - text.length + index;
+    let digit = existing[oldIndex];
+    if (!digit || digit.classList.contains('instrument-digit') !== isDigit) {
+      digit = document.createElement('span');
+      digit.className = isDigit ? 'instrument-digit' : 'instrument-separator';
+      const live = document.createElement('span');
+      live.className = 'nixie-live';
+      digit.append(live);
+      if (isDigit) {
+        const housing = document.createElement('img');
+        housing.className = 'nixie-housing';
+        housing.src = 'assets/themes/nixie-glass-shell.png';
+        housing.width = 841;
+        housing.height = 1871;
+        housing.alt = '';
+        housing.draggable = false;
+        housing.setAttribute('aria-hidden', 'true');
+        digit.append(housing);
+      }
+    }
+    digit.firstElementChild.textContent = character;
+    if (isDigit) digit.dataset.digit = character;
+    return digit;
+  });
+  element.replaceChildren(...digits);
 }
 
 function renderTheme() {
   el.screen.dataset.theme = state.theme;
+  if (document.body) {
+    document.body.dataset.theme = state.theme;
+    document.body.dataset.material = String(['space-age', 'steampunk', 'art-deco', 'nixie'].includes(state.theme));
+    if (state.theme === 'nixie' && !tubeAssets) {
+      // Keep readable amber text until every local photograph and the housing decode. A
+      // missing/corrupt image leaves the text fallback available for all digits.
+      const files = [...Array.from({ length: 10 }, (_, digit) => `nixie-${digit}.jpg`), 'nixie-glass-shell.png'];
+      tubeAssets = Promise.all(files.map((file) => new Promise((resolve) => {
+        const image = new Image();
+        image.onload = () => resolve(image.naturalWidth > 0);
+        image.onerror = () => resolve(false);
+        image.src = `assets/themes/${file}`;
+      })));
+      tubeAssets.then((loaded) => { document.body.dataset.tubesReady = String(loaded.every(Boolean)); });
+    }
+  }
   for (const input of document.querySelectorAll('[data-theme-option]')) {
     input.checked = input.value === state.theme;
   }
@@ -226,9 +309,12 @@ async function addCount() {
   streak = now - lastCountAt <= STREAK_WINDOW_MS ? streak + 1 : 1;
   lastCountAt = now;
 
+  pendingCounts++;
+  renderCount();
   try { await perform('count'); } catch { return; }
+  finally { pendingCounts--; renderCount(); }
 
-  el.countValue.classList.remove('is-bump');
+  el.countValue.classList.remove('is-bump', 'is-undo');
   void el.countValue.offsetWidth; // restart the animation
   el.countValue.classList.add('is-bump');
 
@@ -253,13 +339,35 @@ async function addCount() {
   }
 }
 
+async function undoCount() {
+  if (el.btnUndoCount.disabled || !state.countUndo) return;
+  const receiptId = state.countUndo.id;
+  undoPending = true;
+  renderCount();
+  try {
+    const result = await perform('undoCount', { receiptId });
+    if (result.undone) {
+      clearEphemeral();
+      void el.countValue.offsetWidth;
+      el.countValue.classList.add('is-undo');
+    }
+    const message = result.undone ? 'Count undone' : 'Count changed. Nothing undone.';
+    announce(message);
+    el.undoStatus.textContent = message;
+    clearTimeout(undoStatusTimer);
+    undoStatusTimer = setTimeout(() => { el.undoStatus.textContent = ''; }, 2400);
+  } catch { /* A failed save retains the receipt, so the user can retry. */ }
+  finally { undoPending = false; renderCount(); }
+}
+
 /* -------------------------------------------------------------- resets -- */
 
 /** Clear the ephemeral, popup-only streak / chain state. */
 function clearEphemeral() {
   streak = 0;
   lastCountAt = 0;
-  el.countValue.classList.remove('is-chain', 'is-bump');
+  el.countValue.classList.remove('is-chain', 'is-bump', 'is-undo');
+  el.screen.classList.remove('is-flash');
   clearFx(el.fxLayer);
 }
 
@@ -393,6 +501,7 @@ function bindEvents() {
   // state changes. Timer/count displays are mouse shortcuts for the buttons.
   bindPrimaryAction(el.btnStartStop, toggleTimer);
   bindPrimaryAction(el.btnCount, addCount);
+  bindPrimaryAction(el.btnUndoCount, undoCount);
   el.timer.addEventListener('click', toggleTimer);
   el.countPad.addEventListener('click', addCount);
   el.btnSettings.addEventListener('click', showStats);
@@ -429,6 +538,8 @@ function bindEvents() {
 
   window.addEventListener('pagehide', () => {
     clockController.dispose();
+    flapRenderer.dispose();
+    instrumentMotion.removeEventListener?.('change', cancelInstrumentMotion);
   });
 }
 
@@ -491,7 +602,7 @@ async function openSelectedView() {
 }
 
 function onStorageChanged(changes, area) {
-  if (area === 'local' && ['timer', 'sessionCount', 'history', 'theme', 'settings', 'displayPreferences'].some((key) => key in changes)) {
+  if (area === 'local' && ['timer', 'sessionCount', 'countUndo', 'history', 'theme', 'settings', 'displayPreferences'].some((key) => key in changes)) {
     perform('get').catch(() => {});
   }
 }
@@ -516,7 +627,10 @@ async function init() {
 }
 
 window.addEventListener('unload', () => {
+  flapRenderer.dispose();
+  instrumentMotion.removeEventListener?.('change', cancelInstrumentMotion);
   clearInterval(tickTimer);
+  clearTimeout(undoStatusTimer);
   clockController.dispose();
   chrome.storage.onChanged.removeListener(onStorageChanged);
 });

@@ -1,0 +1,170 @@
+Arcade Counter Timer — artwork and typography
+
+All artwork and fonts are packaged in the extension. No image, font, analytics,
+or other network service is contacted during use.
+
+AIRSHIP MACHINERY
+Original fictional mechanical background generated for Tokumaru Labs using
+OpenAI imagegen, October 2026. Decorative machinery is not a live measurement.
+File: airship-machinery.webp
+
+BRASS GEAR
+Derived from Gears-th.JPG by VladimirZhV, public domain.
+https://commons.wikimedia.org/wiki/File:Gears-th.JPG
+The photograph was edited using imagegen to remove the background, face the
+gear forward, and adjust the tooth shape. Resized and encoded as WebP.
+File: brass-gear-cutout.webp
+
+METAL TEXTURE
+Brushed Aluminium.jpg by Andrezadnik.
+https://commons.wikimedia.org/wiki/File:Brushed_Aluminium.jpg
+Creative Commons Attribution-ShareAlike 3.0 Unported:
+https://creativecommons.org/licenses/by-sa/3.0/
+Display is cropped and tinted with CSS. Adaptations of this image retain that
+license. The included source image is available beside this file:
+brushed-aluminium.jpg
+
+TYPOGRAPHY
+Bodoni Moda by the Bodoni Moda Project Authors:
+https://github.com/indestructible-type/Bodoni
+Distributed through the Google Fonts repository:
+https://github.com/google/fonts/tree/main/ofl/bodonimoda
+Unmodified normal variable font: BodoniModa.ttf
+SIL Open Font License 1.1: OFL.txt (included beside this file).
+
+Space Age, Steampunk, Art Deco and Nixie are original interface compositions by
+Tokumaru Labs. Interactive buttons and values are live HTML, not painted images.
+
+NIXIE GLASS HOUSING
+nixie-glass-shell.png is an AI-edited transparent derivative of
+Dalibor Farny RZ568M Nixie Tube.jpg by TofDir, CC0 1.0:
+https://commons.wikimedia.org/wiki/File:Dalibor_Farny_RZ568M_Nixie_Tube.jpg
+https://creativecommons.org/publicdomain/zero/1.0/
+Edited for Tokumaru Labs using OpenAI imagegen, October 2026. The room background,
+lit digit, mesh and internal supports were removed; the glass housing, reflections
+and black socket were retained as one complete overlay. CSS keeps its original
+proportions, places it above the cathode and applies uniform opacity. Source URL,
+method and prompt are recorded in
+nixie-glass-shell-provenance.json. This is an edited illustration assembled with
+the Z566M digit photographs credited below, not an exact reproduction or unmodified
+photograph of either tube model. No dimming or idle brightness behavior is used.
+
+BARLOW CONDENSED
+Copyright 2017 The Barlow Project Authors (https://github.com/jpt/barlow).
+Unmodified Google Fonts files BarlowCondensed-Medium.ttf and BarlowCondensed-SemiBold.ttf.
+https://github.com/google/fonts/tree/main/ofl/barlowcondensed
+SIL Open Font License 1.1: BarlowCondensed-OFL.txt (included).
+
+COMMONS PHOTOGRAPHIC MATERIALS
+The following photographs retain their stated licenses. Original photographs
+are bundled unedited; the enamel image is the Commons-provided 960px thumbnail.
+CSS crops, borders and tints are used for their display. Adaptations of any
+CC BY-SA image retain CC BY-SA 3.0. Source files remain available beside this
+file. Exact download URLs and SHA-256 hashes: COMMONS-SOURCES.json.
+
+enamel-cream.jpg — File:Cream beige moderately scratched rusty scuffed worn seamless metal surface texture.jpg
+Sisters.seamless — CC0
+https://commons.wikimedia.org/wiki/File:Cream_beige_moderately_scratched_rusty_scuffed_worn_seamless_metal_surface_texture.jpg
+http://creativecommons.org/publicdomain/zero/1.0/deed.en
+Wikimedia-provided 960px thumbnail. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+gold-metal.jpg — File:Gold metallic finish clean smooth seamless metal surface sheet texture.jpg
+Sisters.seamless — CC0
+https://commons.wikimedia.org/wiki/File:Gold_metallic_finish_clean_smooth_seamless_metal_surface_sheet_texture.jpg
+http://creativecommons.org/publicdomain/zero/1.0/deed.en
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+scratched-steel.jpg — File:Dark grey stainless steel heavily scratched worn seamless metal surface texture.jpg
+Sisters.seamless — CC0
+https://commons.wikimedia.org/wiki/File:Dark_grey_stainless_steel_heavily_scratched_worn_seamless_metal_surface_texture.jpg
+http://creativecommons.org/publicdomain/zero/1.0/deed.en
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+cast-charcoal.jpg — File:Charcoal dark grey rough speckled textured cast finish seamless metal surface texture.jpg
+Sisters.seamless — CC0
+https://commons.wikimedia.org/wiki/File:Charcoal_dark_grey_rough_speckled_textured_cast_finish_seamless_metal_surface_texture.jpg
+http://creativecommons.org/publicdomain/zero/1.0/deed.en
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+garnet-metal.jpg — File:Garnet red slightly worn scratched rough dusty seamless metal sheet texture.jpg
+Sisters.seamless — CC0
+https://commons.wikimedia.org/wiki/File:Garnet_red_slightly_worn_scratched_rough_dusty_seamless_metal_sheet_texture.jpg
+http://creativecommons.org/publicdomain/zero/1.0/deed.en
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+cast-bronze.jpg — File:Golden brown textured cast finish rough flecked seamless metal surface texture.jpg
+Sisters.seamless — CC0
+https://commons.wikimedia.org/wiki/File:Golden_brown_textured_cast_finish_rough_flecked_seamless_metal_surface_texture.jpg
+http://creativecommons.org/publicdomain/zero/1.0/deed.en
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+screw-macro.jpg — File:Phillips screw head.jpg
+en:User:Cburnett — CC BY-SA 3.0
+https://commons.wikimedia.org/wiki/File:Phillips_screw_head.jpg
+http://creativecommons.org/licenses/by-sa/3.0/
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+clockwork-photo.jpg — File:Mouvement horloge.jpg
+Vassil — Public domain
+https://commons.wikimedia.org/wiki/File:Mouvement_horloge.jpg
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+nixie-0.jpg — File:Z566M digit 0.jpg
+Hellbus — CC BY-SA 3.0
+https://commons.wikimedia.org/wiki/File:Z566M_digit_0.jpg
+https://creativecommons.org/licenses/by-sa/3.0
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+nixie-1.jpg — File:Z566M digit 1.jpg
+Hellbus — CC BY-SA 3.0
+https://commons.wikimedia.org/wiki/File:Z566M_digit_1.jpg
+https://creativecommons.org/licenses/by-sa/3.0
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+nixie-2.jpg — File:Z566M digit 2.jpg
+Hellbus — CC BY-SA 3.0
+https://commons.wikimedia.org/wiki/File:Z566M_digit_2.jpg
+https://creativecommons.org/licenses/by-sa/3.0
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+nixie-3.jpg — File:Z566M digit 3.jpg
+Hellbus — CC BY-SA 3.0
+https://commons.wikimedia.org/wiki/File:Z566M_digit_3.jpg
+https://creativecommons.org/licenses/by-sa/3.0
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+nixie-4.jpg — File:Z566M digit 4.jpg
+Hellbus — CC BY-SA 3.0
+https://commons.wikimedia.org/wiki/File:Z566M_digit_4.jpg
+https://creativecommons.org/licenses/by-sa/3.0
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+nixie-5.jpg — File:Z566M digit 5.jpg
+Hellbus — CC BY-SA 3.0
+https://commons.wikimedia.org/wiki/File:Z566M_digit_5.jpg
+https://creativecommons.org/licenses/by-sa/3.0
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+nixie-6.jpg — File:Z566M digit 6.jpg
+Hellbus — CC BY-SA 3.0
+https://commons.wikimedia.org/wiki/File:Z566M_digit_6.jpg
+https://creativecommons.org/licenses/by-sa/3.0
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+nixie-7.jpg — File:Z566M digit 7.jpg
+Hellbus — CC BY-SA 3.0
+https://commons.wikimedia.org/wiki/File:Z566M_digit_7.jpg
+https://creativecommons.org/licenses/by-sa/3.0
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+nixie-8.jpg — File:Z566M digit 8.jpg
+Hellbus — CC BY-SA 3.0
+https://commons.wikimedia.org/wiki/File:Z566M_digit_8.jpg
+https://creativecommons.org/licenses/by-sa/3.0
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.
+
+nixie-9.jpg — File:Z566M digit 9.jpg
+Hellbus — CC BY-SA 3.0
+https://commons.wikimedia.org/wiki/File:Z566M_digit_9.jpg
+https://creativecommons.org/licenses/by-sa/3.0
+Original photo bytes. No bitmap editing. UI may crop or tint via CSS; image license remains as stated.

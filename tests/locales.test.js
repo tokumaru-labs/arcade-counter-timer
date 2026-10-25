@@ -25,7 +25,7 @@ test('the manifest declares only the permissions required for the three surfaces
   const manifest = readJson('manifest.json');
 
   assert.equal(manifest.manifest_version, 3);
-  assert.equal(manifest.version, '0.2.0');
+  assert.equal(manifest.version, '0.3.0');
   assert.equal(manifest.action.default_popup, 'popup.html');
   assert.deepEqual(manifest.permissions, ['storage', 'activeTab', 'scripting', 'sidePanel']);
   assert.equal(manifest.host_permissions, undefined);

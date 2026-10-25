@@ -5,12 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Arcade Counter Timer</title>
     <link rel="stylesheet" href="popup.css" />
+    <link rel="stylesheet" href="themes.css" />
   </head>
   <body>
     <div id="screen" class="screen" inert>
+      <div class="material-hardware" aria-hidden="true">
+        <i class="case-screw case-screw--tl"></i><i class="case-screw case-screw--tr"></i>
+        <i class="case-screw case-screw--bl"></i><i class="case-screw case-screw--br"></i>
+        <svg class="deco-fan" viewBox="0 0 100 54" focusable="false"><defs><linearGradient id="fan-gold"><stop stop-color="#74531c"/><stop offset=".3" stop-color="#f9e5a7"/><stop offset=".5" stop-color="#b29148"/><stop offset=".7" stop-color="#fff0bd"/><stop offset="1" stop-color="#7e602c"/></linearGradient></defs><path d="M3 50 12 25 23 36 29 11 40 24 50 1 60 24 71 11 77 36 88 25 97 50Z" fill="url(#fan-gold)" stroke="#dfc284"/><path d="m50 50-38-25m38 25L29 11m21 39V1m0 49 21-39M50 50l38-25" stroke="#523b17" stroke-width="1.5"/><path d="M2 51h96M14 53h72" stroke="#e8d29a"/></svg>
+        <svg class="deco-inlay" viewBox="0 0 600 520" preserveAspectRatio="none" focusable="false"><path id="left-inlay" d="M12 94 25 108 25 141 19 132 19 302 25 312 25 417 12 430Z" fill="url(#fan-gold)" stroke="#e7ce8b"/><use href="#left-inlay" transform="translate(600 0) scale(-1 1)"/><path d="M19 134 24 141M19 171 24 178M19 208 24 215M19 245 24 252M19 282 24 289M581 134 576 141M581 171 576 178M581 208 576 215M581 245 576 252M581 282 576 289" stroke="#675020"/></svg>
+      </div>
+      <div class="theme-machinery" aria-hidden="true">
+        <img class="theme-gear theme-gear--large" src="assets/themes/brass-gear-cutout.webp" alt="" />
+        <img class="theme-gear theme-gear--small" src="assets/themes/brass-gear-cutout.webp" alt="" />
+        <img class="theme-gear theme-gear--lower" src="assets/themes/brass-gear-cutout.webp" alt="" />
+      </div>
       <!-- ------------------------------------------------------ main -- -->
       <main id="view-main" class="view view--main">
         <header class="topbar">
+          <span class="instrument-brand" aria-hidden="true"><small>TOKUMARU LABS</small><strong>ARCADE COUNTER TIMER</strong></span>
           <span id="run-dot" class="run-dot" aria-hidden="true"></span>
           <div id="clock" class="clock" aria-label="Current time" hidden>
             <span class="clock__label">NOW</span>
@@ -48,6 +61,7 @@
         <!-- Click shortcut for the mouse; the labelled buttons below are the
              accessible controls, so this is plain text, not a second button. -->
         <div id="timer" class="timer">
+          <span class="bezel-hardware" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
           <span id="timer-value" class="timer__value">00:00:00</span>
           <span id="timer-state" class="timer__state">STOPPED</span>
         </div>
@@ -63,7 +77,7 @@
           <span id="start-stop-label" class="mainbtn__label">START</span>
         </button>
 
-        <div class="subrow">
+        <div class="subrow timer-reset-row">
           <button
             id="btn-reset-timer"
             class="hold hold--timer"
@@ -75,10 +89,12 @@
         </div>
 
         <div id="count-pad" class="countpad">
-          <span id="count-value" class="countpad__value">0</span>
+          <span class="bezel-hardware" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span id="count-value" class="countpad__value" role="img" aria-label="0">0</span>
           <span id="fx-layer" class="fx-layer" aria-hidden="true"></span>
         </div>
 
+        <div class="count-actions">
         <button
           id="btn-count"
           class="mainbtn mainbtn--count"
@@ -88,8 +104,13 @@
           <span class="mainbtn__icon" aria-hidden="true">+</span>
           <span class="mainbtn__label">COUNT</span>
         </button>
+        <button id="btn-undo-count" class="undo-count" type="button" aria-label="Undo the last count" title="Undo counts in reverse order. Resets clear undo history." disabled>
+          <span class="undo-count__icon" aria-hidden="true">↶</span><span>UNDO</span>
+        </button>
+        </div>
 
-        <div class="subrow">
+        <div class="subrow count-reset-row">
+          <span id="undo-status" class="undo-status" aria-hidden="true"></span>
           <button
             id="btn-reset-count"
             class="hold hold--count"
@@ -173,14 +194,14 @@
           <legend>THEME</legend>
           <div class="theme-picker__options">
             <input
-              id="theme-original"
+              id="theme-space-age"
               class="theme-picker__input"
               type="radio"
               name="theme"
-              value="original"
+              value="space-age"
               data-theme-option
             />
-            <label for="theme-original">ORIGINAL</label>
+            <label for="theme-space-age">SPACE AGE</label>
             <input
               id="theme-arcade"
               class="theme-picker__input"
@@ -199,6 +220,12 @@
               data-theme-option
             />
             <label for="theme-editorial">EDITORIAL</label>
+            <input id="theme-steampunk" class="theme-picker__input" type="radio" name="theme" value="steampunk" data-theme-option />
+            <label for="theme-steampunk">STEAMPUNK</label>
+            <input id="theme-art-deco" class="theme-picker__input" type="radio" name="theme" value="art-deco" data-theme-option />
+            <label for="theme-art-deco">ART DECO</label>
+            <input id="theme-nixie" class="theme-picker__input" type="radio" name="theme" value="nixie" data-theme-option />
+            <label for="theme-nixie">NIXIE</label>
           </div>
         </fieldset>
         <fieldset class="display-picker">
@@ -237,6 +264,7 @@
         <button id="btn-clear" class="danger" type="button" aria-label="Clear all stored data">
           CLEAR ALL DATA
         </button>
+        <a class="theme-credits" href="assets/themes/CREDITS.txt" target="_blank" rel="noopener">ARTWORK &amp; FONT CREDITS ↗</a>
       </section>
     </div>
 

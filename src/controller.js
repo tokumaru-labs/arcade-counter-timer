@@ -1,8 +1,8 @@
-import { STATE_VERSION, defaultState, mergeState, normalizeTheme, resetTimer, resetCount, resetSession } from './storage.js';
-import { addIntervalToHistory, addCountToHistory, clampMs } from './time.js';
+import { assertSupportedVersion, defaultState, mergeState, normalizeTheme, resetTimer, resetCount, resetSession } from './storage.js';
+import { addIntervalToHistory, addCountToHistory, clampMs, dayKey } from './time.js';
 import { RELEASE_VERSION, updateNotice } from './release.js';
 
-export const STATE_KEYS = ['stateVersion', 'timer', 'sessionCount', 'history', 'theme', 'settings'];
+export const STATE_KEYS = ['stateVersion', 'timer', 'sessionCount', 'countUndo', 'history', 'theme', 'settings'];
 export const DISPLAY_MODES = ['popup', 'floating', 'sidepanel'];
 export function displayPreferences(value = {}) {
   return {
@@ -38,9 +38,7 @@ export function createStore(storage, now = () => Date.now()) {
   }
   async function execute(message) {
     const raw = await storage.get([...STATE_KEYS, 'displayPreferences', 'releaseNotice', 'upgradeBackupV020']);
-    if (Number.isFinite(raw.stateVersion) && raw.stateVersion > STATE_VERSION) {
-      throw new Error('Data belongs to a newer version. Update the extension before editing it.');
-    }
+    assertSupportedVersion(raw);
     let state = mergeState(raw);
     let preferences = displayPreferences(raw.displayPreferences);
     const action = message?.action;
@@ -80,18 +78,45 @@ export function createStore(storage, now = () => Date.now()) {
       await storage.set({ ...state, displayPreferences: preferences, upgradeBackupV020: null });
       return snapshot();
     }
-    state = settle(state, now());
+    // Capture the receipt from the view's click, not whichever count happens to
+    // be latest when a delayed request reaches this serialized transaction.
+    if (action === 'undoCount' && (!state.countUndo || message.receiptId !== state.countUndo.id)) {
+      return { ...snapshot(), undone: false };
+    }
+    const operationTime = now();
+    state = settle(state, operationTime);
     switch (action) {
       case 'toggle':
-        state.timer = { ...state.timer, running: !state.timer.running, runStartedAt: state.timer.running ? null : now() };
+        state.timer = { ...state.timer, running: !state.timer.running, runStartedAt: state.timer.running ? null : operationTime };
         break;
-      case 'count':
+      case 'count': {
+        const day = dayKey(operationTime);
+        if (!Number.isSafeInteger(state.sessionCount) || state.sessionCount >= Number.MAX_SAFE_INTEGER ||
+            !Number.isSafeInteger(state.history[day]?.count ?? 0) || (state.history[day]?.count ?? 0) >= Number.MAX_SAFE_INTEGER) {
+          throw new Error('Count exceeds the safely supported number range. Nothing was saved.');
+        }
         state.sessionCount++;
-        state.history = addCountToHistory(state.history, new Date(now()), 1);
+        state.history = addCountToHistory(state.history, new Date(operationTime), 1);
+        const runs = state.countUndo?.runs ?? [];
+        if (runs.at(-1)?.day === day) runs.at(-1).count++;
+        else runs.push({ day, count: 1 });
+        state.countUndo = { id: crypto.randomUUID(), day, sessionCount: state.sessionCount, runs };
         break;
-      case 'resetTimer': state = resetTimer(state, now()); break;
+      }
+      case 'undoCount': {
+        const day = state.countUndo.day;
+        state.sessionCount--;
+        state.history = { ...state.history, [day]: { ...state.history[day], count: state.history[day].count - 1 } };
+        const runs = state.countUndo.runs;
+        if (--runs.at(-1).count === 0) runs.pop();
+        // A head token authorizes one mutation, not a historical count's identity.
+        // Rotating it prevents old views/replayed requests becoming valid again.
+        state.countUndo = runs.length ? { id: crypto.randomUUID(), day: runs.at(-1).day, sessionCount: state.sessionCount, runs } : null;
+        break;
+      }
+      case 'resetTimer': state = resetTimer(state, operationTime); break;
       case 'resetCount': state = resetCount(state); break;
-      case 'resetSession': state = resetSession(state, now()); break;
+      case 'resetSession': state = resetSession(state, operationTime); break;
       case 'theme':
         if (normalizeTheme(message.value) !== message.value) throw new Error('Unknown theme.');
         state.theme = message.value;
@@ -103,7 +128,7 @@ export function createStore(storage, now = () => Date.now()) {
       default: throw new Error('Unknown operation.');
     }
     await storage.set(state);
-    return snapshot();
+    return action === 'undoCount' ? { ...snapshot(), undone: true } : snapshot();
   }
   return { dispatch };
 }

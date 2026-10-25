@@ -23,9 +23,9 @@ https://github.com/tokumaru-labs/arcade-counter-timer/blob/main/PRIVACY_JA.md
    support URL is useless if Issues are turned off later.
 3. Paste them into the Developer Dashboard.
 
-## Still outstanding
+## Existing Chrome Web Store item
 
-- The Chrome Web Store listing URL does not exist yet. Add it to `README.md` and
-  `README_JA.md` only after the item is published.
-- `SECURITY.md` currently states that private vulnerability reporting is not
-  enabled on the repository. If it is turned on later, update that file.
+https://chromewebstore.google.com/detail/arcade-counter-timer/cfonffmpidgimppooikhhhlceaoipkeb
+
+Upload 0.3.0 to this existing item. Do not create a new item or change its ID.
+Public availability must be verified after review; a submitted draft is not a live release.

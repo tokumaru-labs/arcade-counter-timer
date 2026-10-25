@@ -2,25 +2,25 @@ English | [日本語](PRIVACY_JA.md)
 
 # Privacy Policy — Arcade Counter Timer
 
-**Last updated: 2026-09-22**
-**Applies to: Arcade Counter Timer 0.2.0, by Tokumaru Labs (release candidate)**
+**Last updated: 2026-10-25**
+**Applies to: Arcade Counter Timer 0.3.0, by Tokumaru Labs**
 
 The extension has no server, accounts, analytics, advertising, cloud sync or
 remote code. It does not transmit data to any service.
 
 ## Local records
 
-`chrome.storage.local` stores the timer state, session count, daily time/count
+`chrome.storage.local` stores the timer state, session count and undo history, daily time/count
 history, selected theme, clock/sound/effect settings, preferred display mode,
 floating coordinates, size/lock preferences and the pending/seen release notice.
-When updating to 0.2.0, it also saves one local copy of the previous timer,
+Since version 0.2.0, it also saves one local copy of the previous timer,
 statistics and settings. These records stay in the same browser profile.
 
 `chrome.storage.session` temporarily stores an internal grant for each floating
 view (tab identifier and a random token). It binds the inserted view to its tab,
 is not a user identifier, and is cleared when the browser restarts.
 
-Normal same-ID extension updates retain local data. Version 0.2.0 does not
+Normal same-ID extension updates retain local data. Since version 0.2.0, updates do not
 automatically prune old daily history. Data pruned by older versions cannot be
 reconstructed by this update.
 

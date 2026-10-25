@@ -11,6 +11,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inflateRawSync } from 'node:zlib';
+import { createHash } from 'node:crypto';
 
 import { pngSize } from './png.mjs';
 
@@ -21,7 +22,7 @@ const EXPECTED = {
   name: '__MSG_extensionName__',
   description: '__MSG_extensionDescription__',
   defaultLocale: 'en',
-  version: '0.2.0',
+  version: '0.3.0',
   descriptionLimit: 132,
   permissions: ['storage', 'activeTab', 'scripting', 'sidePanel']
 };
@@ -38,6 +39,7 @@ const RUNTIME_FILES = [
   'manifest.json',
   'popup.html',
   'popup.css',
+  'themes.css',
   'popup.js',
   'background.js',
   'src/client.js',
@@ -49,12 +51,43 @@ const RUNTIME_FILES = [
   'src/storage.js',
   'src/effects.js',
   'src/input.js',
+  'src/flaps.js',
   '_locales/en/messages.json',
   '_locales/ja/messages.json',
   'assets/icons/icon16.png',
   'assets/icons/icon32.png',
   'assets/icons/icon48.png',
   'assets/icons/icon128.png',
+  'assets/themes/airship-machinery.webp',
+  'assets/themes/brass-gear-cutout.webp',
+  'assets/themes/brushed-aluminium.jpg',
+  'assets/themes/BodoniModa.ttf',
+  'assets/themes/OFL.txt',
+  'assets/themes/CREDITS.txt',
+  'assets/themes/enamel-cream.jpg',
+  'assets/themes/gold-metal.jpg',
+  'assets/themes/scratched-steel.jpg',
+  'assets/themes/cast-charcoal.jpg',
+  'assets/themes/garnet-metal.jpg',
+  'assets/themes/cast-bronze.jpg',
+  'assets/themes/screw-macro.jpg',
+  'assets/themes/clockwork-photo.jpg',
+  'assets/themes/nixie-0.jpg',
+  'assets/themes/nixie-1.jpg',
+  'assets/themes/nixie-2.jpg',
+  'assets/themes/nixie-3.jpg',
+  'assets/themes/nixie-4.jpg',
+  'assets/themes/nixie-5.jpg',
+  'assets/themes/nixie-6.jpg',
+  'assets/themes/nixie-7.jpg',
+  'assets/themes/nixie-8.jpg',
+  'assets/themes/nixie-9.jpg',
+  'assets/themes/nixie-glass-shell.png',
+  'assets/themes/nixie-glass-shell-provenance.json',
+  'assets/themes/BarlowCondensed-Medium.ttf',
+  'assets/themes/BarlowCondensed-SemiBold.ttf',
+  'assets/themes/BarlowCondensed-OFL.txt',
+  'assets/themes/COMMONS-SOURCES.json',
   'LICENSE'
 ];
 
@@ -135,7 +168,7 @@ if (manifest) {
   check('side panel uses the shared view', manifest.side_panel?.default_path === 'popup.html?surface=sidepanel');
   check('Chrome 116 or newer is required', manifest.minimum_chrome_version === '116');
   const resources = manifest.web_accessible_resources;
-  check('only shared view assets are web accessible, using a dynamic URL', resources?.length === 1 && resources[0].use_dynamic_url === true && JSON.stringify(resources[0].resources) === JSON.stringify(['popup.html', 'popup.css', 'popup.js', 'src/*.js']) && JSON.stringify(resources[0].matches) === JSON.stringify(['<all_urls>']));
+  check('only shared view assets are web accessible, using a dynamic URL', resources?.length === 1 && resources[0].use_dynamic_url === true && JSON.stringify(resources[0].resources) === JSON.stringify(['popup.html', 'popup.css', 'themes.css', 'popup.js', 'src/*.js']) && JSON.stringify(resources[0].matches) === JSON.stringify(['<all_urls>']));
 }
 
 /* ---------------------------------------------------------------- files -- */
@@ -144,6 +177,14 @@ section('Runtime files');
 
 for (const rel of RUNTIME_FILES) {
   check(`${rel} exists`, existsSync(join(ROOT, rel)));
+}
+
+section('Photographic source provenance');
+const materials = JSON.parse(readFileSync(join(ROOT, 'assets/themes/COMMONS-SOURCES.json'), 'utf8'));
+for (const source of materials) {
+  const rel = `assets/themes/${source.file}`;
+  check(`${source.file} has source, author and license`, Boolean(source.source && source.artist && source.license));
+  check(`${source.file} retains the recorded source bytes`, createHash('sha256').update(readFileSync(join(ROOT, rel))).digest('hex') === source.sha256);
 }
 
 /* -------------------------------------------------------------- locales -- */
@@ -258,7 +299,7 @@ section('Source tree');
 const srcFiles = readdirSync(join(ROOT, 'src')).sort();
 check(
   'src/ contains only the expected runtime modules',
-  srcFiles.join(',') === 'client.js,clock.js,controller.js,effects.js,input.js,overlay.js,release.js,storage.js,time.js',
+  srcFiles.join(',') === 'client.js,clock.js,controller.js,effects.js,flaps.js,input.js,overlay.js,release.js,storage.js,time.js',
   srcFiles.join(', ')
 );
 
@@ -271,15 +312,28 @@ const STORE_ASSETS = [
   ['store-assets/small-promo-440x280.png', 440, 280],
   ['store-assets/marquee-promo-1400x560.png', 1400, 560],
   ['store-assets/screenshot-main-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-machinery-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-style-1280x800.png', 1280, 800],
   ['store-assets/screenshot-arcade-1280x800.png', 1280, 800],
-  ['store-assets/screenshot-editorial-1280x800.png', 1280, 800],
-  ['store-assets/screenshot-stats-1280x800.png', 1280, 800],
-  ['store-assets/source/popup-main.png', 360, 540],
-  ['store-assets/source/popup-stats.png', 360, 540],
+  ['store-assets/screenshot-undo-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-main-ja-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-machinery-ja-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-style-ja-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-arcade-ja-1280x800.png', 1280, 800],
+  ['store-assets/screenshot-undo-ja-1280x800.png', 1280, 800],
+  ['store-assets/source/popup-main.png', 600, 520],
+  ['store-assets/source/popup-stats.png', 600, 520],
   ['store-assets/source/popup-arcade-main.png', 360, 540],
   ['store-assets/source/popup-arcade-stats.png', 360, 540],
   ['store-assets/source/popup-editorial-main.png', 360, 540],
-  ['store-assets/source/popup-editorial-stats.png', 360, 540]
+  ['store-assets/source/popup-editorial-stats.png', 360, 540],
+  ['store-assets/source/popup-steampunk-main.png', 600, 520],
+  ['store-assets/source/popup-steampunk-stats.png', 600, 520],
+  ['store-assets/source/popup-art-deco-main.png', 600, 520],
+  ['store-assets/source/popup-art-deco-stats.png', 600, 520],
+  ['store-assets/source/popup-nixie-main.png', 600, 520],
+  ['store-assets/source/popup-nixie-stats.png', 600, 520],
+  ['store-assets/source/popup-undo.png', 600, 520]
 ];
 
 for (const [rel, w, h] of STORE_ASSETS) {
@@ -290,7 +344,7 @@ for (const [rel, w, h] of STORE_ASSETS) {
   }
   try {
     const { width, height } = pngSize(abs);
-    check(`${rel} is ${w}x${h}`, width === w && height === h, `${width}x${height}`);
+    check(`${rel} has expected dimensions`, width === w && height === h, `${width}x${height}`);
   } catch (err) {
     check(`${rel} is a valid PNG`, false, err.message);
   }
@@ -326,6 +380,9 @@ if (!existsSync(zipPath)) {
 
   const missing = RUNTIME_FILES.filter((f) => !names.includes(f));
   check('ZIP contains every runtime file', missing.length === 0, missing.join(', '));
+  for (const rel of RUNTIME_FILES) {
+    if (names.includes(rel)) check(`ZIP ${rel} matches current source`, Buffer.compare(readZipEntry(zip, rel, true), readFileSync(join(ROOT, rel))) === 0);
+  }
 
   for (const excluded of ['tests/', 'scripts/', 'store-assets/', 'store-listing/', 'node_modules/', '.git/']) {
     check(`ZIP excludes ${excluded}`, !names.some((n) => n.startsWith(excluded)));
@@ -409,7 +466,7 @@ function readZipDirectory(path) {
 }
 
 /** Decompress one entry's bytes as UTF-8 text. */
-function readZipEntry({ buf, entries }, name) {
+function readZipEntry({ buf, entries }, name, binary = false) {
   const entry = entries.find((e) => e.name === name);
   if (!entry) throw new Error(`${name} is not in the archive`);
 
@@ -421,8 +478,8 @@ function readZipEntry({ buf, entries }, name) {
   const start = local + 30 + nameLen + extraLen;
   const body = buf.subarray(start, start + compressedSize);
 
-  if (entry.method === 0) return body.toString('utf8');
-  if (entry.method === 8) return inflateRawSync(body).toString('utf8');
+  if (entry.method === 0) return binary ? body : body.toString('utf8');
+  if (entry.method === 8) { const result = inflateRawSync(body); return binary ? result : result.toString('utf8'); }
   throw new Error(`Unsupported compression method ${entry.method} for ${name}`);
 }
 
