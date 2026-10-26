@@ -3,7 +3,7 @@ English | [日本語](PRIVACY_JA.md)
 # Privacy Policy — Arcade Counter Timer
 
 **Last updated: 2026-10-25**
-**Applies to: Arcade Counter Timer 0.3.0, by Tokumaru Labs**
+**Applies to: Arcade Counter Timer 0.3.1, by Tokumaru Labs**
 
 The extension has no server, accounts, analytics, advertising, cloud sync or
 remote code. It does not transmit data to any service.

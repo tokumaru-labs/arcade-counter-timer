@@ -9,15 +9,15 @@ the declarations and the final "Submit for review" are all manual.**
 - [ ] `npm test` passes
 - [ ] `npm run verify` passes
 - [ ] `npm run package` has produced
-      `dist/arcade-counter-timer-v0.3.0-chrome-web-store.zip`
+      `dist/arcade-counter-timer-v0.3.1-chrome-web-store.zip`
 - [ ] The ZIP has been loaded unpacked in Chrome once and manually exercised
 - [ ] The URLs in `urls.md` still load
 
 ## Package
 
 - [ ] Open the existing published Arcade Counter Timer item; retain its ID
-- [ ] Upload `dist/arcade-counter-timer-v0.3.0-chrome-web-store.zip`
-- [ ] The Dashboard's manifest analysis reports version **0.3.0**
+- [ ] Upload `dist/arcade-counter-timer-v0.3.1-chrome-web-store.zip`
+- [ ] The Dashboard's manifest analysis reports version **0.3.1**
 - [ ] It reports **storage, activeTab, scripting and sidePanel**
 - [ ] It reports no host permissions and no remote code warnings
 - [ ] The item name and description are picked up from `_locales/en` — the

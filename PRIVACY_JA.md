@@ -3,7 +3,7 @@
 # プライバシーポリシー — Arcade Counter Timer
 
 **最終更新日：2026-10-25**
-**対象：Arcade Counter Timer 0.3.0（Tokumaru Labs）**
+**対象：Arcade Counter Timer 0.3.1（Tokumaru Labs）**
 
 サーバー、アカウント、解析、広告、クラウド同期、リモートコードはありません。
 利用者のデータを外部へ送信しません。

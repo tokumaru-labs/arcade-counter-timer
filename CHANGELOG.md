@@ -6,6 +6,12 @@ project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.1] — 2026-10-26
+
+### Fixed
+- Remove the red-orange perimeter stripe and side ticks from Space Age across popup, floating and side-panel views.
+- Preserve the enamel housing, controls, other themes, statistics and undo history. No new permissions or update notice for this cosmetic patch.
+
 ## [0.3.0] — 2026-10-25
 
 ### Added

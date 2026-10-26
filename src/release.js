@@ -1,5 +1,5 @@
 // Release notices are bundled text, never remote announcements.
-export const RELEASE_VERSION = '0.3.0';
+export const RELEASE_VERSION = '0.3.1';
 const releases = [
   { version: '0.1.2', en: 'Optional live clock in the header', ja: 'ヘッダーに現在時刻を表示できます' },
   { version: '0.1.3', en: 'Selectable visual themes', ja: 'テーマを選べるようになりました' },
