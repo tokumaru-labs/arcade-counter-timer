@@ -68,8 +68,8 @@ try {
   const after = await worker.evaluate(() => chrome.storage.local.get(null));
   for (const key of Object.keys(seed)) assert.deepEqual(after[key], seed[key], `update preserves ${key}`);
   assert.deepEqual(after.upgradeBackupV020, seed);
-  assert.equal(after.releaseNotice.pending.version, '0.3.0');
-  record('real 0.1.3 → 0.3.0 update preserves historical statistics and creates backup');
+  assert.equal(after.releaseNotice.pending.version, '0.3.1');
+  record('real 0.1.3 → 0.3.1 update preserves historical statistics and creates backup');
 
   const popup = await context.newPage();
   const errors = [];

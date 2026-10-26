@@ -64,7 +64,6 @@ body[data-material="true"] .theme-picker label{color:var(--blue)}body[data-mater
 
 /* SPACE AGE: a photographed enamel surface under a translucent overglaze. */
 .screen[data-theme="space-age"]{--bg-top:#ece4d0;--line:#a48c65;--dim:#68573c;--blue:#44341d;--orange:#ff5522;--orange-glow:#ff481c90;--red:#9e3517;--plate:#e7deca;--ink:#3c2b18;background:linear-gradient(125deg,#fffff0bb,#f5e6c988 45%,#ab997866),url('assets/themes/enamel-cream.jpg') center/cover}
-.screen[data-theme="space-age"] .material-hardware::before{content:'';position:absolute;inset:9px;border:3px solid #bf481a;border-radius:32px;box-shadow:0 1px 2px #fff,inset 0 0 0 2px #fbf4df}
 .screen[data-theme="space-age"] .view--main{background:linear-gradient(90deg,transparent 48%,#b7a98b40 49%,#fff5 50%,transparent 51%)}.screen[data-theme="space-age"] .clock{color:#b53d13}
 .screen[data-theme="space-age"] .timer,.screen[data-theme="space-age"] .countpad{border-radius:48px;background:radial-gradient(ellipse at 45% 0,#443d2a,#0f0d08 70%) padding-box,linear-gradient(135deg,#fffbed,#827862 22%,#f8f3e1 29%,#d9cfb2 52%,#71664e 77%,#f8f0d8) border-box}
 .screen[data-theme="space-age"] .undo-count{color:#fff2d9;background:linear-gradient(#ff8c3c,#d2440d) padding-box,linear-gradient(120deg,#fff5d7,#786c54 35%,#fff5d7 70%,#786c54) border-box}
@@ -191,7 +190,6 @@ body[data-material="true"] .release-notice{position:relative;inset:auto;grid-col
 .screen[data-theme="space-age"] .timer__value{scale:1 1.4}.screen[data-theme="space-age"] .countpad__value{scale:1 1.2}
 .screen[data-theme="art-deco"] .timer__value{scale:1 1.45}.screen[data-theme="art-deco"] .countpad__value{scale:1 1.3}
 .screen[data-theme="steampunk"] .timer__value{scale:1 1.2}.screen[data-theme="steampunk"] .countpad__value{scale:1 1.1}
-.screen[data-theme="space-age"] .material-hardware::after{content:'';position:absolute;left:8px;right:8px;top:52%;height:13px;background:linear-gradient(90deg,#cb4c1d 0 16px,transparent 16px calc(100% - 16px),#cb4c1d calc(100% - 16px));mask:repeating-linear-gradient(0deg,#000 0 3px,transparent 3px 6px)}
 }
 .screen[data-theme="art-deco"] .undo-count:disabled{opacity:.88;filter:none;color:#d7bd80;background:linear-gradient(#174833,#012315) padding-box,linear-gradient(120deg,#ffe5aa,#725622 40%,#fce8ae 70%,#6e521e) border-box}
 .screen[data-theme="art-deco"] .hold:not(.hold--session){border:3px solid transparent;background:linear-gradient(#103f2e,#01271b) padding-box,url("assets/themes/gold-metal.jpg") center/cover border-box;box-shadow:0 0 0 1px #493819,inset 0 2px 2px #fff2,inset 0 -2px 2px #000a,0 2px 2px #0009}

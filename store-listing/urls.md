@@ -27,5 +27,5 @@ https://github.com/tokumaru-labs/arcade-counter-timer/blob/main/PRIVACY_JA.md
 
 https://chromewebstore.google.com/detail/arcade-counter-timer/cfonffmpidgimppooikhhhlceaoipkeb
 
-Upload 0.3.0 to this existing item. Do not create a new item or change its ID.
+Upload 0.3.1 to this existing item. Do not create a new item or change its ID.
 Public availability must be verified after review; a submitted draft is not a live release.

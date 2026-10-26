@@ -1,4 +1,4 @@
-# Chrome Web Store listing — ja / 0.3.0
+# Chrome Web Store listing — ja / 0.3.1
 
 Existing item: `cfonffmpidgimppooikhhhlceaoipkeb`. Category: Productivity.
 Basic controls are English; localized captions and update notes are provided.

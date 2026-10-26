@@ -42,10 +42,10 @@ try {
   const page = await context.newPage(); await page.goto(`chrome-extension://${id}/popup.html`);
   await page.locator('#screen:not([inert])').waitFor();
   await page.locator('#release-notice:not([hidden])').waitFor();
-  assert.equal(await page.evaluate(() => chrome.runtime.getManifest().version), '0.3.0');
+  assert.equal(await page.evaluate(() => chrome.runtime.getManifest().version), '0.3.1');
   const data = await page.evaluate(() => chrome.storage.local.get(null));
   for (const key of Object.keys(seed).filter(k => k !== 'releaseNotice')) assert.deepEqual(data[key], seed[key]);
-  assert.equal(data.releaseNotice.seenVersion, '0.3.0');
+  assert.equal(data.releaseNotice.seenVersion, '0.3.1');
   const notice = await page.locator('#release-notice').innerText();
   assert.match(notice, /Six themes.*undo|6つのテーマ.*取り消し/);
   assert.doesNotMatch(notice, /Original/);
@@ -55,7 +55,7 @@ try {
   }), 'the update description must fit inside its visible notice');
   assert.ok(await page.locator('.footer').evaluate(el => el.getBoundingClientRect().bottom <= innerHeight));
   await page.screenshot({ path: join(qa, 'update-0.2-to-0.3.png') });
-  record('actual 0.2.0 -> 0.3.0 retains every stored record and existing backup, with the new notice');
+  record('actual 0.2.0 -> 0.3.1 retains every stored record and existing backup, with the new notice');
   await page.reload(); await page.locator('#screen:not([inert])').waitFor();
   assert.equal(await page.locator('#release-notice').isHidden(), true);
   await page.locator('#btn-count').click(); await page.locator('#btn-count').click();

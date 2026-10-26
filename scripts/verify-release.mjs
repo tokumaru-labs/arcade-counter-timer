@@ -22,7 +22,7 @@ const EXPECTED = {
   name: '__MSG_extensionName__',
   description: '__MSG_extensionDescription__',
   defaultLocale: 'en',
-  version: '0.3.0',
+  version: '0.3.1',
   descriptionLimit: 132,
   permissions: ['storage', 'activeTab', 'scripting', 'sidePanel']
 };

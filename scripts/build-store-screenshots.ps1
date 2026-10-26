@@ -28,7 +28,7 @@ foreach($locale in @('en','ja')) {
   $accent = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(250,176,99))
   $title = if($locale -eq 'ja'){$slide.Ja}else{$slide.En}
   $sub = if($locale -eq 'ja'){$slide.JaSub}else{$slide.EnSub}
-  $g.DrawString('TOKUMARU LABS  /  ARCADE COUNTER TIMER 0.3.0',$tag,$accent,55,28)
+  $g.DrawString('TOKUMARU LABS  /  ARCADE COUNTER TIMER 0.3.1',$tag,$accent,55,28)
   $g.DrawString($title,$heading,$light,[System.Drawing.RectangleF]::new(52,60,1180,72))
   $g.DrawString($sub,$body,$dim,[System.Drawing.RectangleF]::new(55,143,1170,60))
   foreach($shot in $slide.Shots) {
